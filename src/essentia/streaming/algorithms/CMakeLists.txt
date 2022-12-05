@@ -1,0 +1,19 @@
+target_sources(essentia
+  PRIVATE
+    copy.h
+    devnull.cpp
+    devnull.h
+    diskwriter.h
+    fileoutput.h
+    poolstorage.cpp
+    poolstorage.h
+    ringbufferinput.cpp
+    ringbufferinput.h
+    ringbufferoutput.cpp
+    ringbufferoutput.h
+    ringbuffervectoroutput.cpp
+    ringbuffervectoroutput.h
+    vectorinput.h
+    vectoroutput.h)
+
+target_include_directories(essentia PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

@@ -1,0 +1,16 @@
+target_sources(essentia
+  PRIVATE
+    tensorflowpredict.cpp
+    tensorflowpredict2d.cpp
+    tensorflowpredictcrepe.cpp
+    tensorflowpredicteffnetdiscogs.cpp
+    tensorflowpredictmusicnn.cpp
+    tensorflowpredicttempocnn.cpp
+    tensorflowpredictvggish.cpp
+    tensorflowpredict.h
+    tensorflowpredict2d.h
+    tensorflowpredictcrepe.h
+    tensorflowpredicteffnetdiscogs.h
+    tensorflowpredictmusicnn.h
+    tensorflowpredicttempocnn.h
+    tensorflowpredictvggish.h)

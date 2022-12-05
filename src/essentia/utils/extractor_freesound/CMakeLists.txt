@@ -1,0 +1,13 @@
+target_sources(essentia
+  PRIVATE
+    FreesoundLowlevelDescriptors.cpp
+    FreesoundRhythmDescriptors.cpp
+    FreesoundSfxDescriptors.cpp
+    FreesoundTonalDescriptors.cpp
+  PUBLIC
+    extractor_version.h
+    FreesoundDescriptorsSet.h
+    FreesoundLowlevelDescriptors.h
+    FreesoundRhythmDescriptors.h
+    FreesoundSfxDescriptors.h
+    FreesoundTonalDescriptors.h)

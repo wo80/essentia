@@ -1,0 +1,40 @@
+target_sources(essentia
+  PRIVATE
+    algorithm.cpp
+    algorithmfactory_impl.h
+    configurable.cpp
+    connector.cpp
+    debugging.cpp
+    essentia.cpp
+    essentiautil.cpp
+    iotypewrappers_impl.h
+    parameter.cpp
+    pool.cpp
+    range.cpp
+    stringutil.cpp
+  PUBLIC
+    algorithm.h
+    algorithmfactory.h
+    config.h
+    configurable.h
+    connector.h
+    debugging.h
+    essentia.h
+    essentiamath.h
+    essentiautil.h
+    iotypewrappers.h
+    parameter.h
+    pool.h
+    range.h
+    roguevector.h
+    streamconnector.h
+    streamutil.h
+    stringutil.h
+    threading.h
+    types.h)
+
+target_include_directories(essentia PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_subdirectory(scheduler)
+add_subdirectory(streaming)
+add_subdirectory(utils)

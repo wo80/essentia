@@ -1,0 +1,22 @@
+target_sources(essentia
+  PRIVATE
+    allpass.cpp
+    bandpass.cpp
+    bandreject.cpp
+    dcremoval.cpp
+    equalloudness.cpp
+    highpass.cpp
+    iir.cpp
+    lowpass.cpp
+    medianfilter.cpp
+    movingaverage.cpp
+    allpass.h
+    bandpass.h
+    bandreject.h
+    dcremoval.h
+    equalloudness.h
+    highpass.h
+    iir.h
+    lowpass.h
+    medianfilter.h
+    movingaverage.h)

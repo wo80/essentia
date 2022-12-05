@@ -1,0 +1,12 @@
+target_sources(essentia
+  PRIVATE
+    MusicLowlevelDescriptors.cpp
+    MusicRhythmDescriptors.cpp
+    MusicTonalDescriptors.cpp
+  PUBLIC
+    extractor_version.h
+    MusicDescriptorsSet.h
+    MusicLowlevelDescriptors.h
+    MusicRhythmDescriptors.h
+    MusicTonalDescriptors.h
+    tagwhitelist.h)

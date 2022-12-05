@@ -1,0 +1,22 @@
+target_sources(essentia
+  PRIVATE
+    clickdetector.cpp
+    discontinuitydetector.cpp
+    falsestereodetector.cpp
+    gapsdetector.cpp
+    humdetector.cpp
+    noiseburstdetector.cpp
+    saturationdetector.cpp
+    snr.cpp
+    startstopcut.cpp
+    truepeakdetector.cpp
+    clickdetector.h
+    discontinuitydetector.h
+    falsestereodetector.h
+    gapsdetector.h
+    humdetector.h
+    noiseburstdetector.h
+    saturationdetector.h
+    snr.h
+    startstopcut.h
+    truepeakdetector.h)
