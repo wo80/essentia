@@ -14,7 +14,6 @@
 // for abs() below
 
 using namespace TNT;
-using namespace std;
 
 namespace JAMA
 {
@@ -49,6 +48,8 @@ class SVD
 
    SVD (const Array2D<Real> &Arg) {
 
+      using std::min;
+      using std::max;
 
       m = Arg.dim1();
       n = Arg.dim2();

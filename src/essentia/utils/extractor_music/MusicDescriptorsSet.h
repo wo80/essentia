@@ -32,14 +32,13 @@
 #include "essentia/streaming/algorithms/poolstorage.h"
 #include "essentia/streaming/algorithms/vectorinput.h"
 
-using namespace std;
 using namespace essentia;
 using namespace essentia::streaming;
 
 class MusicDescriptorSet { 
 
  public:
- 	static const string nameSpace;  
+ 	static const std::string nameSpace;
 
  protected:
   Pool options;

@@ -13,7 +13,6 @@
 // for abs() below
 
 using namespace TNT;
-using namespace std;
 
 namespace JAMA
 {
@@ -218,6 +217,8 @@ class Eigenvalue
    // Symmetric tridiagonal QL algorithm.
 
    void tql2 () {
+
+      using std::max;
 
    //  This is derived from the Algol procedures tql2, by
    //  Bowdler, Martin, Reinsch, and Wilkinson, Handbook for
@@ -454,6 +455,9 @@ class Eigenvalue
    // Nonsymmetric reduction from Hessenberg to real Schur form.
 
    void hqr2 () {
+
+      using std::min;
+      using std::max;
 
       //  This is derived from the Algol procedure hqr2,
       //  by Martin and Wilkinson, Handbook for Auto. Comp.,

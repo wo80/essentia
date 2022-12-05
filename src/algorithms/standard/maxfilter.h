@@ -22,19 +22,17 @@
 
 #include "algorithmfactory.h"
 
-using namespace std;
-
 namespace essentia {
 namespace standard {
 
 class MaxFilter : public Algorithm {
 
  protected:
-  Input<vector<Real> > _array;
-  Output<vector<Real> > _filtered;
+  Input<std::vector<Real> > _array;
+  Output<std::vector<Real> > _filtered;
 
   // circular buffer containing past values
-  vector<Real> _buffer;
+  std::vector<Real> _buffer;
   Real _curMax;
   bool _filledBuffer;
   int _bufferFillIdx;   

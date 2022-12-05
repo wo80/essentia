@@ -23,8 +23,6 @@
 #include "algorithm.h"
 #include "essentiautil.h"
 
-using namespace std;
-
 namespace essentia {
 namespace standard {
 

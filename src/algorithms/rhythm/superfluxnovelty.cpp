@@ -35,7 +35,7 @@ void SuperFluxNovelty::configure() {
 
 void SuperFluxNovelty::compute() {
             
-const vector< vector<Real> >& bands = _bands.get();
+const std::vector< std::vector<Real> >& bands = _bands.get();
   Real& diffs = _diffs.get();
   
   int nFrames = bands.size();
@@ -52,7 +52,7 @@ const vector< vector<Real> >& bands = _bands.get();
     throw EssentiaException("SuperFluxNovelty: not enough frames for the specified frameWidth");
   }
 
-  vector<Real> maxsBuffer(nBands, 0);
+  std::vector<Real> maxsBuffer(nBands, 0);
             
   // buffer for differences
   Real cur_diff;

@@ -22,7 +22,6 @@
 
 #include "MusicDescriptorsSet.h"
 
-using namespace std;
 using namespace essentia;
 using namespace essentia::streaming;
 
@@ -30,7 +29,7 @@ class MusicRhythmDescriptors : public MusicDescriptorSet {
 
  public:
 
- 	static const string nameSpace;  
+ 	static const std::string nameSpace;
 
   MusicRhythmDescriptors(Pool& options) {
     this->options = options;

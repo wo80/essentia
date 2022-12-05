@@ -23,12 +23,10 @@
 #include "MusicDescriptorsSet.h"
 #include "essentia/essentiamath.h"
 
-using namespace std;
-
 class MusicLowlevelDescriptors : public MusicDescriptorSet {
 
  public:
- 	static const string nameSpace;  
+ 	static const std::string nameSpace;
 
   MusicLowlevelDescriptors(Pool& options) {
     this->options = options;
