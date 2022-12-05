@@ -62,8 +62,8 @@ void SuperFluxPeaks::configure() {
 
 void SuperFluxPeaks::compute() {
   
-  const vector<Real>& signal = _signal.get();
-  vector<Real>& peaks = _peaks.get();
+  const std::vector<Real>& signal = _signal.get();
+  std::vector<Real>& peaks = _peaks.get();
   if (signal.empty()) {
     peaks.resize(0);
     return;
@@ -71,12 +71,12 @@ void SuperFluxPeaks::compute() {
   
   int size = signal.size();
   
-  vector<Real> avg(size);
+  std::vector<Real> avg(size);
   _movAvg->input("signal").set(signal);
   _movAvg->output("signal").set(avg);
   _movAvg->compute();
   
-  vector<Real> maxs(size);
+  std::vector<Real> maxs(size);
   _maxf->input("signal").set(signal);
   _maxf->output("signal").set(maxs);
   _maxf->compute();

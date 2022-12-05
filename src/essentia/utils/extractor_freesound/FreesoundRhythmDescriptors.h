@@ -22,7 +22,6 @@
 
 #include "FreesoundDescriptorsSet.h"
 
-using namespace std;
 using namespace essentia;
 using namespace essentia::streaming;
 
@@ -30,7 +29,7 @@ using namespace essentia::streaming;
 
  public:
 
- 	static const string nameSpace;  
+ 	static const std::string nameSpace;
 
   FreesoundRhythmDescriptors(Pool& options) {
     this->options = options;

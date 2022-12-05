@@ -23,12 +23,10 @@
 #include "FreesoundDescriptorsSet.h"
 #include "essentia/essentiamath.h"
 
-using namespace std;
-
 class FreesoundLowlevelDescriptors : public FreesoundDescriptorSet {
 
  public:
- 	static const string nameSpace;  
+ 	static const std::string nameSpace;
 
   FreesoundLowlevelDescriptors(Pool& options) {
     this->options = options;

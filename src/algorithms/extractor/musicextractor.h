@@ -134,8 +134,8 @@ class MusicExtractor : public Algorithm {
   
     const char* statsArray[] = { "mean", "var", "stdev", "median", "min", "max", "dmean", "dmean2", "dvar", "dvar2" };
     const char* cepstrumStatsArray[] = { "mean", "cov", "icov" };
-    vector<string> stats = arrayToVector<string>(statsArray);
-    vector<string> cepstrumStats = arrayToVector<string>(cepstrumStatsArray);
+    std::vector<std::string> stats = arrayToVector<std::string>(statsArray);
+    std::vector<std::string> cepstrumStats = arrayToVector<std::string>(cepstrumStatsArray);
 
     declareParameter("lowlevelStats", "the statistics to compute for low-level features", "", stats);
     declareParameter("tonalStats", "the statistics to compute for tonal features", "", stats);

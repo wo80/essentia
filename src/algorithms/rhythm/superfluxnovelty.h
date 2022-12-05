@@ -21,7 +21,6 @@
 #define ESSENTIA_SUPERFLUXNOVELTY_H
 
 #include "algorithmfactory.h"
-using namespace std;
 
 namespace essentia {
 namespace standard {
@@ -74,7 +73,7 @@ namespace streaming {
 class SuperFluxNovelty : public Algorithm {
 
  protected:
-  Sink< vector<Real> > _bands;
+  Sink< std::vector<Real> > _bands;
   Source<Real  > _diffs;
 
   essentia::standard::Algorithm* _algo;

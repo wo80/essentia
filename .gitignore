@@ -74,6 +74,7 @@ src/examples/python/streaming_extractor/streaming_extractortuningfrequency.h
 # this shouldn't be here, but yeah well...
 test/src/basetest/test_*.o
 src/algorithms/essentia_algorithms_reg.cpp
+src/algorithms/essentia_algorithms_reg_2.h
 
 # pre-built 3rdparty dependencies
 packaging/debian_3rdparty/bin

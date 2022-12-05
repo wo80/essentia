@@ -26,7 +26,7 @@
 class MusicTonalDescriptors : public MusicDescriptorSet {
 
  public:
- 	static const string nameSpace;
+ 	static const std::string nameSpace;
 
   MusicTonalDescriptors(Pool& options) {
     this->options = options;

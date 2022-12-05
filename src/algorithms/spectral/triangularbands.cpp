@@ -57,8 +57,8 @@ void TriangularBands::configure() {
 
 
 void TriangularBands::compute() {
-  const vector<Real>& spectrum = _spectrumInput.get();
-  vector<Real>& bands = _bandsOutput.get();
+  const std::vector<Real>& spectrum = _spectrumInput.get();
+  std::vector<Real>& bands = _bandsOutput.get();
 
   if (spectrum.size() <= 1) {
     throw EssentiaException("TriangularBands: the size of the input spectrum is not greater than one");
@@ -120,7 +120,7 @@ void TriangularBands::createFilters(int spectrumSize) {
     throw EssentiaException("TriangularBands: Filter bank cannot be computed from a spectrum with less than 2 bins");
   }
 
-  _filterCoefficients = vector<vector<Real> >(_nBands, vector<Real>(spectrumSize, 0.0));
+  _filterCoefficients = std::vector<std::vector<Real> >(_nBands, std::vector<Real>(spectrumSize, 0.0));
 
   Real frequencyScale = (_sampleRate / 2.0) / (spectrumSize - 1);
 

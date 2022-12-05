@@ -27,7 +27,7 @@ class FreesoundSfxDescriptors : public FreesoundDescriptorSet {
 
  public:
 
- 	static const string nameSpace;  
+ 	static const std::string nameSpace;  
 
   FreesoundSfxDescriptors(Pool& options) {
     this->options = options;
