@@ -1,0 +1,36 @@
+/* This file is automatically created by the build system.
+ * Please make changes only in its source file essentia_algorithms_reg.h.in.
+ */
+
+#ifndef ESSENTIA_ALGORITHMS_REG_H_
+#define ESSENTIA_ALGORITHMS_REG_H_
+
+#ifndef ENABLE_FFTW
+#cmakedefine01 ENABLE_FFTW
+#endif
+
+#ifndef ENABLE_YAML
+#cmakedefine01 ENABLE_YAML
+#endif
+
+#ifndef ENABLE_SAMPLERATE
+#cmakedefine01 ENABLE_SAMPLERATE
+#endif
+
+#ifndef ENABLE_TAGLIB
+#cmakedefine01 ENABLE_TAGLIB
+#endif
+
+#ifndef ENABLE_CHROMAPRINT
+#cmakedefine01 ENABLE_CHROMAPRINT
+#endif
+
+#ifndef ENABLE_TENSORFLOW
+#cmakedefine01 ENABLE_TENSORFLOW
+#endif
+
+#ifndef ENABLE_GAIA
+#cmakedefine01 ENABLE_GAIA
+#endif
+
+#endif /* ESSENTIA_ALGORITHMS_REG_H_ */
