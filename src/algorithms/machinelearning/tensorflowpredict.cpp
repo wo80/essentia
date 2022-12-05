@@ -72,13 +72,13 @@ void TensorflowPredict::configure() {
   _savedModel = parameter("savedModel").toString();
   _graphFilename = parameter("graphFilename").toString();
 
-  if ((_savedModel.empty()) and (_graphFilename.empty()) and (_isConfigured)) {
+  if ((_savedModel.empty()) && (_graphFilename.empty()) && (_isConfigured)) {
     E_WARNING("TensorflowPredict: You are trying to update a valid configuration with invalid parameters. "
               "If you want to update the configuration specify a valid `graphFilename` or `savedModel` parameter.");
   };
 
   // Do not do anything if we did not get a non-empty model name.
-  if ((_savedModel.empty()) and (_graphFilename.empty())) return;
+  if ((_savedModel.empty()) && (_graphFilename.empty())) return;
 
   _tags = parameter("tags").toVectorString();
 
