@@ -1,0 +1,22 @@
+target_sources(essentia
+  PRIVATE
+    duration.cpp
+    effectiveduration.cpp
+    larm.cpp
+    leq.cpp
+    loudness.cpp
+    loudnessebur128.cpp
+    loudnessebur128filter.cpp
+    loudnessvickers.cpp
+    lpc.cpp
+    zerocrossingrate.cpp
+    duration.h
+    effectiveduration.h
+    larm.h
+    leq.h
+    loudness.h
+    loudnessebur128.h
+    loudnessebur128filter.h
+    loudnessvickers.h
+    lpc.h
+    zerocrossingrate.h)

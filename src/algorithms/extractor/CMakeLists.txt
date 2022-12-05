@@ -1,0 +1,26 @@
+target_sources(essentia
+  PRIVATE
+    barkextractor.cpp
+    extractor.cpp
+    freesoundextractor.cpp
+    keyextractor.cpp
+    levelextractor.cpp
+    lowlevelspectraleqloudextractor.cpp
+    lowlevelspectralextractor.cpp
+    musicextractor.cpp
+    musicextractorsvm.cpp
+    rhythmdescriptors.cpp
+    tonalextractor.cpp
+    tuningfrequencyextractor.cpp
+    barkextractor.h
+    extractor.h
+    freesoundextractor.h
+    keyextractor.h
+    levelextractor.h
+    lowlevelspectraleqloudextractor.h
+    lowlevelspectralextractor.h
+    musicextractor.h
+    musicextractorsvm.h
+    rhythmdescriptors.h
+    tonalextractor.h
+    tuningfrequencyextractor.h)

@@ -1,0 +1,20 @@
+target_sources(essentia
+  PRIVATE
+    aftermaxtobeforemaxenergyratio.cpp
+    derivativesfx.cpp
+    flatnesssfx.cpp
+    logattacktime.cpp
+    maxtototal.cpp
+    mintototal.cpp
+    pitchsalience.cpp
+    strongdecay.cpp
+    tctototal.cpp
+    aftermaxtobeforemaxenergyratio.h
+    derivativesfx.h
+    flatnesssfx.h
+    logattacktime.h
+    maxtototal.h
+    mintototal.h
+    pitchsalience.h
+    strongdecay.h
+    tctototal.h)

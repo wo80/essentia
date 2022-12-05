@@ -1,0 +1,34 @@
+target_sources(essentia
+  PRIVATE
+    chromacrosssimilarity.cpp
+    coversongsimilarity.cpp
+    crosssimilaritymatrix.cpp
+    danceability.cpp
+    dynamiccomplexity.cpp
+    fadedetection.cpp
+    intensity.cpp
+    pca.cpp
+    sbic.cpp
+    chromacrosssimilarity.h
+    coversongsimilarity.h
+    crosssimilaritymatrix.h
+    danceability.h
+    dynamiccomplexity.h
+    fadedetection.h
+    intensity.h
+    pca.h
+    sbic.h)
+
+if(ESSENTIA_USE_CHROMAPRINT)
+  target_sources(essentia
+    PRIVATE
+      chromaprinter.cpp
+      chromaprinter.h)
+endif()
+
+if(ESSENTIA_USE_GAIA)
+  target_sources(essentia
+    PRIVATE
+      gaiatransform.cpp
+      gaiatransform.h)
+endif()

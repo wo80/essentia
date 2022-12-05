@@ -1,0 +1,16 @@
+/* This file is automatically created by the build system.
+ * Please make changes only in its source file version.h.in.
+ */
+
+#ifndef ESSENTIA_VERSION_H_
+#define ESSENTIA_VERSION_H_
+
+#define ESSENTIA_VERSION "@essentia_VERSION_STRING@"
+#define ESSENTIA_GIT_SHA ""
+#define ESSENTIA_VERSION_MAJOR @essentia_VERSION_MAJOR@
+#define ESSENTIA_VERSION_MINOR @essentia_VERSION_MINOR@
+#define ESSENTIA_VERSION_PATCH @essentia_VERSION_PATCH@
+
+#define ESSENTIA_VERSION_INT ( ( ESSENTIA_VERSION_MAJOR * 100 + ESSENTIA_VERSION_MINOR ) * 100 + ESSENTIA_VERSION_PATCH )
+
+#endif /* ESSENTIA_VERSION_H_ */
