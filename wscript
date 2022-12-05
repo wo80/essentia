@@ -320,10 +320,10 @@ def build(ctx):
 
     if ctx.env.WITH_CPPTESTS:
         ctx.program(
-            source=ctx.path.ant_glob('test/src/basetest/*.cpp test/3rdparty/gtest-1.6.0/src/gtest-all.cc '),
+            source=ctx.path.ant_glob('test/src/basetest/*.cpp test/3rdparty/googletest/googletest/src/gtest-all.cc '),
             target='basetest',
-            includes=['test/3rdparty/gtest-1.6.0/include',
-                      'test/3rdparty/gtest-1.6.0'] + adjust(ctx.env.INCLUDES, 'src'),
+            includes=['test/3rdparty/googletest/googletest/include',
+                      'test/3rdparty/googletest/googletest'] + adjust(ctx.env.INCLUDES, 'src'),
             install_path=None,
             use='essentia ' + ctx.env.USE_LIBS
             )
