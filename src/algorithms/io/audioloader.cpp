@@ -68,49 +68,30 @@ void AudioLoader::openAudioFile(const string& filename) {
         string error = "Unknown error";
         if (av_strerror(errnum, errorstr, 128) == 0) error = errorstr;
         avformat_close_input(&_demuxCtx);
-        _demuxCtx = 0;
+        _demuxCtx = NULL;
         throw EssentiaException("AudioLoader: Could not find stream information, error = ", error);
     }
 
-    // Dump information about file onto standard error
-    //dump_format(_demuxCtx, 0, filename.c_str(), 0);
-
-    // Check that we have only 1 audio stream in the file
-    _streams.clear();
-    for (int i=0; i<(int)_demuxCtx->nb_streams; i++) {
-        if (_demuxCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
-            _streams.push_back(i);
-        }
-    }
-    int nAudioStreams = _streams.size();
-    
-    if (nAudioStreams == 0) {
+    AVCodec* codec;
+    if ((errnum = av_find_best_stream(_demuxCtx, AVMEDIA_TYPE_AUDIO, -1, -1, &codec, 0)) < 0) {
         avformat_close_input(&_demuxCtx);
-        _demuxCtx = 0;
-        throw EssentiaException("AudioLoader ERROR: found 0 streams in the file, expecting one or more audio streams");
+        _demuxCtx = NULL;
+        throw EssentiaException("AudioLoader: no audio streams in the file");
+    }
+    _streamIdx = errnum;
+
+    _audioCodec = codec;
+    _audioCtx = avcodec_alloc_context3(codec);
+
+    if ((errnum = avcodec_parameters_to_context(_audioCtx, _demuxCtx->streams[_streamIdx]->codecpar)) < 0) {
+        throw EssentiaException("AudioLoader: Could not copy the stream parameters");
     }
 
-    if (_selectedStream >= nAudioStreams) {
-        avformat_close_input(&_demuxCtx);
-        _demuxCtx = 0;
-        throw EssentiaException("AudioLoader ERROR: 'audioStream' parameter set to ", _selectedStream ,". It should be smaller than the audio streams count, ", nAudioStreams);
-    }
-
-    _streamIdx = _streams[_selectedStream];
-
-    // Load corresponding audio codec
-    _audioCtx = _demuxCtx->streams[_streamIdx]->codec;
-    _audioCodec = avcodec_find_decoder(_audioCtx->codec_id);
-
-    if (!_audioCodec) {
-        throw EssentiaException("AudioLoader: Unsupported codec!");
-    }
-
-    if (avcodec_open2(_audioCtx, _audioCodec, NULL) < 0) {
+    if (avcodec_open2(_audioCtx, codec, NULL) < 0) {
         throw EssentiaException("AudioLoader: Unable to instantiate codec...");
     }
   
-    // Configure format convertion  (no samplerate conversion yet)
+    // Configure format conversion  (no samplerate conversion yet)
     int64_t layout = av_get_default_channel_layout(_audioCtx->channels);
 
     /*
@@ -133,7 +114,10 @@ void AudioLoader::openAudioFile(const string& filename) {
         throw EssentiaException("AudioLoader: Could not initialize swresample context");
     }
 
-    av_init_packet(&_packet);
+    _packet = av_packet_alloc();
+    if (!_packet) {
+        throw EssentiaException("AudioLoader: Could not allocate packet");
+    }
 
     _decodedFrame = av_frame_alloc();
     if (!_decodedFrame) {
@@ -161,10 +145,9 @@ void AudioLoader::closeAudioFile() {
 
     // free AVPacket
     // TODO: use a variable for whether _packet is initialized or not
-    av_free_packet(&_packet);
+    av_packet_unref(_packet);
     _demuxCtx = 0;
     _audioCtx = 0;
-    _streams.clear();
 }
 
 
@@ -205,7 +188,7 @@ AlgorithmStatus AudioLoader::process() {
 
     // read frames until we get a good one
     do {
-        int result = av_read_frame(_demuxCtx, &_packet);
+        int result = av_read_frame(_demuxCtx, _packet);
         //E_DEBUG(EAlgorithm, "AudioLoader: called av_read_frame(), got result = " << result);
         if (result != 0) {
             // 0 = OK, < 0 = error or EOF
@@ -231,20 +214,20 @@ AlgorithmStatus AudioLoader::process() {
             }
             return FINISHED;
         }
-    } while (_packet.stream_index != _streamIdx);
+    } while (_packet->stream_index != _streamIdx);
 
     // compute md5 first
     if (_computeMD5) {
-        av_md5_update(_md5Encoded, _packet.data, _packet.size);
+        av_md5_update(_md5Encoded, _packet->data, _packet->size);
     }
 
     // decode frames in packet
-    while(_packet.size > 0) {
+    while(_packet->size > 0) {
         if (!decodePacket()) break;
         copyFFmpegOutput();
     }
-    // neds to be freed !!
-    av_free_packet(&_packet);
+    // needs to be freed !!
+    av_packet_unref(_packet);
     
     return OK;
 }
@@ -315,14 +298,13 @@ int AudioLoader::decode_audio_frame(AVCodecContext* audioCtx,
 
 
 void AudioLoader::flushPacket() {
-    AVPacket empty;
-    av_init_packet(&empty);
+    AVPacket* empty = av_packet_alloc();
     do {
         _dataSize = FFMPEG_BUFFER_SIZE;
-        empty.data = NULL;
-        empty.size = 0;
+        empty->data = NULL;
+        empty->size = 0;
 
-        int len = decode_audio_frame(_audioCtx, _buffer, &_dataSize, &empty);
+        int len = decode_audio_frame(_audioCtx, _buffer, &_dataSize, empty);
         if (len < 0) {
             char errstring[1204];
             av_strerror(len, errstring, sizeof(errstring));
@@ -331,6 +313,7 @@ void AudioLoader::flushPacket() {
             E_WARNING(msg.str());
         }
         copyFFmpegOutput();
+        av_packet_unref(empty);
 
     } while (_dataSize > 0);
 }
@@ -364,7 +347,7 @@ int AudioLoader::decodePacket() {
     // but computing md5 hash using ffmpeg will also treat it as audio:
     //      ffmpeg -i file.mp3 -acodec copy -f md5 -
 
-    len = decode_audio_frame(_audioCtx, buff, &_dataSize, &_packet);
+    len = decode_audio_frame(_audioCtx, buff, &_dataSize, _packet);
 
     if (len < 0) {
         char errstring[1204];
@@ -388,7 +371,7 @@ int AudioLoader::decodePacket() {
         return 0;
     }
 
-    if (len != _packet.size) {
+    if (len != _packet->size) {
         // https://www.ffmpeg.org/doxygen/trunk/group__lavc__decoding.html#ga834bb1b062fbcc2de4cf7fb93f154a3e
 
         // Some decoders may support multiple frames in a single AVPacket. Such
@@ -402,12 +385,12 @@ int AudioLoader::decodePacket() {
         E_WARNING("AudioLoader: more than 1 frame in packet, decoding remaining bytes...");
         E_WARNING("at sample index: " << output("audio").totalProduced());
         E_WARNING("decoded samples: " << len);
-        E_WARNING("packet size: " << _packet.size);
+        E_WARNING("packet size: " << _packet->size);
     }
 
     // update packet data pointer to data left undecoded (if any)
-    _packet.size -= len;
-    _packet.data += len;
+    _packet->size -= len;
+    _packet->data += len;
 
 
     if (_dataSize <= 0) {

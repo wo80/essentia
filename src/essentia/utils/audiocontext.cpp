@@ -28,9 +28,11 @@ AudioContext::AudioContext()
     _inputBufSize(0), _buffer(0), _convertCtxAv(0) {
   av_log_set_level(AV_LOG_VERBOSE);
   //av_log_set_level(AV_LOG_QUIET);
-  
+
+#if LIBAVCODEC_VERSION_MAJOR < 58
   // Register all formats and codecs
   av_register_all(); // this should be done once only..
+#endif
 
   if (sizeof(float) != av_get_bytes_per_sample(AV_SAMPLE_FMT_FLT)) {
     throw EssentiaException("Unsupported float size");
@@ -144,7 +146,7 @@ int AudioContext::create(const std::string& filename,
 
   strncpy(_muxCtx->filename, _filename.c_str(), sizeof(_muxCtx->filename));
 
-  // Configure sample format convertion
+  // Configure sample format conversion
   E_DEBUG(EAlgorithm, "AudioContext: using sample format conversion from libswresample");
   _convertCtxAv = swr_alloc();
         
@@ -223,10 +225,10 @@ void AudioContext::write(const vector<StereoSample>& stereoData) {
   
   if (dsize > _codecCtx->frame_size) {
     // AudioWriter sets up correct buffer sizes in accordance to what 
-    // AudioContext:create() returns. Nevertherless, double-check here.
+    // AudioContext:create() returns. Nevertheless, double-check here.
     ostringstream msg;
     msg << "Audio frame size " << _codecCtx->frame_size << 
-           " is not sufficent to store " << dsize << " samples";
+           " is not sufficient to store " << dsize << " samples";
     throw EssentiaException(msg);
   }
 
@@ -249,7 +251,7 @@ void AudioContext::write(const vector<AudioSample>& monoData) {
     // The same as for stereoData version of write()
     ostringstream msg;
     msg << "Audio frame size " << _codecCtx->frame_size << 
-           " is not sufficent to store " << dsize << " samples";
+           " is not sufficient to store " << dsize << " samples";
     throw EssentiaException(msg);
   }
 
@@ -321,22 +323,21 @@ void AudioContext::encodePacket(int size) {
     throw EssentiaException(msg);
   }
 
-  AVPacket packet;
-  av_init_packet(&packet);
+  AVPacket* packet = av_packet_alloc();
   // Set the packet data and size so that it is recognized as being empty.
-  packet.data = NULL;
-  packet.size = 0;
+  packet->data = NULL;
+  packet->size = 0;
 
   int got_output;
-  if (avcodec_encode_audio2(_codecCtx, &packet, frame, &got_output) < 0) {
+  if (avcodec_encode_audio2(_codecCtx, packet, frame, &got_output) < 0) {
      throw EssentiaException("Error while encoding audio frame");
   }
 
   if (got_output) { // packet is not empty, write the frame in the media file
-    if (av_write_frame(_muxCtx, &packet) != 0 ) {
+    if (av_write_frame(_muxCtx, packet) != 0 ) {
       throw EssentiaException("Error while writing audio frame");
     }
-    av_free_packet(&packet);
+    av_packet_unref(packet);
   }
 
   av_frame_free(&frame);
@@ -344,22 +345,21 @@ void AudioContext::encodePacket(int size) {
   _codecCtx->frame_size = tmp_fs;
 }
 
-void AudioContext::writeEOF() { 
-  AVPacket packet;
-  av_init_packet(&packet);
+void AudioContext::writeEOF() {
+  AVPacket* packet = av_packet_alloc();
   // Set the packet data and size so that it is recognized as being empty.
-  packet.data = NULL;
-  packet.size = 0;
+  packet->data = NULL;
+  packet->size = 0;
 
   for (int got_output = 1; got_output;) {
-    if (avcodec_encode_audio2(_codecCtx, &packet, NULL, &got_output) < 0) {
+    if (avcodec_encode_audio2(_codecCtx, packet, NULL, &got_output) < 0) {
       throw EssentiaException("Error while encoding audio frame");
     }
     if (got_output) {
-      if (av_write_frame(_muxCtx, &packet) != 0 ) {
+      if (av_write_frame(_muxCtx, packet) != 0 ) {
         throw EssentiaException("Error while writing delayed audio frame");
       }
-      av_free_packet(&packet);
+      av_packet_unref(packet);
     }
     else break;
   }
