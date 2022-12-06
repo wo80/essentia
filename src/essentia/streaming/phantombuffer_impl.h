@@ -201,14 +201,12 @@ template <typename T>
 inline void PhantomBuffer<T>::updateReadView(ReaderID id) {
   const RogueVector<T>& vconst = static_cast<const RogueVector<T>&>(readView(id));
   RogueVector<T>& v = const_cast<RogueVector<T>&>(vconst);
-  v.setData(&_buffer[0] + _readWindow[id].begin);
-  v.setSize(_readWindow[id].end - _readWindow[id].begin);
+  v.setData(&_buffer[0] + _readWindow[id].begin, _readWindow[id].end - _readWindow[id].begin);
 }
 
 template <typename T>
 inline void PhantomBuffer<T>::updateWriteView() {
-  _writeView.setData(&_buffer[0] + _writeWindow.begin);
-  _writeView.setSize(_writeWindow.end - _writeWindow.begin);
+  _writeView.setData(&_buffer[0] + _writeWindow.begin, _writeWindow.end - _writeWindow.begin);
 }
 
 
