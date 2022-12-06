@@ -54,7 +54,7 @@ class AudioLoader : public Algorithm {
   AVFormatContext* _demuxCtx;
   AVCodecContext* _audioCtx;
   AVCodec* _audioCodec;
-  AVPacket _packet;
+  AVPacket* _packet;
   AVMD5 *_md5Encoded;
   uint8_t _checksum[16];
   bool _computeMD5;
@@ -63,7 +63,6 @@ class AudioLoader : public Algorithm {
   struct SwrContext* _convertCtxAv;
 
   int _streamIdx; // index of the audio stream among all the streams contained in the file
-  std::vector<int> _streams;
   int _selectedStream;
   bool _configured;
 
@@ -94,8 +93,10 @@ class AudioLoader : public Algorithm {
 
     _audio.setBufferType(BufferUsage::forLargeAudioStream);
 
+#if LIBAVCODEC_VERSION_MAJOR < 58
     // Register all formats and codecs
     av_register_all();
+#endif
 
     // use av_malloc, because we _need_ the buffer to be 16-byte aligned
     _buffer = (float*)av_malloc(FFMPEG_BUFFER_SIZE);
