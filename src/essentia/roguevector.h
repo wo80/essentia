@@ -33,27 +33,23 @@ class RogueVector : public std::vector<T> {
 
  public:
   RogueVector(T* tab = 0, size_t size = 0) : std::vector<T>(), _ownsMemory(false) {
-    setData(tab);
-    setSize(size);
+    setData(tab, size);
   }
 
   RogueVector(uint size, T value) : std::vector<T>(size, value), _ownsMemory(true) {}
 
   RogueVector(const RogueVector<T>& v) : std::vector<T>(), _ownsMemory(false) {
-    setData(const_cast<T*>(v.data()));
-    setSize(v.size());
+    setData(const_cast<T*>(v.data()), v.size());
   }
 
   ~RogueVector() {
     if (!_ownsMemory) {
-      setData(0);
-      setSize(0);
+      setData(0, 0);
     }
   }
 
   // Those need to be implementation specific
-  void setData(T* data);
-  void setSize(size_t size);
+  void setData(T* data, size_t size);
 };
 
 // Clang/LLVM implementation
@@ -63,40 +59,44 @@ class RogueVector : public std::vector<T> {
 //       layout of the std::vector (very dangerous, but works for now...)
 
 template <typename T>
-void RogueVector<T>::setData(T* data) { *reinterpret_cast<T**>(this) = data; }
-
-template <typename T>
-void RogueVector<T>::setSize(size_t size) {
+void RogueVector<T>::setData(T* data, size_t size) {
+    *reinterpret_cast<T**>(this) = data;
     T** start = reinterpret_cast<T**>(this);
-    *(start+1) = *start + size;
-    *(start+2) = *start + size;
+    *(start + 1) = *start + size;
+    *(start + 2) = *start + size;
 }
 
 // Linux implementation
 #elif defined(OS_LINUX) || defined(OS_MINGW)
 
 template <typename T>
-void RogueVector<T>::setData(T* data) { this->_M_impl._M_start = data; }
-
-template <typename T>
-void RogueVector<T>::setSize(size_t size) {
+void RogueVector<T>::setData(T* data, size_t size) {
+  this->_M_impl._M_start = data;
   this->_M_impl._M_finish = this->_M_impl._M_start + size;
   this->_M_impl._M_end_of_storage = this->_M_impl._M_start + size;
 }
 
 // Windows implementation
-#elif defined(OS_WIN32)
+#elif defined(_MSC_VER) && _MSC_VER <= 1916
+// MSVC <= VS2017
 
 template <typename T>
-void RogueVector<T>::setData(T* data) {
+void RogueVector<T>::setData(T* data, size_t size) {
   this->_Myfirst() = data;
-}
-
-template <typename T>
-void RogueVector<T>::setSize(size_t size) {
   this->_Mylast() = this->_Myfirst() + size;
   this->_Myend() = this->_Myfirst() + size;
 }
+
+#elif defined(_MSC_VER) && _MSC_VER > 1916
+// MSVC >= VS2019
+
+template <typename T>
+void RogueVector<T>::setData(T* data, size_t size) {
+}
+
+#else
+
+#warning "No implementation for RogueVector<T>"
 
 #endif
 
