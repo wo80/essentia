@@ -50,6 +50,10 @@ if(ESSENTIA_USE_CHROMAPRINT)
   target_link_libraries (essentia_tests ${CHROMAPRINT_LIBRARIES})
 endif()
 
+if(ESSENTIA_USE_GAIA2)
+  target_link_libraries (essentia_tests ${GAIA2_LIBRARIES} ${Qt5Core_LIBRARIES} ${Qt5Concurrent_LIBRARIES})
+endif()
+
 gtest_discover_tests(essentia_tests
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
   PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"

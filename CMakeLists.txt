@@ -14,7 +14,11 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
-option(ESSENTIA_BUILD_EXAMPLES "Build examples" OFF)
+
+option(BUILD_TESTS "Build tests" ON)
+option(BUILD_EXAMPLES "Build examples" OFF)
+option(USE_TENSORFLOW "Use TensorFlow" OFF)
+option(USE_GAIA2 "Use Gaia2" OFF)
 
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 find_package(FFmpeg)
@@ -23,11 +27,20 @@ find_package(SampleRate)
 find_package(Taglib)
 find_package(Chromaprint)
 find_package(YAML)
-find_package(TensorFlow)
+
+if(USE_TENSORFLOW)
+  find_package(TensorFlow)
+endif()
+
+if(USE_GAIA2)
+  find_package(Gaia2)
+  find_package(Qt5 COMPONENTS Core Concurrent REQUIRED)
+endif()
 
 set(ESSENTIA_USE_FFMPEG OFF)
 set(ESSENTIA_USE_FFTW OFF)
 set(ESSENTIA_USE_KISSFFT OFF)
+set(ESSENTIA_USE_ACCELERATE_FFT OFF)
 set(ESSENTIA_USE_YAML OFF)
 set(ESSENTIA_USE_LIBSAMPLERATE OFF)
 set(ESSENTIA_USE_TAGLIB OFF)
@@ -63,6 +76,10 @@ if(TensorFlow_FOUND)
   set(ESSENTIA_USE_TENSORFLOW ON)
 endif()
 
+if(Gaia2_FOUND)
+  set(ESSENTIA_USE_GAIA2 ON)
+endif()
+
 if(MSVC)
   add_compile_definitions(NOMINMAX)
   add_compile_definitions(_USE_MATH_DEFINES)
@@ -73,9 +90,7 @@ endif()
 
 add_subdirectory(src)
 
-option(ESSENTIA_TESTS "Build tests" ON)
-
-if(ESSENTIA_TESTS AND CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+if(BUILD_TESTS AND CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   enable_testing()
   add_subdirectory(test/src/basetest)
 endif()

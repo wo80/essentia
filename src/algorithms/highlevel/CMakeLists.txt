@@ -26,7 +26,7 @@ if(ESSENTIA_USE_CHROMAPRINT)
       chromaprinter.h)
 endif()
 
-if(ESSENTIA_USE_GAIA)
+if(ESSENTIA_USE_GAIA2)
   target_sources(essentia
     PRIVATE
       gaiatransform.cpp
