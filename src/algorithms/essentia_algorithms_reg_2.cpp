@@ -46,7 +46,7 @@
 #include "algorithms\highlevel\danceability.h"
 #include "algorithms\highlevel\dynamiccomplexity.h"
 #include "algorithms\highlevel\fadedetection.h"
-#if ENABLE_GAIA
+#if ENABLE_GAIA2
 #include "algorithms\highlevel\gaiatransform.h"
 #endif
 #include "algorithms\highlevel\intensity.h"
@@ -154,6 +154,16 @@
 #include "algorithms\standard\fftwcomplex.h"
 #include "algorithms\standard\ifftw.h"
 #include "algorithms\standard\ifftwcomplex.h"
+#elif ENABLE_KISS
+#include "algorithms\standard\fftk.h"
+#include "algorithms\standard\fftkcomplex.h"
+#include "algorithms\standard\ifftk.h"
+#include "algorithms\standard\ifftkcomplex.h"
+#elif ENABLE_ACCELERATE
+#include "algorithms\standard\iffta.h"
+#include "algorithms\standard\ifftacomplex.h"
+#include "algorithms\standard\ffta.h"
+#include "algorithms\standard\fftacomplex.h"
 #endif
 #include "algorithms\standard\framecutter.h"
 #include "algorithms\standard\frametoreal.h"
@@ -322,7 +332,7 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<Danceability> regDanceability;
     AlgorithmFactory::Registrar<DynamicComplexity> regDynamicComplexity;
     AlgorithmFactory::Registrar<FadeDetection> regFadeDetection;
-#if ENABLE_GAIA
+#if ENABLE_GAIA2
     AlgorithmFactory::Registrar<GaiaTransform> regGaiaTransform;
 #endif
     AlgorithmFactory::Registrar<Intensity> regIntensity;
@@ -429,6 +439,16 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<FFTWComplex> regFFTWComplex;
     AlgorithmFactory::Registrar<IFFTW> regIFFTW;
     AlgorithmFactory::Registrar<IFFTWComplex> regIFFTWComplex;
+#elif ENABLE_KISS
+    AlgorithmFactory::Registrar<FFTK> regFFTK;
+    AlgorithmFactory::Registrar<FFTKComplex> regFFTKComplex;
+    AlgorithmFactory::Registrar<IFFTK> regIFFTK;
+    AlgorithmFactory::Registrar<IFFTKComplex> regIFFTKComplex;
+#elif ENABLE_ACCELERATE
+    AlgorithmFactory::Registrar<FFTA> regFFTA;
+    AlgorithmFactory::Registrar<FFTAComplex> regFFTAComplex;
+    AlgorithmFactory::Registrar<IFFTA> regIFFTA;
+    AlgorithmFactory::Registrar<IFFTAComplex> regIFFTAComplex;
 #endif
     AlgorithmFactory::Registrar<FrameCutter> regFrameCutter;
     AlgorithmFactory::Registrar<FrameToReal> regFrameToReal;
@@ -686,6 +706,16 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<FFTWComplex, essentia::standard::FFTWComplex> regFFTWComplex;
     AlgorithmFactory::Registrar<IFFTW, essentia::standard::IFFTW> regIFFTW;
     AlgorithmFactory::Registrar<IFFTWComplex, essentia::standard::IFFTWComplex> regIFFTWComplex;
+#elif ENABLE_KISS
+    AlgorithmFactory::Registrar<FFTK, essentia::standard::FFTK> regFFTK;
+    AlgorithmFactory::Registrar<FFTKComplex, essentia::standard::FFTKComplex> regFFTKComplex;
+    AlgorithmFactory::Registrar<IFFTK, essentia::standard::IFFTK> regIFFTK;
+    AlgorithmFactory::Registrar<IFFTKComplex, essentia::standard::IFFTKComplex> regIFFTKComplex;
+#elif ENABLE_ACCELERATE
+    AlgorithmFactory::Registrar<FFTA, essentia::standard::FFTA> regFFTA;
+    AlgorithmFactory::Registrar<FFTAComplex, essentia::standard::FFTAComplex> regFFTAComplex;
+    AlgorithmFactory::Registrar<IFFTA, essentia::standard::IFFTA> regIFFTA;
+    AlgorithmFactory::Registrar<IFFTAComplex, essentia::standard::IFFTAComplex> regIFFTAComplex;
 #endif
     AlgorithmFactory::Registrar<FrameCutter, essentia::standard::FrameCutter> regFrameCutter;
     AlgorithmFactory::Registrar<FrameToReal, essentia::standard::FrameToReal> regFrameToReal;

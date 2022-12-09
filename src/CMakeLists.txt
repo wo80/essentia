@@ -15,13 +15,23 @@ if(ESSENTIA_USE_FFTW)
   set(ENABLE_FFTW ON)
 endif()
 
+if(ESSENTIA_USE_KISSFFT)
+  include_directories(${KISSFFT_INCLUDE_DIRS})
+  set(ENABLE_KISS ON)
+endif()
+
+if(ESSENTIA_USE_ACCELERATE_FFT)
+  include_directories(${ACCELERATE_FFT_INCLUDE_DIRS})
+  set(ENABLE_ACCELERATE ON)
+endif()
+
 if(ESSENTIA_USE_YAML)
   include_directories(${YAML_INCLUDE_DIR})
   set(ENABLE_YAML ON)
 endif()
 
 if(ESSENTIA_USE_LIBSAMPLERATE)
-  include_directories(${SAMPLERATE_INCLUDE_DIRS})
+  include_directories(${SAMPLERATE_INCLUDE_DIR})
   set(ENABLE_SAMPLERATE ON)
 endif()
 
@@ -31,7 +41,7 @@ if(ESSENTIA_USE_TAGLIB)
 endif()
 
 if(ESSENTIA_USE_CHROMAPRINT)
-  include_directories(${CHROMAPRINT_INCLUDES})
+  include_directories(${CHROMAPRINT_INCLUDE_DIR})
   set(ENABLE_CHROMAPRINT ON)
 endif()
 
@@ -40,8 +50,9 @@ if(ESSENTIA_USE_TENSORFLOW)
   set(ENABLE_TENSORFLOW ON)
 endif()
 
-if(ESSENTIA_USE_GAIA)
-  set(ENABLE_GAIA ON)
+if(ESSENTIA_USE_GAIA2)
+  include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Concurrent_INCLUDE_DIRS} ${GAIA2_INCLUDE_DIR})
+  set(ENABLE_GAIA2 ON)
 endif()
 
 if(MSVC)
@@ -57,6 +68,6 @@ add_subdirectory(algorithms)
 add_subdirectory(3rdparty)
 
 
-if(ESSENTIA_BUILD_EXAMPLES)
+if(BUILD_EXAMPLES)
   add_subdirectory(examples)
 endif()
