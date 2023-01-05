@@ -34,9 +34,10 @@ const char* AudioLoader::description = essentia::standard::AudioLoader::descript
 AudioLoader::~AudioLoader() {
     closeAudioFile();
 
+    av_frame_free(&_decodedFrame);
+
     av_freep(&_buffer);
     av_freep(&_md5Encoded);
-    av_freep(&_decodedFrame);
 }
 
 void AudioLoader::configure() {
@@ -72,7 +73,7 @@ void AudioLoader::openAudioFile(const string& filename) {
         throw EssentiaException("AudioLoader: Could not find stream information, error = ", error);
     }
 
-    AVCodec* codec;
+    const AVCodec* codec;
     if ((errnum = av_find_best_stream(_demuxCtx, AVMEDIA_TYPE_AUDIO, -1, -1, &codec, 0)) < 0) {
         avformat_close_input(&_demuxCtx);
         _demuxCtx = NULL;
@@ -80,7 +81,7 @@ void AudioLoader::openAudioFile(const string& filename) {
     }
     _streamIdx = errnum;
 
-    _audioCodec = codec;
+    _audioCodecName = std::string(codec->name);
     _audioCtx = avcodec_alloc_context3(codec);
 
     if ((errnum = avcodec_parameters_to_context(_audioCtx, _demuxCtx->streams[_streamIdx]->codecpar)) < 0) {
@@ -90,7 +91,7 @@ void AudioLoader::openAudioFile(const string& filename) {
     if (avcodec_open2(_audioCtx, codec, NULL) < 0) {
         throw EssentiaException("AudioLoader: Unable to instantiate codec...");
     }
-  
+
     // Configure format conversion  (no samplerate conversion yet)
     int64_t layout = av_get_default_channel_layout(_audioCtx->channels);
 
@@ -224,7 +225,7 @@ AlgorithmStatus AudioLoader::process() {
     // decode frames in packet
     while(_packet->size > 0) {
         if (!decodePacket()) break;
-        copyFFmpegOutput();
+            copyFFmpegOutput();
     }
     // needs to be freed !!
     av_packet_unref(_packet);
@@ -241,14 +242,18 @@ int AudioLoader::decode_audio_frame(AVCodecContext* audioCtx,
     // _dataSize  input = number of bytes available for write in buff
     //           output = number of bytes actually written (actual: FLT data)
     //E_DEBUG(EAlgorithm, "decode_audio_frame, available bytes in buffer = " << _dataSize);
-    int gotFrame = 0;
-    av_frame_unref(_decodedFrame); //avcodec_get_frame_defaults(_decodedFrame);
 
-    int len = avcodec_decode_audio4(audioCtx, _decodedFrame, &gotFrame, packet);
+    //av_frame_unref(_decodedFrame); //avcodec_get_frame_defaults(_decodedFrame);
 
-    if (len < 0) return len; // error handling should be done outside
+    int ret = avcodec_send_packet(audioCtx, packet);
+    if (ret < 0) {
+        outputSize = 0;
+        return ret;
+    }
 
-    if (gotFrame) {
+    ret = avcodec_receive_frame(audioCtx, _decodedFrame);
+
+    if (ret == 0) {
         int inputSamples = _decodedFrame->nb_samples;
         int inputPlaneSize = av_samples_get_buffer_size(NULL, _nChannels, inputSamples,
                                                         audioCtx->sample_fmt, 1);
@@ -293,7 +298,7 @@ int AudioLoader::decode_audio_frame(AVCodecContext* audioCtx,
       *outputSize = 0;
     }
 
-    return len;
+    return packet->size;
 }
 
 
@@ -458,7 +463,7 @@ void AudioLoader::reset() {
     openAudioFile(filename);
 
     pushChannelsSampleRateInfo(_audioCtx->channels, _audioCtx->sample_rate);
-    pushCodecInfo(_audioCodec->name, _audioCtx->bit_rate);
+    pushCodecInfo(_audioCodecName, _audioCtx->bit_rate);
 }
 
 } // namespace streaming
