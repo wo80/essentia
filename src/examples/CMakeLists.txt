@@ -39,7 +39,7 @@ set(ESSENTIA_EXAMPLES_standard
   standard_loudnessebur128.cpp
   standard_loudnessebur128_double_input.cpp
   standard_mfcc.cpp
-  standard_nnls.cpp
+  #standard_nnls.cpp
   standard_onsetrate.cpp
   standard_pca.cpp
   standard_pitchdemo.cpp
