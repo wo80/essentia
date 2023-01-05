@@ -60,7 +60,7 @@ if(SampleRate_FOUND)
   set(ESSENTIA_USE_LIBSAMPLERATE ON)
 endif()
 
-if(Taglib_FOUND)
+if(TAGLIB_FOUND)
   set(ESSENTIA_USE_TAGLIB ON)
 endif()
 
@@ -84,7 +84,7 @@ if(MSVC)
   add_compile_definitions(NOMINMAX _USE_MATH_DEFINES)
   add_compile_options(/W4 /wd4100)
 else()
-  add_compile_options(-Wall -Wextra -Wno-unused-parameter)
+  add_compile_options(-Wall -Wextra -Wno-unused-parameter -Wno-unknown-pragmas -Wno-ignored-qualifiers)
 endif()
 
 add_subdirectory(src)
