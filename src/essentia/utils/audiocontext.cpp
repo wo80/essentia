@@ -59,6 +59,8 @@ int AudioContext::create(const std::string& filename,
   if (avformat_alloc_output_context2(&_muxCtx, NULL, NULL, filename.c_str()) < 0)
       throw EssentiaException("Could not allocate the format context");
 
+  //_muxCtx->url = av_strdup(filename.c_str());
+
   const AVOutputFormat* av_output_format = _muxCtx->oformat;
 
   // Find encoder
@@ -153,26 +155,40 @@ int AudioContext::create(const std::string& filename,
                                              _codecCtx->channels, 
                                              _codecCtx->frame_size, 
                                              AV_SAMPLE_FMT_FLT, 0);
+
   _buffer = (float*)av_malloc(_inputBufSize);
 
+  _packet = av_packet_alloc();
+  if (!_packet) {
+      throw EssentiaException("Error allocating AVPacket");
+  }
+
+  _frame = av_frame_alloc();
+  if (!_frame) {
+      throw EssentiaException("Error allocating AVFrame");
+  }
+
   // Configure sample format conversion
-  E_DEBUG(EAlgorithm, "AudioContext: using sample format conversion from libswresample");
+  //E_DEBUG(EAlgorithm, "AudioContext: using sample format conversion from libswresample");
   _convertCtxAv = swr_alloc();
-
-  int error = swr_alloc_set_opts2(&_convertCtxAv,
-      &_codecCtx->ch_layout,
-      _codecCtx->sample_fmt,
-      _codecCtx->sample_rate,
-      &_codecCtx->ch_layout,
-      AV_SAMPLE_FMT_FLT,
-      _codecCtx->sample_rate,
-      0, NULL);
-
-  if (error < 0) {
+  if (!_convertCtxAv) {
       throw EssentiaException("AudioLoader: Could not allocate swresample context");
   }
 
+  /* set options */
+  av_opt_set_chlayout(_convertCtxAv, "in_chlayout", &_codecCtx->ch_layout, 0);
+  av_opt_set_int(_convertCtxAv, "in_sample_rate", _codecCtx->sample_rate, 0);
+  av_opt_set_sample_fmt(_convertCtxAv, "in_sample_fmt", AV_SAMPLE_FMT_FLT, 0);
+
+  av_opt_set_chlayout(_convertCtxAv, "out_chlayout", &_codecCtx->ch_layout, 0);
+  av_opt_set_int(_convertCtxAv, "out_sample_rate", _codecCtx->sample_rate, 0);
+  av_opt_set_sample_fmt(_convertCtxAv, "out_sample_fmt", _codecCtx->sample_fmt, 0);
+
   if (swr_init(_convertCtxAv) < 0) {
+      throw EssentiaException("AudioLoader: Could not initialize swresample context");
+  }
+
+  if (swr_is_initialized(_convertCtxAv) == 0) {
       throw EssentiaException("AudioLoader: Could not initialize swresample context");
   }
 
@@ -212,9 +228,12 @@ void AudioContext::close() {
   avformat_free_context(_muxCtx);
 
   av_freep(&_buffer);
+  av_freep(&_convert_buffer[0]);
 
-  av_freep(&_avStream);
-  av_freep(&_muxCtx); // TODO also must be av_free, not av_freep
+  av_packet_free(&_packet);
+  av_frame_free(&_frame);
+
+  //av_freep(&_avStream);
 
   // TODO: need those assignments?
   _muxCtx = 0;
@@ -279,6 +298,7 @@ void AudioContext::write(const vector<AudioSample>& monoData) {
 void AudioContext::encodePacket(int size) {
 
   int tmp_fs = _codecCtx->frame_size;
+
   if (size < _codecCtx->frame_size) {
     _codecCtx->frame_size = size;
   }
@@ -287,25 +307,26 @@ void AudioContext::encodePacket(int size) {
     throw EssentiaException("AudioLoader: Input audio segment is larger than the codec's frame size");
   }
 
-  // convert sample format to the one required by codec
-  int inputPlaneSize = av_samples_get_buffer_size(NULL, 
-                                                  _codecCtx->channels, 
-                                                  size, 
-                                                  AV_SAMPLE_FMT_FLT, 0);
-  int outputPlaneSize;  
-  uint8_t* bufferFmt;
+  /* allocate the data buffers */
+  int num_out_samples = swr_get_out_samples(_convertCtxAv, size);
 
-  if (av_samples_alloc(&bufferFmt, &outputPlaneSize, 
-                               _codecCtx->channels, size,
-                               _codecCtx->sample_fmt, 0) < 0) {
-    throw EssentiaException("Could not allocate output buffer for sample format conversion");
+  int linesize;
+  if (num_out_samples > _convert_buffer_size) {
+      if (_convert_buffer)
+          av_freep(&_convert_buffer[0]);
+      _convert_buffer_size = num_out_samples;
+      if (av_samples_alloc_array_and_samples(&_convert_buffer, &linesize, _codecCtx->channels,
+          num_out_samples, _codecCtx->sample_fmt, 0) < 0) {
+          throw EssentiaException("Could not allocate output buffer for sample format conversion");
+      }
   }
  
+  // convert sample format to the one required by codec
   int written = swr_convert(_convertCtxAv,
-                                   &bufferFmt, 
-                                   size, 
-                                   (const uint8_t**) &_buffer,
-                                   size);
+      _convert_buffer,
+      num_out_samples,
+      (const uint8_t**) &_buffer,
+      size);
 
   if (written < size) {
     // The same as in AudioLoader. There may be data remaining in the internal 
@@ -318,18 +339,17 @@ void AudioContext::encodePacket(int size) {
     throw EssentiaException(msg);
   }
 
-  AVFrame *frame;
-  frame = av_frame_alloc();  
-  if (!frame) {
-    throw EssentiaException("Error allocating audio frame");
+  _frame->nb_samples = _codecCtx->frame_size;
+  _frame->format = _codecCtx->sample_fmt;
+  int ret = av_channel_layout_copy(&_frame->ch_layout, &_codecCtx->ch_layout);
+  if (ret < 0) {
+      throw EssentiaException("Error av_channel_layout_copy");
   }
 
-  frame->nb_samples = _codecCtx->frame_size;
-  frame->format = _codecCtx->sample_fmt;
-  frame->channel_layout = _codecCtx->channel_layout;
+  int buffer_size = av_samples_get_buffer_size(NULL, _codecCtx->channels, size, AV_SAMPLE_FMT_FLT, 0);
 
-  int result = avcodec_fill_audio_frame(frame, _codecCtx->channels, _codecCtx->sample_fmt,
-                                        bufferFmt, outputPlaneSize * _codecCtx->channels, 0);
+  int result = avcodec_fill_audio_frame(_frame, _codecCtx->channels, _codecCtx->sample_fmt,
+                                        _convert_buffer[0], buffer_size, 0);
   if (result < 0) {
     char errstring[1204];
     av_strerror(result, errstring, sizeof(errstring));
@@ -339,35 +359,35 @@ void AudioContext::encodePacket(int size) {
   }
 
   /* send the frame for encoding */
-  result = avcodec_send_frame(_codecCtx, frame);
+  result = avcodec_send_frame(_codecCtx, _frame);
   if (result < 0) {
       char errstring[1204];
       av_strerror(result, errstring, sizeof(errstring));
       throw EssentiaException("Error sending the frame to the encoder");
   }
 
-  AVPacket* packet = av_packet_alloc();
   // Set the packet data and size so that it is recognized as being empty.
-  packet->data = NULL;
-  packet->size = 0;
+  _packet->data = NULL;
+  _packet->size = 0;
 
   /* read all the available output packets */
   while (result >= 0) {
-      result = avcodec_receive_packet(_codecCtx, packet);
+      result = avcodec_receive_packet(_codecCtx, _packet);
       if (result == AVERROR(EAGAIN) || result == AVERROR_EOF)
-          return;
+          goto cleanup;
       else if (result < 0) {
           throw EssentiaException("Error encoding audio frame");
       }
-      if (av_write_frame(_muxCtx, packet) != 0) {
+      if (av_write_frame(_muxCtx, _packet) != 0) {
           throw EssentiaException("Error while writing audio frame");
       }
-      av_packet_unref(packet);
+      av_packet_unref(_packet);
   }
 
-  av_frame_free(&frame);
-  av_freep(&bufferFmt);
   _codecCtx->frame_size = tmp_fs;
+cleanup:
+  av_frame_unref(_frame);
+  av_packet_unref(_packet);
 }
 
 void AudioContext::writeEOF() { 
