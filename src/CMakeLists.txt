@@ -42,6 +42,7 @@ endif()
 
 if(ESSENTIA_USE_CHROMAPRINT)
   include_directories(${CHROMAPRINT_INCLUDE_DIR})
+  add_compile_definitions(HAVE_LIBCHROMAPRINT)
   set(ENABLE_CHROMAPRINT ON)
 endif()
 
@@ -52,6 +53,7 @@ endif()
 
 if(ESSENTIA_USE_GAIA2)
   include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Concurrent_INCLUDE_DIRS} ${GAIA2_INCLUDE_DIR})
+  add_compile_definitions(HAVE_GAIA2)
   set(ENABLE_GAIA2 ON)
 endif()
 
