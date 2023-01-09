@@ -36,7 +36,7 @@ if(ESSENTIA_USE_LIBSAMPLERATE)
 endif()
 
 if(ESSENTIA_USE_TAGLIB)
-  include_directories(${TAGLIB_INCLUDES})
+  include_directories(${TAGLIB_INCLUDE_DIRS})
   set(ENABLE_TAGLIB ON)
 endif()
 
