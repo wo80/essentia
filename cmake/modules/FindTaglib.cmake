@@ -1,135 +1,78 @@
-# - Try to find the Taglib library
-# Once done this will define
+# SPDX-FileCopyrightText: 2006 Laurent Montel <montel@kde.org>
+# SPDX-FileCopyrightText: 2019 Heiko Becker <heirecka@exherbo.org>
+# SPDX-FileCopyrightText: 2020 Elvis Angelaccio <elvis.angelaccio@kde.org>
 #
-#  TAGLIB_FOUND - system has the taglib library
-#  TAGLIB_CFLAGS - the taglib cflags
-#  TAGLIB_LIBRARIES - The libraries needed to use taglib
+# SPDX-License-Identifier: BSD-3-Clause
 
-# Copyright (c) 2006, Laurent Montel, <montel@kde.org>
-#
-# Redistribution and use is allowed according to the terms of the BSD license.
-# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+#[=======================================================================[.rst:
+FindTaglib
+----------
 
-if(NOT TAGLIB_MIN_VERSION)
-  set(TAGLIB_MIN_VERSION "1.6")
-endif(NOT TAGLIB_MIN_VERSION)
+Try to find the Taglib library.
 
-if(NOT WIN32)
-    find_program(TAGLIBCONFIG_EXECUTABLE NAMES taglib-config PATHS
-       ${BIN_INSTALL_DIR}
-    )
-endif(NOT WIN32)
+This will define the following variables:
 
-#reset vars
-set(TAGLIB_LIBRARIES)
-set(TAGLIB_CFLAGS)
+``TAGLIB_FOUND``
+      True if the system has the taglib library of at least the minimum
+      version specified by the version parameter to find_package()
+``TAGLIB_INCLUDE_DIRS``
+      The taglib include dirs for use with target_include_directories
+``TAGLIB_LIBRARIES``
+      The taglib libraries for use with target_link_libraries()
+``TAGLIB_VERSION``
+      The version of taglib that was found
 
-# if taglib-config has been found
-if(TAGLIBCONFIG_EXECUTABLE)
+If ``TAGLIB_FOUND`` is TRUE, it will also define the following imported
+target:
 
-  exec_program(${TAGLIBCONFIG_EXECUTABLE} ARGS --version RETURN_VALUE _return_VALUE OUTPUT_VARIABLE TAGLIB_VERSION)
+``Taglib::Taglib``
+      The Taglib library
 
-  if(TAGLIB_VERSION VERSION_LESS "${TAGLIB_MIN_VERSION}")
-     message(STATUS "TagLib version too old: version searched :${TAGLIB_MIN_VERSION}, found ${TAGLIB_VERSION}")
-     set(TAGLIB_FOUND FALSE)
-  else(TAGLIB_VERSION VERSION_LESS "${TAGLIB_MIN_VERSION}")
+Since 5.72.0
+#]=======================================================================]
 
-     exec_program(${TAGLIBCONFIG_EXECUTABLE} ARGS --libs RETURN_VALUE _return_VALUE OUTPUT_VARIABLE TAGLIB_LIBRARIES)
+find_package(PkgConfig QUIET)
 
-     exec_program(${TAGLIBCONFIG_EXECUTABLE} ARGS --cflags RETURN_VALUE _return_VALUE OUTPUT_VARIABLE TAGLIB_CFLAGS)
+pkg_check_modules(PC_TAGLIB QUIET taglib)
 
-     if(TAGLIB_LIBRARIES AND TAGLIB_CFLAGS)
-        set(TAGLIB_FOUND TRUE)
-     endif(TAGLIB_LIBRARIES AND TAGLIB_CFLAGS)
-     string(REGEX REPLACE " *-I" ";" TAGLIB_INCLUDES "${TAGLIB_CFLAGS}")
-  endif(TAGLIB_VERSION VERSION_LESS "${TAGLIB_MIN_VERSION}") 
-  mark_as_advanced(TAGLIB_CFLAGS TAGLIB_LIBRARIES TAGLIB_INCLUDES)
-
-else(TAGLIBCONFIG_EXECUTABLE)
-
-  find_path(TAGLIB_INCLUDES
-    NAMES
-    tag.h
+find_path(TAGLIB_INCLUDE_DIRS
+    NAMES tag.h
     PATH_SUFFIXES taglib
-    PATHS
-    ${KDE4_INCLUDE_DIR}
-    ${INCLUDE_INSTALL_DIR}
-  )
+    HINTS ${PC_TAGLIB_INCLUDEDIR}
+)
 
-    if(NOT WIN32)
-      # on non-win32 we don't need to take care about WIN32_DEBUG_POSTFIX
+find_library(TAGLIB_LIBRARIES
+    NAMES tag
+    HINTS ${PC_TAGLIB_LIBDIR}
+)
 
-      find_library(TAGLIB_LIBRARIES tag PATHS ${KDE4_LIB_DIR} ${LIB_INSTALL_DIR})
+set(TAGLIB_VERSION ${PC_TAGLIB_VERSION})
 
-    else(NOT WIN32)
+if (TAGLIB_INCLUDE_DIRS AND NOT TAGLIB_VERSION)
+    if(EXISTS "${TAGLIB_INCLUDE_DIRS}/taglib.h")
+        file(READ "${TAGLIB_INCLUDE_DIRS}/taglib.h" TAGLIB_H)
 
-      # 1. get all possible libnames
-      set(args PATHS ${KDE4_LIB_DIR} ${LIB_INSTALL_DIR})             
-      set(newargs "")               
-      set(libnames_release "")      
-      set(libnames_debug "")        
+        string(REGEX MATCH "#define TAGLIB_MAJOR_VERSION[ ]+[0-9]+" TAGLIB_MAJOR_VERSION_MATCH ${TAGLIB_H})
+        string(REGEX MATCH "#define TAGLIB_MINOR_VERSION[ ]+[0-9]+" TAGLIB_MINOR_VERSION_MATCH ${TAGLIB_H})
+        string(REGEX MATCH "#define TAGLIB_PATCH_VERSION[ ]+[0-9]+" TAGLIB_PATCH_VERSION_MATCH ${TAGLIB_H})
 
-      list(LENGTH args listCount)
+        string(REGEX REPLACE ".*_MAJOR_VERSION[ ]+(.*)" "\\1" TAGLIB_MAJOR_VERSION "${TAGLIB_MAJOR_VERSION_MATCH}")
+        string(REGEX REPLACE ".*_MINOR_VERSION[ ]+(.*)" "\\1" TAGLIB_MINOR_VERSION "${TAGLIB_MINOR_VERSION_MATCH}")
+        string(REGEX REPLACE ".*_PATCH_VERSION[ ]+(.*)" "\\1" TAGLIB_PATCH_VERSION "${TAGLIB_PATCH_VERSION_MATCH}")
 
-        # just one name
-        list(APPEND libnames_release "tag")
-        list(APPEND libnames_debug   "tagd")
+        set(TAGLIB_VERSION "${TAGLIB_MAJOR_VERSION}.${TAGLIB_MINOR_VERSION}.${TAGLIB_PATCH_VERSION}")
+    endif()
+endif()
 
-        set(newargs ${args})
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(Taglib
+    FOUND_VAR
+        TAGLIB_FOUND
+    REQUIRED_VARS
+        TAGLIB_LIBRARIES
+        TAGLIB_INCLUDE_DIRS
+    VERSION_VAR
+        TAGLIB_VERSION
+)
 
-      # search the release lib
-      find_library(TAGLIB_LIBRARIES_RELEASE
-                   NAMES ${libnames_release}
-                   ${newargs}
-      )
-
-      # search the debug lib
-      find_library(TAGLIB_LIBRARIES_DEBUG
-                   NAMES ${libnames_debug}
-                   ${newargs}
-      )
-
-      if(TAGLIB_LIBRARIES_RELEASE AND TAGLIB_LIBRARIES_DEBUG)
-
-        # both libs found
-        set(TAGLIB_LIBRARIES optimized ${TAGLIB_LIBRARIES_RELEASE}
-                        debug     ${TAGLIB_LIBRARIES_DEBUG})
-
-      else(TAGLIB_LIBRARIES_RELEASE AND TAGLIB_LIBRARIES_DEBUG)
-
-        if(TAGLIB_LIBRARIES_RELEASE)
-
-          # only release found
-          set(TAGLIB_LIBRARIES ${TAGLIB_LIBRARIES_RELEASE})
-
-        else(TAGLIB_LIBRARIES_RELEASE)
-
-          # only debug (or nothing) found
-          set(TAGLIB_LIBRARIES ${TAGLIB_LIBRARIES_DEBUG})
-
-        endif(TAGLIB_LIBRARIES_RELEASE)
-
-      endif(TAGLIB_LIBRARIES_RELEASE AND TAGLIB_LIBRARIES_DEBUG)
-
-      mark_as_advanced(TAGLIB_LIBRARIES_RELEASE)
-      mark_as_advanced(TAGLIB_LIBRARIES_DEBUG)
-
-    endif(NOT WIN32)
-  
-  include(FindPackageMessage)
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(Taglib DEFAULT_MSG TAGLIB_INCLUDES TAGLIB_LIBRARIES)
-
-endif(TAGLIBCONFIG_EXECUTABLE)
-
-
-if(TAGLIB_FOUND)
-  if(NOT Taglib_FIND_QUIETLY AND TAGLIBCONFIG_EXECUTABLE)
-    message(STATUS "Taglib found: ${TAGLIB_LIBRARIES}")
-  endif(NOT Taglib_FIND_QUIETLY AND TAGLIBCONFIG_EXECUTABLE)
-else(TAGLIB_FOUND)
-  if(Taglib_FIND_REQUIRED)
-    message(FATAL_ERROR "Could not find Taglib")
-  endif(Taglib_FIND_REQUIRED)
-endif(TAGLIB_FOUND)
-
+mark_as_advanced(TAGLIB_LIBRARIES TAGLIB_INCLUDE_DIRS)
