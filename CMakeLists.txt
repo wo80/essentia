@@ -17,7 +17,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
 option(BUILD_TESTS "Build tests" ON)
 option(BUILD_EXAMPLES "Build examples" OFF)
-option(BUILD_PYTHON_BINDINGS "Build examples" OFF)
+option(BUILD_PYTHON_BINDINGS "Build Python bindings" OFF)
 option(USE_TENSORFLOW "Use TensorFlow" OFF)
 option(USE_GAIA2 "Use Gaia2" OFF)
 
