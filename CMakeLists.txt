@@ -17,6 +17,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
 option(BUILD_TESTS "Build tests" ON)
 option(BUILD_EXAMPLES "Build examples" OFF)
+option(BUILD_PYTHON_BINDINGS "Build examples" OFF)
 option(USE_TENSORFLOW "Use TensorFlow" OFF)
 option(USE_GAIA2 "Use Gaia2" OFF)
 
@@ -27,6 +28,10 @@ find_package(SampleRate)
 find_package(Taglib)
 find_package(Chromaprint)
 find_package(YAML)
+
+if(BUILD_PYTHON_BINDINGS)
+  find_package(Python3 COMPONENTS Development NumPy)
+endif()
 
 if(USE_TENSORFLOW)
   find_package(TensorFlow)

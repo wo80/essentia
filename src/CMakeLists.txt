@@ -73,3 +73,7 @@ add_subdirectory(3rdparty)
 if(BUILD_EXAMPLES)
   add_subdirectory(examples)
 endif()
+
+if(BUILD_PYTHON_BINDINGS)
+  add_subdirectory(python)
+endif()
