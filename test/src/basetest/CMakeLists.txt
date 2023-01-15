@@ -34,25 +34,6 @@ if(MSVC)
 endif()
 
 target_link_libraries(essentia_tests gtest gtest_main essentia)
-target_link_libraries(essentia_tests ${AVCODEC_LIBRARIES} ${AVFORMAT_LIBRARIES} ${AVUTIL_LIBRARIES} ${SWRESAMPLE_LIBRARIES})
-target_link_libraries(essentia_tests ${YAML_LIBRARIES})
-target_link_libraries(essentia_tests ${SAMPLERATE_LIBRARIES})
-
-if(ESSENTIA_USE_FFTW)
-  target_link_libraries(essentia_tests ${FFTW3_LIBRARIES} ${FFTW3_FFTWF_LIBRARY})
-endif()
-
-if(ESSENTIA_USE_TAGLIB)
-  target_link_libraries (essentia_tests ${TAGLIB_LIBRARIES})
-endif()
-
-if(ESSENTIA_USE_CHROMAPRINT)
-  target_link_libraries (essentia_tests ${CHROMAPRINT_LIBRARIES})
-endif()
-
-if(ESSENTIA_USE_GAIA2)
-  target_link_libraries (essentia_tests ${GAIA2_LIBRARIES} ${Qt5Core_LIBRARIES} ${Qt5Concurrent_LIBRARIES})
-endif()
 
 gtest_discover_tests(essentia_tests
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
