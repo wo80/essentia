@@ -1,24 +1,7 @@
 function(essentia_add_example example_src)
   string( REPLACE ".cpp" "" example ${example_src} )
-
   add_executable( ${example} ${example_src} )
-
   target_link_libraries(${example} PRIVATE essentia)
-  target_link_libraries(${example} PRIVATE ${AVCODEC_LIBRARIES} ${AVFORMAT_LIBRARIES} ${AVUTIL_LIBRARIES} ${SWRESAMPLE_LIBRARIES})
-  target_link_libraries(${example} PRIVATE ${YAML_LIBRARIES})
-  target_link_libraries(${example} PRIVATE ${SAMPLERATE_LIBRARIES})
-
-  if(ESSENTIA_USE_FFTW)
-    target_link_libraries(${example} PRIVATE ${FFTW3_LIBRARIES} ${FFTW3_FFTWF_LIBRARY})
-  endif()
-
-  if(ESSENTIA_USE_TAGLIB)
-    target_link_libraries (${example} PRIVATE ${TAGLIB_LIBRARIES})
-  endif()
-
-  if(ESSENTIA_USE_CHROMAPRINT)
-    target_link_libraries (${example} PRIVATE ${CHROMAPRINT_LIBRARIES})
-  endif()
 endfunction()
 
 set(ESSENTIA_EXAMPLES_standard
@@ -109,15 +92,11 @@ target_sources(streaming_spectrogram
 # Tensorflow
 if(ESSENTIA_USE_TENSORFLOW)
   essentia_add_example(streaming_tensorflowpredict.cpp)
-  target_link_libraries(streaming_tensorflowpredict PRIVATE ${TensorFlow_LIBRARY})
   essentia_add_example(streaming_musicnn_predict.cpp)
-  target_link_libraries(streaming_musicnn_predict PRIVATE ${TensorFlow_LIBRARY})
   essentia_add_example(streaming_vggish_predict.cpp)
-  target_link_libraries(streaming_vggish_predict PRIVATE ${TensorFlow_LIBRARY})
 endif()
 
 # Gaia SVM
 if(ESSENTIA_USE_GAIA2)
   essentia_add_example(streaming_extractor_music_svm.cpp)
-  target_link_libraries(streaming_extractor_music_svm PRIVATE ${Gaia2_LIBRARY})
 endif()

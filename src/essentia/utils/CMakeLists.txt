@@ -13,7 +13,6 @@ target_sources(essentia
     bpfutil.h
     bpmutil.h
     jsonconvert.h
-    MersenneTwister.h
     metadatautils.h
     output.h
     peak.h
