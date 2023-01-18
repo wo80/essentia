@@ -85,11 +85,9 @@ if(Gaia2_FOUND)
   set(ESSENTIA_USE_GAIA2 ON)
 endif()
 
-add_compile_definitions(CPP_11)
-  
 if(MSVC)
   add_compile_definitions(NOMINMAX _USE_MATH_DEFINES)
-  add_compile_options(/W4 /wd4100)
+  add_compile_options(/W4 /wd4100 /Zc:__cplusplus)
 else()
   add_compile_options(-Wall -Wextra -Wno-unused-parameter -Wno-unknown-pragmas -Wno-ignored-qualifiers)
 endif()
