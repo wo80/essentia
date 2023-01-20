@@ -22,7 +22,12 @@
 
 #include "atomic.h"
 
-#ifdef OS_WIN32
+#ifdef CPP_11
+
+#include <mutex>
+#include <condition_variable>
+
+#elif defined(OS_WIN32)
 
 #include <windows.h>
 
@@ -116,7 +121,12 @@ class RingBufferImpl {
 
   Real* _buffer;
 
+#ifdef CPP_11
+  std::condition_variable condition;
+  std::mutex mutex;
+#else
   Condition condition;
+#endif
 
   // whether to wait for space (to add data to the buffer)
   // or for availability of data (when reading data from the buffer)
@@ -156,14 +166,18 @@ class RingBufferImpl {
     // has been set accordingly
     assert(_waitingCondition == kAvailable);
 
+#ifdef CPP_11
+    std::unique_lock<std::mutex> lock{mutex};
+    condition.wait(lock, [&] { return _available > 0; });
+    lock.unlock();
+#else
     condition.lock();
-
     while (_available == 0)
     {
       condition.wait();
     }
-
     condition.unlock();
+#endif
   }
 
   void waitSpace(void)
@@ -172,14 +186,18 @@ class RingBufferImpl {
     // has been set accordingly
     assert(_waitingCondition == kSpace);
 
+#ifdef CPP_11
+    std::unique_lock<std::mutex> lock{ mutex };
+    condition.wait(lock, [&] { return _space > 0; });
+    lock.unlock();
+#else
     condition.lock();
-
     while (_space == 0)
     {
       condition.wait();
     }
-
     condition.unlock();
+#endif
   }
 
   int add(const Real* inputData, int inputSize)
@@ -200,15 +218,23 @@ class RingBufferImpl {
     _space -=  size;
     _available += size;
 
+    // the thread that is using this ringbuffer will be waiting for
+    // data to become available - typically the essentia-part from
+    // a RingBufferInput. we signal the waiting condition here
+#ifdef CPP_11
+    std::lock_guard<std::mutex> lock{ mutex };
+    if (_waitingCondition == kAvailable)
+    {
+        condition.notify_one();
+    }
+#else
     condition.lock();
     if (_waitingCondition == kAvailable)
     {
-      // the thread that is using this ringbuffer will be waiting for
-      // data to become available - typically the essentia-part from
-      // a RingBufferInput. we signal the waiting condition here
       condition.signal();
     }
     condition.unlock();
+#endif
 
     return size;
   }
@@ -232,15 +258,23 @@ class RingBufferImpl {
     _available -= size;
     _space += size;
 
+    // the thread that is using this ringbuffer will be waiting for
+    // space in the buffer - typically the essentia-part from
+    // a RingBufferOutput. we signal the waiting condition here
+#ifdef CPP_11
+    std::lock_guard<std::mutex> lock{ mutex };
+    if (_waitingCondition == kSpace)
+    {
+        condition.notify_one();
+    }
+#else
     condition.lock();
     if (_waitingCondition == kSpace)
     {
-      // the thread that is using this ringbuffer will be waiting for
-      // space in the buffer - typically the essentia-part from
-      // a RingBufferOutput. we signal the waiting condition here
       condition.signal();
     }
     condition.unlock();
+#endif
 
     return size;
   }

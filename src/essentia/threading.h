@@ -21,7 +21,9 @@
 #define ESSENTIA_THREADING_H
 
 
-#ifdef OS_WIN32
+#ifdef CPP_11
+#   include <mutex>
+#elif defined(OS_WIN32)
 #   include <windows.h>
 #else // OS_WIN32
 #   include <pthread.h>
@@ -59,7 +61,11 @@ class MutexLocker {
 // the ForcedMutex is a real Mutex, that should always lock properly
 // (ex: in FFTW, the plan creation/destruction needs to be protected no matter what)
 
-#  ifdef OS_WIN32
+#ifdef CPP_11
+
+typedef std::mutex ForcedMutex;
+
+#elif defined(OS_WIN32)
 
 // windows CriticalSection implementation
 
@@ -73,7 +79,7 @@ class ForcedMutex {
   void unlock()  { LeaveCriticalSection(&criticalSection); }
 };
 
-#  else // OS_WIN32
+#else // OS_WIN32
 
 // posix implementation for linux and osx
 
@@ -92,6 +98,12 @@ class ForcedMutex {
 
 #  endif // OS_WIN32
 
+#ifdef CPP_11
+
+typedef std::lock_guard<std::mutex> ForcedMutexLocker;
+
+#else
+
 class ForcedMutexLocker {
  protected:
   ForcedMutex& _mutex;
@@ -99,6 +111,8 @@ class ForcedMutexLocker {
   ForcedMutexLocker(ForcedMutex& mutex) : _mutex(mutex) { _mutex.lock(); }
   ~ForcedMutexLocker() { _mutex.unlock(); }
 };
+
+#  endif
 
 
 } // namespace essentia
