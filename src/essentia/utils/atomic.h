@@ -48,9 +48,9 @@ class Atomic {
 } // namespace essentia
 
 
-// life's easy in C++11
-#elif __cplusplus >= 201103L
+#elif defined(CPP_11)
 
+// life's easy in C++11
 
 #include <atomic>
 
