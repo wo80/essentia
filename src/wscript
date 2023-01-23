@@ -506,9 +506,9 @@ def build(ctx):
 
     # Add Kiss Dependancy stuff
     if 'KISS' in ctx.env.FFT:
-        ctx.env.INCLUDES += ['3rdparty/kiss_fft130' ]
-        sources += [ ctx.path.find_resource('3rdparty/kiss_fft130/kiss_fft.c') ]
-        sources += [ ctx.path.find_resource('3rdparty/kiss_fft130/tools/kiss_fftr.c') ]
+        ctx.env.INCLUDES += ['3rdparty/kiss_fft' ]
+        sources += [ ctx.path.find_resource('3rdparty/kiss_fft/kiss_fft.c') ]
+        sources += [ ctx.path.find_resource('3rdparty/kiss_fft/tools/kiss_fftr.c') ]
 
     # Add Chromaprint Dependancy stuff 
     """
