@@ -13,8 +13,8 @@
 #cmakedefine01 ENABLE_KISS
 #endif
 
-#ifndef ENABLE_ACCELERATE
-#cmakedefine01 ENABLE_ACCELERATE
+#ifndef ENABLE_VDSP
+#cmakedefine01 ENABLE_VDSP
 #endif
 
 #ifndef ENABLE_YAML

@@ -159,7 +159,7 @@
 #include "algorithms/standard/fftkcomplex.h"
 #include "algorithms/standard/ifftk.h"
 #include "algorithms/standard/ifftkcomplex.h"
-#elif ENABLE_ACCELERATE
+#elif ENABLE_VDSP
 #include "algorithms/standard/iffta.h"
 #include "algorithms/standard/ifftacomplex.h"
 #include "algorithms/standard/ffta.h"
@@ -444,7 +444,7 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<FFTKComplex> regFFTKComplex;
     AlgorithmFactory::Registrar<IFFTK> regIFFTK;
     AlgorithmFactory::Registrar<IFFTKComplex> regIFFTKComplex;
-#elif ENABLE_ACCELERATE
+#elif ENABLE_VDSP
     AlgorithmFactory::Registrar<FFTA> regFFTA;
     AlgorithmFactory::Registrar<FFTAComplex> regFFTAComplex;
     AlgorithmFactory::Registrar<IFFTA> regIFFTA;
@@ -711,7 +711,7 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<FFTKComplex, essentia::standard::FFTKComplex> regFFTKComplex;
     AlgorithmFactory::Registrar<IFFTK, essentia::standard::IFFTK> regIFFTK;
     AlgorithmFactory::Registrar<IFFTKComplex, essentia::standard::IFFTKComplex> regIFFTKComplex;
-#elif ENABLE_ACCELERATE
+#elif ENABLE_VDSP
     AlgorithmFactory::Registrar<FFTA, essentia::standard::FFTA> regFFTA;
     AlgorithmFactory::Registrar<FFTAComplex, essentia::standard::FFTAComplex> regFFTAComplex;
     AlgorithmFactory::Registrar<IFFTA, essentia::standard::IFFTA> regIFFTA;
