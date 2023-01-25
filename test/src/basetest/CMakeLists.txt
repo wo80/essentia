@@ -2,10 +2,9 @@ include(GoogleTest)
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/test/3rdparty/googletest" "test/3rdparty/googletest")
 
-mark_as_advanced(
-  BUILD_GTEST BUILD_SHARED_LIBS
-  gtest_build_samples gtest_build_tests gtest_disable_pthreads gtest_force_shared_crt gtest_hide_internal_symbols
-)
+set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
+set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+mark_as_advanced(BUILD_GMOCK INSTALL_GTEST GTEST_HAS_ABSL)
 
 set_target_properties(gtest PROPERTIES FOLDER extern)
 set_target_properties(gtest_main PROPERTIES FOLDER extern)
