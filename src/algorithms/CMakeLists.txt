@@ -13,7 +13,8 @@ set(ESSENTIA_ALGORITHMS
   stats
   synthesis
   temporal
-  tonal)
+  tonal
+)
 
 if(ESSENTIA_USE_TENSORFLOW)
   set(ESSENTIA_ALGORITHMS ${ESSENTIA_ALGORITHMS} machinelearning)
@@ -27,4 +28,5 @@ configure_file(${CMAKE_CURRENT_LIST_DIR}/essentia_algorithms_reg_2.h.in ${CMAKE_
 
 target_sources(essentia
   PRIVATE
-    essentia_algorithms_reg_2.cpp)
+    essentia_algorithms_reg_2.cpp
+)

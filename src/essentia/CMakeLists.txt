@@ -12,7 +12,6 @@ target_sources(essentia
     pool.cpp
     range.cpp
     stringutil.cpp
-  PUBLIC
     algorithm.h
     algorithmfactory.h
     config.h
@@ -31,9 +30,14 @@ target_sources(essentia
     streamutil.h
     stringutil.h
     threading.h
-    types.h)
+    types.h
+)
 
-target_include_directories(essentia PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(essentia
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 
 add_subdirectory(scheduler)
 add_subdirectory(streaming)

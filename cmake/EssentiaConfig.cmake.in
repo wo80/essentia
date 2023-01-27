@@ -1,0 +1,6 @@
+@PACKAGE_INIT@
+
+include(${CMAKE_CURRENT_LIST_DIR}/Essentia.cmake)
+set_and_check(Essentia_INCLUDE_DIR "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
+set(Essentia_LIBRARIES Essentia::essentia)
+check_required_components(Essentia)
