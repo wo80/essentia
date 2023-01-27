@@ -12,6 +12,7 @@ build
 .vscode
 buildw/
 .idea/
+.ipynb_checkpoints/
 
 # hide the debian stuff
 build-arch-stamp
