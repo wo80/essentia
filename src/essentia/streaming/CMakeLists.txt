@@ -8,7 +8,6 @@ target_sources(essentia
     streamingalgorithm.cpp
     streamingalgorithmcomposite.cpp
     streamingalgorithmwrapper.cpp
-  PUBLIC
     accumulatoralgorithm.h
     multiratebuffer.h
     phantombuffer.h
@@ -20,8 +19,13 @@ target_sources(essentia
     sourceproxy.h
     streamingalgorithm.h
     streamingalgorithmcomposite.h
-    streamingalgorithmwrapper.h)
+    streamingalgorithmwrapper.h
+)
 
-target_include_directories(essentia PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(essentia
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 
 add_subdirectory(algorithms)

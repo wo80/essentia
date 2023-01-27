@@ -1,4 +1,5 @@
 add_library(essentia STATIC)
+add_library(Essentia::essentia ALIAS essentia)
 
 set_property(TARGET essentia PROPERTY VERSION ${Essentia_VERSION})
 set_property(TARGET essentia PROPERTY SOVERSION 1)
@@ -68,12 +69,16 @@ if(ESSENTIA_USE_GAIA2)
 endif()
 
 if(MSVC)
-  target_compile_options(essentia PRIVATE /bigobj /MP)
+  target_compile_options(essentia PRIVATE /bigobj)
 endif()
 
 configure_file(${CMAKE_CURRENT_LIST_DIR}/version.h.in ${CMAKE_CURRENT_LIST_DIR}/version.h @ONLY)
 
-target_include_directories(essentia PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(essentia
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 
 add_subdirectory(essentia)
 add_subdirectory(algorithms)

@@ -4,10 +4,10 @@ target_sources(essentia
     FreesoundRhythmDescriptors.cpp
     FreesoundSfxDescriptors.cpp
     FreesoundTonalDescriptors.cpp
-  PUBLIC
     extractor_version.h
     FreesoundDescriptorsSet.h
     FreesoundLowlevelDescriptors.h
     FreesoundRhythmDescriptors.h
     FreesoundSfxDescriptors.h
-    FreesoundTonalDescriptors.h)
+    FreesoundTonalDescriptors.h
+)

@@ -90,7 +90,7 @@ endif()
 
 if(MSVC)
   add_compile_definitions(NOMINMAX _USE_MATH_DEFINES)
-  add_compile_options(/W4 /wd4100 /Zc:__cplusplus)
+  add_compile_options(/MP /W4 /wd4100 /Zc:__cplusplus)
 else()
   add_compile_options(-Wall -Wextra -Wno-unused-parameter -Wno-unknown-pragmas -Wno-ignored-qualifiers)
 endif()
@@ -101,3 +101,49 @@ if(BUILD_TESTS AND CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   enable_testing()
   add_subdirectory(test/src/basetest)
 endif()
+
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+install(TARGETS essentia
+  EXPORT EssentiaTargets
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include)
+
+configure_package_config_file(
+  cmake/EssentiaConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/EssentiaConfig.cmake
+  PATH_VARS CMAKE_INSTALL_INCLUDEDIR
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Essentia
+)
+
+write_basic_package_version_file(
+  ${CMAKE_CURRENT_BINARY_DIR}/EssentiaConfigVersion.cmake
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion
+)
+
+# Maybe not the best idea to install headers this way.
+install(DIRECTORY src/
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/essentia
+  FILES_MATCHING
+    PATTERN "*.h"
+    PATTERN "3rdparty" EXCLUDE
+    PATTERN "algorithms" EXCLUDE
+    PATTERN "examples" EXCLUDE
+    PATTERN "python" EXCLUDE
+)
+
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/EssentiaConfig.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/EssentiaConfigVersion.cmake
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Essentia
+)
+
+install(EXPORT EssentiaTargets
+  FILE EssentiaTargets.cmake
+  NAMESPACE Essentia::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Essentia
+)
