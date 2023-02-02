@@ -7,7 +7,6 @@ if (NOT WIN32)
     endif ()
 endif (NOT WIN32)
 
-
 find_path(YAML_INCLUDE_DIR yaml.h
     ${PKG_LIBYAML_INCLUDE_DIRS}
     /usr/include
