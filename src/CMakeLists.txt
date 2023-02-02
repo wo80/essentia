@@ -1,6 +1,8 @@
 add_library(essentia STATIC)
 add_library(Essentia::essentia ALIAS essentia)
 
+set_target_properties(essentia PROPERTIES DEBUG_POSTFIX _d)
+
 set_property(TARGET essentia PROPERTY VERSION ${Essentia_VERSION})
 set_property(TARGET essentia PROPERTY SOVERSION 1)
 
@@ -57,13 +59,13 @@ endif()
 
 if(ESSENTIA_USE_TENSORFLOW)
   include_directories(${TensorFlow_INCLUDE_DIR})
-  target_link_libraries(essentia ${TensorFlow_LIBRARY})
+  target_link_libraries(essentia ${TensorFlow_LIBRARIES})
   set(ENABLE_TENSORFLOW ON)
 endif()
 
 if(ESSENTIA_USE_GAIA2)
   include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Concurrent_INCLUDE_DIRS} ${GAIA2_INCLUDE_DIR})
-  target_link_libraries(essentia ${Gaia2_LIBRARY})
+  target_link_libraries(essentia ${Gaia2_LIBRARIES})
   add_compile_definitions(HAVE_GAIA2)
   set(ENABLE_GAIA2 ON)
 endif()

@@ -13,7 +13,7 @@ find_path(TensorFlow_INCLUDE_DIR tensorflow/c/c_api.h
     /usr/local/include
 )
 
-find_library(TensorFlow_LIBRARY
+find_library(TensorFlow_LIBRARIES
     NAMES
     tensorflow tensorflow.dll
     PATHS
@@ -22,4 +22,4 @@ find_library(TensorFlow_LIBRARY
     /usr/local/lib
 )
 
-find_package_handle_standard_args(TensorFlow DEFAULT_MSG TensorFlow_LIBRARY TensorFlow_INCLUDE_DIR)
+find_package_handle_standard_args(TensorFlow DEFAULT_MSG TensorFlow_LIBRARIES TensorFlow_INCLUDE_DIR)
