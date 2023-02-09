@@ -176,6 +176,15 @@ int AudioContext::create(const std::string& filename,
   }
 
   /* set options */
+#if LIBAVCODEC_VERSION_MAJOR < 59
+  av_opt_set_int(_convertCtxAv, "in_channel_layout", _codecCtx->channel_layout, 0);
+  av_opt_set_int(_convertCtxAv, "in_sample_rate", _codecCtx->sample_rate, 0);
+  av_opt_set_int(_convertCtxAv, "in_sample_fmt", AV_SAMPLE_FMT_FLT, 0);
+
+  av_opt_set_int(_convertCtxAv, "out_channel_layout", _codecCtx->channel_layout, 0);
+  av_opt_set_int(_convertCtxAv, "out_sample_rate", _codecCtx->sample_rate, 0);
+  av_opt_set_int(_convertCtxAv, "out_sample_fmt", _codecCtx->sample_fmt, 0);
+#else
   av_opt_set_chlayout(_convertCtxAv, "in_chlayout", &_codecCtx->ch_layout, 0);
   av_opt_set_int(_convertCtxAv, "in_sample_rate", _codecCtx->sample_rate, 0);
   av_opt_set_sample_fmt(_convertCtxAv, "in_sample_fmt", AV_SAMPLE_FMT_FLT, 0);
@@ -183,6 +192,7 @@ int AudioContext::create(const std::string& filename,
   av_opt_set_chlayout(_convertCtxAv, "out_chlayout", &_codecCtx->ch_layout, 0);
   av_opt_set_int(_convertCtxAv, "out_sample_rate", _codecCtx->sample_rate, 0);
   av_opt_set_sample_fmt(_convertCtxAv, "out_sample_fmt", _codecCtx->sample_fmt, 0);
+#endif
 
   if (swr_init(_convertCtxAv) < 0) {
       throw EssentiaException("AudioLoader: Could not initialize swresample context");
@@ -341,10 +351,15 @@ void AudioContext::encodePacket(int size) {
 
   _frame->nb_samples = _codecCtx->frame_size;
   _frame->format = _codecCtx->sample_fmt;
+
+#if LIBAVCODEC_VERSION_MAJOR < 59
+  _frame->channel_layout = _codecCtx->channel_layout;
+#else
   int ret = av_channel_layout_copy(&_frame->ch_layout, &_codecCtx->ch_layout);
   if (ret < 0) {
       throw EssentiaException("Error av_channel_layout_copy");
   }
+#endif
 
   int buffer_size = av_samples_get_buffer_size(NULL, _codecCtx->channels, size, AV_SAMPLE_FMT_FLT, 0);
 
