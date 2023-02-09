@@ -38,6 +38,17 @@
 #include "utils/tnt/tnt.h"
 #include "utils/tnt/tnt2essentiautils.h"
 
+/**
+ * Even with _USE_MATH_DEFINES defined, math constants might not
+ * get imported on MinGW, so we make sure they are defined here.
+ */
+#ifndef M_PI
+  #define M_PI 3.14159265358979323846
+#endif
+#ifndef M_LN2
+  #define M_LN2 0.693147180559945309417
+#endif
+
 #define M_2PI (2 * M_PI)
 
 namespace essentia {
@@ -419,7 +430,7 @@ template <typename T> T instantPower(const std::vector<T>& array) {
 // of noise and even when music is rendered to file it is normally dithered
 // first. For this reason we set the silence cutoff as what should be silence
 // on a 16bit pcm file, that is (16bit - 1bit)*6.02 which yields -90.3 dB thus
-// aproximately -90
+// approximately -90
 #define SILENCE_CUTOFF 1e-10
 #define DB_SILENCE_CUTOFF -100
 #define LOG_SILENCE_CUTOFF -23.025850929940457
@@ -928,7 +939,7 @@ void hist(const T* array, uint n, int* n_array, T* x_array, uint n_bins) {
 
 
 /**
- * returns in output the number of occurence of each value in the input vector
+ * returns in output the number of occurrence of each value in the input vector
  */
 template <typename T>
 void bincount(const std::vector<T>& input, std::vector<T>& output) {
@@ -1142,20 +1153,20 @@ template <typename T> T pearsonCorrelationCoefficient(const std::vector<T>& x, c
   T xStddev = stddev(x, xMean);
   T yStddev = stddev(y, yMean);
 
-  // When dealing with constants corraltion is 0 by convention. 
+  // When dealing with constants correlation is 0 by convention. 
   if ((xStddev == (T)0.0) || (xStddev == (T)0.0) || (xStddev == (T)0.0)) return (T) 0.0;
   
   T corr = cov / (xStddev * yStddev);
 
   // Numerical error can yield results slightly outside the analytical range [-1, 1].
-  // Clipping the output is a cheap way to mantain this contrain.
+  // Clipping the output is a cheap way to maintain this constraint.
   // Seen in https://github.com/numpy/numpy/blob/v1.15.0/numpy/lib/function_base.py#L2403-L2406
   return std::max(std::min(corr, (T)1.0), (T)-1.0);
 }
 
 
 /**
- * Apply heaviside step function to an input m X n dimentional vector.
+ * Apply heaviside step function to an input m X n dimensional vector.
  * f(x) = if x<0: x=0; if x>=0: x=1
  * Throws an exception if the input array is empty.
  * returns a 2D binary vector of m X n shape
@@ -1177,8 +1188,8 @@ void heavisideStepFunction(std::vector<std::vector<T> >& inputArray) {
 /**
  * Pairwise euclidean distances between two 2D vectors.
  * Throws an exception if the input array is empty.
- * Returns a (m.shape[0], n.shape[0]) dimentional vector where m and n are the two input arrays
- * TODO: [add other distance metrics beside euclidean such as cosine, mahanalobis etc as a configurable parameter]
+ * Returns a (m.shape[0], n.shape[0]) dimensional vector where m and n are the two input arrays
+ * TODO: [add other distance metrics beside euclidean such as cosine, mahalanobis etc as a configurable parameter]
  */
 template <typename T>
 std::vector<std::vector<T> > pairwiseDistance(const std::vector<std::vector<T> >& m, const std::vector<std::vector<T> >& n) {
@@ -1258,7 +1269,7 @@ Tensor<T> mean(const Tensor<T>& tensor, int axis) {
  */
 template <typename T>
 T stddev(const Tensor<T>& tensor, const T mean) {
-  // Substract the mean.
+  // Subtract the mean.
   Tensor<Real> tmp = tensor - tensor.constant(mean);
   // Sum of squares.
   Real sos = ((TensorScalar)tmp.pow(2).sum())(0);
@@ -1279,11 +1290,11 @@ Tensor<T> stddev(const Tensor<T>& tensor, const Tensor<T> mean, int axis) {
   // Get the number of elements on each sub-tensor.
   Real normalization = tensor.size() / tensor.dimension(axis);
 
-  // Substract the means along the axis using broadcast to replicate
+  // Subtract the means along the axis using broadcast to replicate
   // them along the rest of dimensions.
   Tensor<Real> tmp = tensor - mean.broadcast(broadcastShape);
 
-  // Cumpute the sum of squares.
+  // Compute the sum of squares.
   Tensor1D sos = tmp.pow(2).sum(squeezeShape);
 
   // Compute the standard deviations and put them into a Tensor along the axis.
