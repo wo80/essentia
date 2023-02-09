@@ -73,7 +73,11 @@ void AudioLoader::openAudioFile(const string& filename) {
         throw EssentiaException("AudioLoader: Could not find stream information, error = ", error);
     }
 
+#if LIBAVCODEC_VERSION_MAJOR < 59
+    AVCodec* codec;
+#else
     const AVCodec* codec;
+#endif
     if ((errnum = av_find_best_stream(_demuxCtx, AVMEDIA_TYPE_AUDIO, -1, -1, &codec, 0)) < 0) {
         avformat_close_input(&_demuxCtx);
         _demuxCtx = NULL;
