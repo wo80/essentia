@@ -357,7 +357,11 @@ void AudioContext::encodePacket(int size) {
 #else
   int ret = av_channel_layout_copy(&_frame->ch_layout, &_codecCtx->ch_layout);
   if (ret < 0) {
-      throw EssentiaException("Error av_channel_layout_copy");
+      char errstring[1204];
+      av_strerror(ret, errstring, sizeof(errstring));
+      ostringstream msg;
+      msg << "Error while encoding audio frame: " << errstring;
+      throw EssentiaException(msg);
   }
 #endif
 
