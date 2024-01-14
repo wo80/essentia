@@ -58,11 +58,7 @@ namespace internal {
 
 // Silence MSVC C4100 (unreferenced formal parameter) and
 // C4805('==': unsafe mix of type 'const int' and type 'const bool')
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4100)
-#pragma warning(disable : 4805)
-#endif
+GTEST_DISABLE_MSC_WARNINGS_PUSH_(4100 4805)
 
 // Joins a vector of strings as if they are fields of a tuple; returns
 // the joined string.
@@ -94,6 +90,24 @@ template <typename Element>
 inline Element* GetRawPointer(Element* p) {
   return p;
 }
+
+// Default definitions for all compilers.
+// NOTE: If you implement support for other compilers, make sure to avoid
+// unexpected overlaps.
+// (e.g., Clang also processes #pragma GCC, and clang-cl also handles _MSC_VER.)
+#define GMOCK_INTERNAL_WARNING_PUSH()
+#define GMOCK_INTERNAL_WARNING_CLANG(Level, Name)
+#define GMOCK_INTERNAL_WARNING_POP()
+
+#if defined(__clang__)
+#undef GMOCK_INTERNAL_WARNING_PUSH
+#define GMOCK_INTERNAL_WARNING_PUSH() _Pragma("clang diagnostic push")
+#undef GMOCK_INTERNAL_WARNING_CLANG
+#define GMOCK_INTERNAL_WARNING_CLANG(Level, Warning) \
+  _Pragma(GMOCK_PP_INTERNAL_STRINGIZE(clang diagnostic Level Warning))
+#undef GMOCK_INTERNAL_WARNING_POP
+#define GMOCK_INTERNAL_WARNING_POP() _Pragma("clang diagnostic pop")
+#endif
 
 // MSVC treats wchar_t as a native type usually, but treats it as the
 // same as unsigned short when the compiler option /Zc:wchar_t- is
@@ -210,7 +224,7 @@ class FailureReporterInterface {
   // The type of a failure (either non-fatal or fatal).
   enum FailureType { kNonfatal, kFatal };
 
-  virtual ~FailureReporterInterface() {}
+  virtual ~FailureReporterInterface() = default;
 
   // Reports a failure that occurred at the given source file location.
   virtual void ReportFailure(FailureType type, const char* file, int line,
@@ -297,7 +311,8 @@ GTEST_API_ WithoutMatchers GetWithoutMatchers();
 // crashes).
 template <typename T>
 inline T Invalid() {
-  Assert(false, "", -1, "Internal error: attempt to return invalid value");
+  Assert(/*condition=*/false, /*file=*/"", /*line=*/-1,
+         "Internal error: attempt to return invalid value");
 #if defined(__GNUC__) || defined(__clang__)
   __builtin_unreachable();
 #elif defined(_MSC_VER)
@@ -450,8 +465,10 @@ struct Function<R(Args...)> {
   using MakeResultIgnoredValue = IgnoredValue(Args...);
 };
 
+#ifdef GTEST_INTERNAL_NEED_REDUNDANT_CONSTEXPR_DECL
 template <typename R, typename... Args>
 constexpr size_t Function<R(Args...)>::ArgumentCount;
+#endif
 
 // Workaround for MSVC error C2039: 'type': is not a member of 'std'
 // when std::tuple_element is used.
@@ -462,9 +479,7 @@ using TupleElement = typename std::tuple_element<I, T>::type;
 
 bool Base64Unescape(const std::string& encoded, std::string* decoded);
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+GTEST_DISABLE_MSC_WARNINGS_POP_()  // 4100 4805
 
 }  // namespace internal
 }  // namespace testing

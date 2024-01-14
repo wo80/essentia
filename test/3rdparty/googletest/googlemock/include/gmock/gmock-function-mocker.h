@@ -108,8 +108,11 @@ constexpr bool ValidateSpec(const char (&spec)[N]) {
 using internal::FunctionMocker;
 }  // namespace testing
 
-#define MOCK_METHOD(...) \
-  GMOCK_PP_VARIADIC_CALL(GMOCK_INTERNAL_MOCK_METHOD_ARG_, __VA_ARGS__)
+#define MOCK_METHOD(...)                                               \
+  GMOCK_INTERNAL_WARNING_PUSH()                                        \
+  GMOCK_INTERNAL_WARNING_CLANG(ignored, "-Wunused-member-function")    \
+  GMOCK_PP_VARIADIC_CALL(GMOCK_INTERNAL_MOCK_METHOD_ARG_, __VA_ARGS__) \
+  GMOCK_INTERNAL_WARNING_POP()
 
 #define GMOCK_INTERNAL_MOCK_METHOD_ARG_1(...) \
   GMOCK_INTERNAL_WRONG_ARITY(__VA_ARGS__)
@@ -177,8 +180,9 @@ using internal::FunctionMocker;
       _Signature)>::Result                                                     \
   GMOCK_INTERNAL_EXPAND(_CallType)                                             \
       _MethodName(GMOCK_PP_REPEAT(GMOCK_INTERNAL_PARAMETER, _Signature, _N))   \
-          GMOCK_PP_IF(_Constness, const, ) _RefSpec _NoexceptSpec              \
-          GMOCK_PP_IF(_Override, override, ) GMOCK_PP_IF(_Final, final, ) {    \
+          GMOCK_PP_IF(_Constness, const, )                                     \
+              _RefSpec _NoexceptSpec GMOCK_PP_IF(_Override, override, )        \
+                  GMOCK_PP_IF(_Final, final, ) {                               \
     GMOCK_MOCKER_(_N, _Constness, _MethodName)                                 \
         .SetOwnerAndName(this, #_MethodName);                                  \
     return GMOCK_MOCKER_(_N, _Constness, _MethodName)                          \
