@@ -1,0 +1,106 @@
+name: Build with CMake
+
+on: [push, pull_request]
+
+jobs:
+  windows:
+    name: Windows (build and test)
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: cmd
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: Install FFmpeg
+        run: |
+          mkdir external
+          cd external
+          mkdir bin
+          mkdir include
+          mkdir lib
+          curl -L -o ffmpeg-6.1.1-full_build-shared.zip https://github.com/GyanD/codexffmpeg/releases/download/6.1.1/ffmpeg-6.1.1-full_build-shared.zip
+          tar -xf ffmpeg-6.1.1-full_build-shared.zip
+          xcopy /s /y ffmpeg-6.1.1-full_build-shared\bin bin
+          xcopy /s /y ffmpeg-6.1.1-full_build-shared\include include
+          xcopy /s /y ffmpeg-6.1.1-full_build-shared\lib lib
+
+      - name: Install Eigen3
+        run: |
+          cd external
+          set INSTALL_PREFIX=%CD%
+          curl -L -o eigen-3.4.0.tar.gz https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
+          tar -xf eigen-3.4.0.tar.gz
+          cd eigen-3.4.0
+          cmake -B build -DEIGEN_BUILD_DOC=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+          cmake --build build --config Release
+          cmake --install build
+
+      - name: Install FFTW
+        run: |
+          cd external
+          set INSTALL_PREFIX=%CD%
+          curl -L -o fftw-3.3.10.tar.gz https://www.fftw.org/fftw-3.3.10.tar.gz
+          tar -xf fftw-3.3.10.tar.gz
+          cd fftw-3.3.10
+          cmake -B build -DBUILD_TESTS=OFF -DDISABLE_FORTRAN=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+          cmake --build build --config Release --parallel
+          cmake --install build
+          cmake -B build -DBUILD_TESTS=OFF -DDISABLE_FORTRAN=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=ON
+          cmake --build build --clean-first --config Release --parallel
+          cmake --install build
+
+      - name: Install libsamplerate
+        run: |
+          cd external
+          set INSTALL_PREFIX=%CD%
+          git clone https://github.com/libsndfile/libsamplerate.git
+          cd libsamplerate
+          cmake -B build -DLIBSAMPLERATE_EXAMPLES=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+          cmake --build build --config Release
+          cmake --install build
+
+      - name: Install TagLib
+        run: |
+          cd external
+          set INSTALL_PREFIX=%CD%
+          git clone --recurse-submodules https://github.com/taglib/taglib.git
+          cd taglib
+          cmake -B build -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF -DBUILD_TESTING=OFF -DWITH_ZLIB=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+          cmake --build build --config Release --parallel
+          cmake --install build
+
+      - name: Install YAML
+        run: |
+          cd external
+          set INSTALL_PREFIX=%CD%
+          git clone https://github.com/yaml/libyaml.git
+          cd libyaml
+          cmake -B build -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+          cmake --build build --config Release
+          cmake --install build
+
+      - name: Install Chromaprint
+        run: |
+          cd external
+          set INSTALL_PREFIX=%CD%
+          git clone https://github.com/acoustid/chromaprint.git
+          cd chromaprint
+          cmake -B build -DBUILD_TOOLS=OFF -DBUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+          cmake --build build --config Release
+          cmake --install build
+
+      - name: Build Essentia
+        run: |
+          set PATH=%PATH%;%CD%\external\bin
+          cmake -B build -DCMAKE_PREFIX_PATH=%CD%\external
+          cmake --build build --config Release --parallel
+
+      - name: Test Essentia
+        run: |
+          set PATH=%PATH%;%CD%\external\bin
+          ctest --test-dir build --output-on-failure -C Release

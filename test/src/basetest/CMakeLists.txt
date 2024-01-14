@@ -32,7 +32,7 @@ if(MSVC)
   target_compile_options(essentia_tests PRIVATE /MP)
 endif()
 
-target_link_libraries(essentia_tests gtest gtest_main essentia)
+target_link_libraries(essentia_tests PRIVATE gtest gtest_main essentia)
 
 gtest_discover_tests(essentia_tests
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
