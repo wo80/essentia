@@ -17,6 +17,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 option(BUILD_TESTS "Build tests" ON)
 option(BUILD_EXAMPLES "Build examples" OFF)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings" OFF)
+option(BUILD_VAMP_PLUGIN "Build VAMP plugin" OFF)
 option(USE_TENSORFLOW "Use TensorFlow" OFF)
 option(USE_GAIA2 "Use Gaia2" OFF)
 
@@ -30,6 +31,10 @@ find_package(YAML)
 
 if(BUILD_PYTHON_BINDINGS)
   find_package(Python3 COMPONENTS Development NumPy)
+endif()
+
+if(BUILD_VAMP_PLUGIN)
+  find_package(VampSdk)
 endif()
 
 if(USE_TENSORFLOW)
@@ -50,6 +55,7 @@ set(ESSENTIA_USE_LIBSAMPLERATE OFF)
 set(ESSENTIA_USE_TAGLIB OFF)
 set(ESSENTIA_USE_CHROMAPRINT OFF)
 set(ESSENTIA_USE_TENSORFLOW OFF)
+set(ESSENTIA_USE_VAMP OFF)
 set(ESSENTIA_USE_GAIA OFF)
 
 if(FFMPEG_FOUND)
@@ -82,6 +88,10 @@ endif()
 
 if(TensorFlow_FOUND)
   set(ESSENTIA_USE_TENSORFLOW ON)
+endif()
+
+if(VAMPSDK_FOUND)
+  set(ESSENTIA_USE_VAMP ON)
 endif()
 
 if(Gaia2_FOUND)
