@@ -1,25 +1,34 @@
 include(FindPackageHandleStandardArgs)
 
 if (NOT WIN32)
-    find_package(PkgConfig)
-    if (PKG_CONFIG_FOUND)
-         pkg_check_modules(PKG_LIBSAMPLERATE libsamplerate)
-    endif ()
+  find_package(PkgConfig)
+  if (PKG_CONFIG_FOUND)
+    pkg_check_modules(SAMPLERATE samplerate)
+  endif ()
 endif (NOT WIN32)
 
-find_path(SAMPLERATE_INCLUDE_DIR samplerate.h
-    ${PKG_LIBSAMPLERATE_INCLUDE_DIRS}
-    /usr/include
-    /usr/local/include
-)
+if ( NOT SAMPLERATE_FOUND )
+  find_path(SAMPLERATE_INCLUDE_DIRS NAMES samplerate.h)
+  find_library(SAMPLERATE_LIBRARIES NAMES samplerate)
 
-find_library(SAMPLERATE_LIBRARIES
-    NAMES
-    samplerate samplerate.dll
-    PATHS
-    ${PKG_LIBSAMPLERATE_LIBRARY_DIRS}
-    /usr/lib
-    /usr/local/lib
-)
+  if ( NOT "${SAMPLERATE_LIBRARIES}" STREQUAL "")
+    set (SAMPLERATE_FOUND TRUE)
+    set (SAMPLERATE_LINK_LIBRARIES ${SAMPLERATE_LINK_LIBRARIES} ${SAMPLERATE_LIBRARIES})
+  endif ()
+endif ()
 
-find_package_handle_standard_args(SampleRate DEFAULT_MSG SAMPLERATE_LIBRARIES SAMPLERATE_INCLUDE_DIR)
+if ( SAMPLERATE_INCLUDEDIR AND NOT SAMPLERATE_INCLUDE_DIRS )
+  set (SAMPLERATE_INCLUDE_DIRS ${SAMPLERATE_INCLUDEDIR})
+endif ()
+  
+find_package_handle_standard_args(SampleRate DEFAULT_MSG SAMPLERATE_LIBRARIES SAMPLERATE_INCLUDE_DIRS)
+
+if ( SAMPLERATE_FOUND AND NOT TARGET SampleRate::samplerate )
+  add_library(SampleRate::samplerate INTERFACE IMPORTED GLOBAL)
+  set_target_properties(SampleRate::samplerate
+    PROPERTIES
+      VERSION "${SAMPLERATE_VERSION}"
+      LOCATION "${SAMPLERATE_LINK_LIBRARIES}"
+      INTERFACE_INCLUDE_DIRECTORIES "${SAMPLERATE_INCLUDE_DIRS}"
+      INTERFACE_LINK_LIBRARIES "${SAMPLERATE_LINK_LIBRARIES}")
+endif ()

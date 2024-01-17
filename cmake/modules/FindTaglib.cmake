@@ -76,3 +76,18 @@ find_package_handle_standard_args(Taglib
 )
 
 mark_as_advanced(TAGLIB_LIBRARIES TAGLIB_INCLUDE_DIRS)
+
+if ( TAGLIB_FOUND AND NOT TARGET TagLib::TagLib )
+  add_library(TagLib::TagLib INTERFACE IMPORTED GLOBAL)
+  set_target_properties(TagLib::TagLib
+    PROPERTIES
+      VERSION "${TAGLIB_VERSION}"
+      LOCATION "${TAGLIB_LIBRARIES}"
+      INTERFACE_INCLUDE_DIRECTORIES "${TAGLIB_INCLUDE_DIRS}"
+      INTERFACE_LINK_LIBRARIES "${TAGLIB_LIBRARIES}")
+endif ()
+
+
+if(NOT TARGET TagLib::tag)
+  add_library(TagLib::tag ALIAS TagLib::TagLib)
+endif()

@@ -7,6 +7,10 @@ if (NOT WIN32)
     endif ()
 endif (NOT WIN32)
 
+if ( VAMPSDK_INCLUDEDIR AND NOT VAMPSDK_INCLUDE_DIRS )
+  set (VAMPSDK_INCLUDE_DIRS ${VAMPSDK_INCLUDEDIR})
+endif ()
+
 if ( NOT VAMPSDK_FOUND )
   find_path(VAMPSDK_INCLUDE_DIRS NAMES vamp-sdk.h PATH_SUFFIXES vamp-sdk)
   find_library(VAMPSDK_LIBRARIES NAMES libvamp-sdk VampPluginSDK)
