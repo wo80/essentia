@@ -18,9 +18,12 @@ add_wheel(_essentia
   NAME "essentia"
   VERSION "2.1"
   AUTHOR "Dmitry Bogdanov"
+  EMAIL "dmitry.bogdanov@upf.edu"
   URL "http://essentia.upf.edu"
   PYTHON_REQUIRES ">=3.8"
   DESCRIPTION "Library for audio and music analysis, description and synthesis."
+  KEYWORDS "audio music sound dsp MIR"
+  LICENSE "AGPLv3"
   README_PATH "${CMAKE_SOURCE_DIR}/README.md"
   LICENSE_PATH "${CMAKE_SOURCE_DIR}/COPYING.txt"
   MODULE_DEPENDENCIES "numpy>=1.8.2" "pyyaml" "six")

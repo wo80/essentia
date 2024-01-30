@@ -61,10 +61,13 @@ setup(
     version = "@WHEEL_VERSION@",
     description = "@WHEEL_DESCRIPTION@",
     author = "@WHEEL_AUTHOR@",
+    author_email = "@WHEEL_EMAIL@",
     url = "@WHEEL_URL@",
 
     ext_modules = [CMakeExtension("@WHEEL_TARGET@")],
-    keywords = "@WHEEL_NAME@",
+    keywords = "@WHEEL_KEYWORDS@",
+    license = "@WHEEL_LICENSE@",
+    platforms = "@WHEEL_PLATFORMS@",
     python_requires = "@WHEEL_PYTHON_REQUIRES@",
     install_requires = [
         @WHEEL_MODULE_DEPENDENCIES_PYLIST@

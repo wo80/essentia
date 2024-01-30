@@ -40,7 +40,7 @@ function (add_wheel WHEEL_TARGET)
   # Parse arguments
   cmake_parse_arguments(WHEEL
     ""
-    "NAME;AUTHOR;URL;PYTHON_REQUIRES;VERSION;DESCRIPTION;README_PATH;LICENSE_PATH"
+    "NAME;AUTHOR;EMAIL;URL;PYTHON_REQUIRES;VERSION;DESCRIPTION;KEYWORDS;LICENSE;PLATFORMS;README_PATH;LICENSE_PATH"
     "TARGET_DEPENDENCIES;MODULE_DEPENDENCIES;DEPLOY_FILES;SUBMODULES" ${ARGN})
 
   to_python_list_string(WHEEL_MODULE_DEPENDENCIES WHEEL_MODULE_DEPENDENCIES_PYLIST)
@@ -53,8 +53,24 @@ function (add_wheel WHEEL_TARGET)
     message(FATAL_ERROR "Missing wheel author.")
   endif()
 
+  if (NOT WHEEL_EMAIL)
+    set(WHEEL_EMAIL "")
+  endif()
+
   if (NOT WHEEL_URL)
     set(WHEEL_URL "")
+  endif()
+
+  if (NOT WHEEL_KEYWORDS)
+    set(WHEEL_KEYWORDS "")
+  endif()
+
+  if (NOT WHEEL_LICENSE)
+    set(WHEEL_LICENSE "")
+  endif()
+
+  if (NOT WHEEL_PLATFORMS)
+    set(WHEEL_PLATFORMS "any")
   endif()
 
   if (NOT WHEEL_PYTHON_REQUIRES)
