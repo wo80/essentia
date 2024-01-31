@@ -1,15 +1,16 @@
-add_library(essentia STATIC)
+if (BUILD_SHARED_LIBS AND MSVC)
+  #set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+  #set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
+  set(WINDOWS_EXPORT_ALL_SYMBOLS YES)
+endif()
+
+add_library(essentia)
 add_library(Essentia::essentia ALIAS essentia)
 
 set_target_properties(essentia PROPERTIES DEBUG_POSTFIX _d)
-
-set_property(TARGET essentia PROPERTY VERSION ${Essentia_VERSION})
-set_property(TARGET essentia PROPERTY SOVERSION 1)
-
-if (BUILD_SHARED_LIBS)
-  set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-  set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
-endif()
+set_target_properties(essentia PROPERTIES
+  VERSION   ${essentia_VERSION}
+  SOVERSION 1)
 
 include_directories(${EIGEN3_INCLUDE_DIRS})
 target_link_libraries(essentia PUBLIC Eigen3::Eigen)
