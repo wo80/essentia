@@ -14,6 +14,19 @@ set(WHEEL_DEPLOY_DIRECTORY "${CMAKE_BINARY_DIR}/wheel")
 
 include(python-wheel)
 
+
+if (MSVC)
+  # On Windows, the file extension should be .pyd, see
+  # https://docs.python.org/3/faq/windows.html#is-a-pyd-file-the-same-as-a-dll
+  set_target_properties(_essentia
+    PROPERTIES
+      OUTPUT_NAME "_essentia.cp${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}-${PY_WHEEL_PLATFORM}"
+      SUFFIX ".pyd")
+else()
+  # Make sure to not add "lib" prefix on Linux
+  set_target_properties(_essentia PROPERTIES PREFIX "")
+endif()
+
 string(REPLACE "-beta" "b" WHL_VERSION ${essentia_VERSION_STRING})
 string(REPLACE "-dev" ".dev" WHL_VERSION ${WHL_VERSION})
 
