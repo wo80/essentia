@@ -55,7 +55,7 @@ class ESSENTIA_API AlgorithmInfo {
  * getting information from the ReferenceAlgorithm implementation.
  */
 template <typename BaseAlgorithm>
-class ESSENTIA_API EssentiaFactory {
+class ESSENTIA_DLLEXPORT EssentiaFactory {
 
   static EssentiaFactory<BaseAlgorithm>* _instance;
 
