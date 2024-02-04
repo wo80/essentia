@@ -67,8 +67,8 @@ class FileOutputProxy : public Algorithm {
 
 };
 
-void connect(SourceBase& source, FileOutputProxy& file);
-void connect(SourceBase& source, Algorithm& file);
+ESSENTIA_API void connect(SourceBase& source, FileOutputProxy& file);
+ESSENTIA_API void connect(SourceBase& source, Algorithm& file);
 
 } // namespace streaming
 } // namespace essentia

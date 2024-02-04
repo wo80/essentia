@@ -34,8 +34,8 @@
 
 namespace essentia {
 
-extern const char* version;
-extern const char* version_git_sha;
+ESSENTIA_API extern const char* version;
+ESSENTIA_API extern const char* version_git_sha;
 
 /**
  * This function registers the algorithms in the factory, so that they are
@@ -43,11 +43,11 @@ extern const char* version_git_sha;
  * "human-readable" representations. You need to call this function before
  * doing anything with essentia.
  */
-void init();
+ESSENTIA_API void init();
 
-bool isInitialized();
+ESSENTIA_API bool isInitialized();
 
-void shutdown();
+ESSENTIA_API void shutdown();
 
 namespace standard {
   /**

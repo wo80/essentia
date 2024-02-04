@@ -23,18 +23,19 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include "config.h"
 
 namespace essentia {
 
 /**
  * Return a new string with the characters of str in lower-case.
  */
-std::string toLower(const std::string& str);
+ESSENTIA_API std::string toLower(const std::string& str);
 
 /**
  * Return a new string with the characters of str in upper-case.
  */
-std::string toUpper(const std::string& str);
+ESSENTIA_API std::string toUpper(const std::string& str);
 
 /**
  * Return a string split whenever there is a char contained in the given

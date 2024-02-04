@@ -95,7 +95,7 @@ typedef std::stack<NetworkNode*> NodeStack;
  * generator node at the root of the Network (an audio loader, usually) and
  * carry the data through all the other algorithms automatically.
  */
-class Network {
+class ESSENTIA_API Network {
 
  public:
   /**
@@ -271,7 +271,7 @@ class Network {
 * Delete the algorithm together with its all visible dependencies without 
 * creating a network object.
 */
-void deleteNetwork(const streaming::Algorithm* algo);
+ESSENTIA_API void deleteNetwork(const streaming::Algorithm* algo);
 
 /**
  * Prints the fill state of all the buffers in the last created network.

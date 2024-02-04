@@ -147,7 +147,7 @@ class PoolStorage : public PoolStorageBase {
  * Connect a source (eg: the output of an algorithm) to a Pool, and use the given
  * name as an identifier in the Pool.
  */
-void connect(SourceBase& source, Pool& pool,
+ESSENTIA_API void connect(SourceBase& source, Pool& pool,
              const std::string& descriptorName);
 
 class PoolConnector {
@@ -180,7 +180,7 @@ void connectSingleValue(SourceBase& source, Pool& pool,
 /**
  * Disconnect a source (eg: the output of an algorithm) from a Pool.
  */
-void disconnect(SourceBase& source, Pool& pool,
+ESSENTIA_API void disconnect(SourceBase& source, Pool& pool,
                 const std::string& descriptorName);
 
 

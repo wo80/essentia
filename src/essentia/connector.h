@@ -63,7 +63,7 @@ class Connector : public TypeProxy, public StreamConnector {
    * Return a fully qualified name consisting of:
    * "<Parent name>::<Connector name>".
    */
-  std::string fullName() const;
+  ESSENTIA_API std::string fullName() const;
 
 };
 

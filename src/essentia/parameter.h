@@ -279,16 +279,16 @@ class ParameterMap : public EssentiaMap<std::string, Parameter, string_cmp> {
   typedef EssentiaMap<std::string, Parameter, string_cmp> ParameterMapBase;
 
  public:
-  void add(const std::string& name, const Parameter& value);
+  ESSENTIA_API void add(const std::string& name, const Parameter& value);
 
-  const Parameter& operator[](const std::string& key) const;
-  Parameter& operator[](const std::string& key);
+  ESSENTIA_API const Parameter& operator[](const std::string& key) const;
+  ESSENTIA_API Parameter& operator[](const std::string& key);
 
 };
 
-std::ostream& operator<<(std::ostream& out, const Parameter& p);
-std::ostream& operator<<(std::ostream& out, const ParameterMap& m);
-std::ostream& operator<<(std::ostream& out, const Parameter::ParamType& t);
+ESSENTIA_API std::ostream& operator<<(std::ostream& out, const Parameter& p);
+ESSENTIA_API std::ostream& operator<<(std::ostream& out, const ParameterMap& m);
+ESSENTIA_API std::ostream& operator<<(std::ostream& out, const Parameter::ParamType& t);
 
 } // namespace essentia
 
