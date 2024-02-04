@@ -41,12 +41,12 @@ ESSENTIA_API std::string toUpper(const std::string& str);
  * Return a string split whenever there is a char contained in the given
  * @c delimiters argument.
  */
-std::vector<std::string> tokenize(const std::string& str, const std::string& delimiters, bool trimEmpty = false);
+ESSENTIA_API std::vector<std::string> tokenize(const std::string& str, const std::string& delimiters, bool trimEmpty = false);
 
 /**
  * Strip the given string of its leading and trailing whitespace characters.
  */
-std::string strip(const std::string& str);
+ESSENTIA_API std::string strip(const std::string& str);
 
 
 /**

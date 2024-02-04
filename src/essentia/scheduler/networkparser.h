@@ -26,7 +26,7 @@
 namespace essentia {
 namespace scheduler {
 
-class NetworkParser {
+class ESSENTIA_API NetworkParser {
  public:
   // NB: template is only used so that ARRAY_SIZE can work, we only want const char*[] here
   // if createConnections is false, only the NetworkNodes will be connected according to

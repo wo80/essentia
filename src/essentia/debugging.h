@@ -75,11 +75,11 @@ ESSENTIA_API extern bool errorLevelActive;
  */
 ESSENTIA_API extern int debugIndentLevel;
 
-void setDebugLevel(int levels);
-void unsetDebugLevel(int levels);
+ESSENTIA_API void setDebugLevel(int levels);
+ESSENTIA_API void unsetDebugLevel(int levels);
 
-void saveDebugLevels();
-void restoreDebugLevels();
+ESSENTIA_API void saveDebugLevels();
+ESSENTIA_API void restoreDebugLevels();
 
 typedef int DebuggingSchedule[][3];
 typedef std::vector<std::pair<std::pair<int, int>, int> > DebuggingScheduleVector;

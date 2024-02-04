@@ -58,14 +58,14 @@ typedef Position Direction;
  * rectangle, which is a vector of string rows where each row has the same length.
  * This will allow us to navigate in it with rect[x][y], for instance.
  */
-std::vector<std::string> makeRectangle(const std::string& network);
+ESSENTIA_API std::vector<std::string> makeRectangle(const std::string& network);
 
 /**
  * Take an array of C strings representing the network in ASCII art form and turn it into a
  * rectangle, which is a vector of string rows where each row has the same length.
  * This will allow us to navigate in it with rect[x][y], for instance.
  */
-std::vector<std::string> makeRectangle(const char* const* network, int size);
+ESSENTIA_API std::vector<std::string> makeRectangle(const char* const* network, int size);
 
 
 /**
@@ -73,7 +73,7 @@ std::vector<std::string> makeRectangle(const char* const* network, int size);
  * represented as a matrix of @c chars. The only restriction (guarantee?) is
  * that every row (line) has the same number of columns (same length).
  */
-class AsciiCanvas : public std::vector<std::string> {
+class ESSENTIA_API AsciiCanvas : public std::vector<std::string> {
  public:
   // NB: template is only used so that ARRAY_SIZE can work, we only want const char*[] here
   template <typename NetworkType>
@@ -118,7 +118,7 @@ inline std::ostream& operator<<(std::ostream& out, const AsciiCanvas& canvas) {
  *  - '-' for horizontal lines
  *  - '|' for vertical lines
  */
-class AsciiBox {
+class ESSENTIA_API AsciiBox {
  public:
   int posX, posY;    // position of the top-left corner
   int width, height; // size of the box

@@ -25,7 +25,7 @@
 namespace essentia {
 
 
-class AsciiDAGParser {
+class ESSENTIA_API AsciiDAGParser {
  public:
   // NB: template is only used so that ARRAY_SIZE can work, we only want const char*[] here
   template <typename NetworkType>
