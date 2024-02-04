@@ -2,6 +2,7 @@ function(essentia_add_example example_src)
   string( REPLACE ".cpp" "" example ${example_src} )
   add_executable( ${example} ${example_src} )
   target_link_libraries(${example} PRIVATE essentia)
+  target_compile_definitions(${example} PUBLIC ESSENTIA_EXPORTS=0)
 endfunction()
 
 set(ESSENTIA_EXAMPLES_standard
@@ -111,4 +112,5 @@ if(ESSENTIA_USE_VAMP)
     vampwrapper.h)
   target_link_libraries(vamp_essentia PRIVATE essentia ${VAMPSDK_LIBRARIES})
   target_include_directories(vamp_essentia PRIVATE ${VAMPSDK_INCLUDE_DIRS})
+  target_compile_definitions(vamp_essentia PUBLIC ESSENTIA_EXPORTS=0)
 endif()

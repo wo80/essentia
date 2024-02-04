@@ -30,6 +30,7 @@ add_executable(essentia_tests
 
 if(MSVC)
   target_compile_options(essentia_tests PRIVATE /MP)
+  target_compile_definitions(essentia_tests PUBLIC ESSENTIA_EXPORTS=0)
 endif()
 
 target_link_libraries(essentia_tests PRIVATE gtest gtest_main essentia)
