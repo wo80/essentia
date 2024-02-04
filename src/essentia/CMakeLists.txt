@@ -1,6 +1,7 @@
 target_sources(essentia
   PRIVATE
     algorithm.cpp
+    algorithmfactory.cpp
     algorithmfactory_impl.h
     configurable.cpp
     connector.cpp

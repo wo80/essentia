@@ -22,6 +22,8 @@
 
 namespace essentia {
 
+#ifndef _MSC_VER
+
 template <typename BaseAlgorithm>
 EssentiaFactory<BaseAlgorithm>& EssentiaFactory<BaseAlgorithm>::instance() {
   if (!_instance) {
@@ -29,6 +31,8 @@ EssentiaFactory<BaseAlgorithm>& EssentiaFactory<BaseAlgorithm>::instance() {
   }
   return *_instance;
 }
+
+#endif // !_MSC_VER
 
 template <typename BaseAlgorithm>
 std::vector<std::string> EssentiaFactory<BaseAlgorithm>::keys() {
