@@ -70,7 +70,7 @@ else()
   set(ESSENTIA_USE_KISSFFT ON)
 endif()
 
-if(SampleRate_FOUND)
+if(SAMPLERATE_FOUND)
   set(ESSENTIA_USE_LIBSAMPLERATE ON)
 endif()
 
@@ -78,7 +78,7 @@ if(TAGLIB_FOUND)
   set(ESSENTIA_USE_TAGLIB ON)
 endif()
 
-if(Chromaprint_FOUND)
+if(CHROMAPRINT_FOUND)
   set(ESSENTIA_USE_CHROMAPRINT ON)
 endif()
 
@@ -86,7 +86,7 @@ if(YAML_FOUND)
   set(ESSENTIA_USE_YAML ON)
 endif()
 
-if(TensorFlow_FOUND)
+if(TENSORFLOW_FOUND)
   set(ESSENTIA_USE_TENSORFLOW ON)
 endif()
 
@@ -94,7 +94,7 @@ if(VAMPSDK_FOUND)
   set(ESSENTIA_USE_VAMP ON)
 endif()
 
-if(Gaia2_FOUND)
+if(GAIA2_FOUND)
   set(ESSENTIA_USE_GAIA2 ON)
 endif()
 
