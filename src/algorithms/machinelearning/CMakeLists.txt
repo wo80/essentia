@@ -4,6 +4,8 @@ target_sources(essentia
     tensorflowpredict2d.cpp
     tensorflowpredictcrepe.cpp
     tensorflowpredicteffnetdiscogs.cpp
+    tensorflowpredictfsdsinet.cpp
+    tensorflowpredictmaest.cpp
     tensorflowpredictmusicnn.cpp
     tensorflowpredicttempocnn.cpp
     tensorflowpredictvggish.cpp
@@ -11,6 +13,8 @@ target_sources(essentia
     tensorflowpredict2d.h
     tensorflowpredictcrepe.h
     tensorflowpredicteffnetdiscogs.h
+    tensorflowpredictfsdsinet.h
+    tensorflowpredictmaest.h
     tensorflowpredictmusicnn.h
     tensorflowpredicttempocnn.h
     tensorflowpredictvggish.h)

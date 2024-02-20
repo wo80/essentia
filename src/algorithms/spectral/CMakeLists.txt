@@ -56,9 +56,11 @@ target_sources(essentia
 if(ESSENTIA_USE_TENSORFLOW)
   target_sources(essentia
     PRIVATE
+      tensorflowinputfsdsinet.cpp
       tensorflowinputmusicnn.cpp
       tensorflowinputtempocnn.cpp
       tensorflowinputvggish.cpp
+      tensorflowinputfsdsinet.h
       tensorflowinputmusicnn.h
       tensorflowinputtempocnn.h
       tensorflowinputvggish.h)

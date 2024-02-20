@@ -92,6 +92,7 @@
 #include "algorithms/rhythm/superfluxextractor.h"
 #include "algorithms/rhythm/superfluxnovelty.h"
 #include "algorithms/rhythm/superfluxpeaks.h"
+#include "algorithms/rhythm/tempocnn.h"
 #include "algorithms/rhythm/temposcalebands.h"
 #include "algorithms/rhythm/tempotap.h"
 #include "algorithms/rhythm/tempotapdegara.h"
@@ -131,9 +132,19 @@
 #include "algorithms/spectral/spectrumtocent.h"
 #include "algorithms/spectral/strongpeak.h"
 #if ENABLE_TENSORFLOW
+#include "algorithms/spectral/tensorflowinputfsdsinet.h"
 #include "algorithms/spectral/tensorflowinputmusicnn.h"
 #include "algorithms/spectral/tensorflowinputtempocnn.h"
 #include "algorithms/spectral/tensorflowinputvggish.h"
+#include "algorithms/machinelearning/tensorflowpredict.h"
+#include "algorithms/machinelearning/tensorflowpredict2d.h"
+#include "algorithms/machinelearning/tensorflowpredictcrepe.h"
+#include "algorithms/machinelearning/tensorflowpredicteffnetdiscogs.h"
+#include "algorithms/machinelearning/tensorflowpredictfsdsinet.h"
+#include "algorithms/machinelearning/tensorflowpredictmaest.h"
+#include "algorithms/machinelearning/tensorflowpredictmusicnn.h"
+#include "algorithms/machinelearning/tensorflowpredicttempocnn.h"
+#include "algorithms/machinelearning/tensorflowpredictvggish.h"
 #endif
 #include "algorithms/spectral/triangularbands.h"
 #include "algorithms/spectral/triangularbarkbands.h"
@@ -268,6 +279,7 @@
 #include "algorithms/tonal/pitchcontoursmelody.h"
 #include "algorithms/tonal/pitchcontoursmonomelody.h"
 #include "algorithms/tonal/pitchcontoursmultimelody.h"
+#include "algorithms/tonal/pitchcrepe.h"
 #include "algorithms/tonal/pitchfilter.h"
 #include "algorithms/tonal/pitchmelodia.h"
 #include "algorithms/tonal/pitchsaliencefunction.h"
@@ -377,6 +389,7 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<SuperFluxExtractor> regSuperFluxExtractor;
     AlgorithmFactory::Registrar<SuperFluxNovelty> regSuperFluxNovelty;
     AlgorithmFactory::Registrar<SuperFluxPeaks> regSuperFluxPeaks;
+    AlgorithmFactory::Registrar<TempoCNN> regTempoCNN;
     AlgorithmFactory::Registrar<TempoScaleBands> regTempoScaleBands;
     AlgorithmFactory::Registrar<TempoTap> regTempoTap;
     AlgorithmFactory::Registrar<TempoTapDegara> regTempoTapDegara;
@@ -416,9 +429,19 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<SpectrumToCent> regSpectrumToCent;
     AlgorithmFactory::Registrar<StrongPeak> regStrongPeak;
 #if ENABLE_TENSORFLOW
+    AlgorithmFactory::Registrar<TensorflowInputFSDSINet> regTensorflowInputFSDSINet;
     AlgorithmFactory::Registrar<TensorflowInputMusiCNN> regTensorflowInputMusiCNN;
     AlgorithmFactory::Registrar<TensorflowInputTempoCNN> regTensorflowInputTempoCNN;
     AlgorithmFactory::Registrar<TensorflowInputVGGish> regTensorflowInputVGGish;
+    AlgorithmFactory::Registrar<TensorflowPredict> regTensorflowPredict;
+    AlgorithmFactory::Registrar<TensorflowPredict2D> regTensorflowPredict2D;
+    AlgorithmFactory::Registrar<TensorflowPredictCREPE> regTensorflowPredictCREPE;
+    AlgorithmFactory::Registrar<TensorflowPredictEffnetDiscogs> regTensorflowPredictEffnetDiscogs;
+    AlgorithmFactory::Registrar<TensorflowPredictFSDSINet> regTensorflowPredictFSDSINet;
+    AlgorithmFactory::Registrar<TensorflowPredictMAEST> regTensorflowPredictMAEST;
+    AlgorithmFactory::Registrar<TensorflowPredictMusiCNN> regTensorflowPredictMusiCNN;
+    AlgorithmFactory::Registrar<TensorflowPredictTempoCNN> regTensorflowPredictTempoCNN;
+    AlgorithmFactory::Registrar<TensorflowPredictVGGish> regTensorflowPredictVGGish;
 #endif
     AlgorithmFactory::Registrar<TriangularBands> regTriangularBands;
     AlgorithmFactory::Registrar<TriangularBarkBands> regTriangularBarkBands;
@@ -545,6 +568,7 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<PitchContoursMelody> regPitchContoursMelody;
     AlgorithmFactory::Registrar<PitchContoursMonoMelody> regPitchContoursMonoMelody;
     AlgorithmFactory::Registrar<PitchContoursMultiMelody> regPitchContoursMultiMelody;
+    AlgorithmFactory::Registrar<PitchCREPE> regPitchCREPE;
     AlgorithmFactory::Registrar<PitchFilter> regPitchFilter;
     AlgorithmFactory::Registrar<PitchMelodia> regPitchMelodia;
     AlgorithmFactory::Registrar<PitchSalienceFunction> regPitchSalienceFunction;
@@ -644,6 +668,7 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<SuperFluxExtractor, essentia::standard::SuperFluxExtractor> regSuperFluxExtractor;
     AlgorithmFactory::Registrar<SuperFluxNovelty, essentia::standard::SuperFluxNovelty> regSuperFluxNovelty;
     AlgorithmFactory::Registrar<SuperFluxPeaks, essentia::standard::SuperFluxPeaks> regSuperFluxPeaks;
+    AlgorithmFactory::Registrar<TempoCNN, essentia::standard::TempoCNN> regTempoCNN;
     AlgorithmFactory::Registrar<TempoScaleBands, essentia::standard::TempoScaleBands> regTempoScaleBands;
     AlgorithmFactory::Registrar<TempoTap, essentia::standard::TempoTap> regTempoTap;
     AlgorithmFactory::Registrar<TempoTapDegara, essentia::standard::TempoTapDegara> regTempoTapDegara;
@@ -683,9 +708,19 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<SpectrumToCent, essentia::standard::SpectrumToCent> regSpectrumToCent;
     AlgorithmFactory::Registrar<StrongPeak, essentia::standard::StrongPeak> regStrongPeak;
 #if ENABLE_TENSORFLOW
+    AlgorithmFactory::Registrar<TensorflowInputFSDSINet, essentia::standard::TensorflowInputFSDSINet> regTensorflowInputFSDSINet;
     AlgorithmFactory::Registrar<TensorflowInputMusiCNN, essentia::standard::TensorflowInputMusiCNN> regTensorflowInputMusiCNN;
     AlgorithmFactory::Registrar<TensorflowInputTempoCNN, essentia::standard::TensorflowInputTempoCNN> regTensorflowInputTempoCNN;
     AlgorithmFactory::Registrar<TensorflowInputVGGish, essentia::standard::TensorflowInputVGGish> regTensorflowInputVGGish;
+    AlgorithmFactory::Registrar<TensorflowPredict, essentia::standard::TensorflowPredict> regTensorflowPredict;
+    AlgorithmFactory::Registrar<TensorflowPredict2D, essentia::standard::TensorflowPredict2D> regTensorflowPredict2D;
+    AlgorithmFactory::Registrar<TensorflowPredictCREPE, essentia::standard::TensorflowPredictCREPE> regTensorflowPredictCREPE;
+    AlgorithmFactory::Registrar<TensorflowPredictEffnetDiscogs, essentia::standard::TensorflowPredictEffnetDiscogs> regTensorflowPredictEffnetDiscogs;
+    AlgorithmFactory::Registrar<TensorflowPredictFSDSINet, essentia::standard::TensorflowPredictFSDSINet> regTensorflowPredictFSDSINet;
+    AlgorithmFactory::Registrar<TensorflowPredictMAEST, essentia::standard::TensorflowPredictMAEST> regTensorflowPredictMAEST;
+    AlgorithmFactory::Registrar<TensorflowPredictMusiCNN, essentia::standard::TensorflowPredictMusiCNN> regTensorflowPredictMusiCNN;
+    AlgorithmFactory::Registrar<TensorflowPredictTempoCNN, essentia::standard::TensorflowPredictTempoCNN> regTensorflowPredictTempoCNN;
+    AlgorithmFactory::Registrar<TensorflowPredictVGGish, essentia::standard::TensorflowPredictVGGish> regTensorflowPredictVGGish;
 #endif
     AlgorithmFactory::Registrar<TriangularBands, essentia::standard::TriangularBands> regTriangularBands;
     AlgorithmFactory::Registrar<TriangularBarkBands, essentia::standard::TriangularBarkBands> regTriangularBarkBands;
@@ -817,6 +852,7 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<PitchContoursMelody, essentia::standard::PitchContoursMelody> regPitchContoursMelody;
     AlgorithmFactory::Registrar<PitchContoursMonoMelody, essentia::standard::PitchContoursMonoMelody> regPitchContoursMonoMelody;
     AlgorithmFactory::Registrar<PitchContoursMultiMelody, essentia::standard::PitchContoursMultiMelody> regPitchContoursMultiMelody;
+    AlgorithmFactory::Registrar<PitchCREPE, essentia::standard::PitchCREPE> regPitchCREPE;
     AlgorithmFactory::Registrar<PitchFilter, essentia::standard::PitchFilter> regPitchFilter;
     AlgorithmFactory::Registrar<PitchMelodia, essentia::standard::PitchMelodia> regPitchMelodia;
     AlgorithmFactory::Registrar<PitchSalienceFunction, essentia::standard::PitchSalienceFunction> regPitchSalienceFunction;
