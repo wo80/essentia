@@ -33,6 +33,20 @@ jobs:
           xcopy /s /y ffmpeg-6.1.1-full_build-shared\include include
           xcopy /s /y ffmpeg-6.1.1-full_build-shared\lib lib
 
+      - name: Install TensorFlow
+        run: |
+          cd external
+          curl -L -o libtensorflow-cpu-windows-x86_64-2.15.0.zip https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-windows-x86_64-2.15.0.zip
+          tar -xf libtensorflow-cpu-windows-x86_64-2.15.0.zip
+          xcopy /s /y lib\tensorflow.dll bin
+          # Download missing headers
+          set TF_TAG=https://raw.githubusercontent.com/tensorflow/tensorflow/r2.15-66681ea34be
+          curl --create-dirs -o include\tensorflow\c\tf_buffer.h %TF_TAG%/tensorflow/c/tf_buffer.h
+          curl --create-dirs -o include\tensorflow\c\tf_tensor_helper.h %TF_TAG%/tensorflow/c/tf_tensor_helper.h
+          curl --create-dirs -o include\tsl\c\tsl_status.h %TF_TAG%/third_party/xla/third_party/tsl/tsl/c/tsl_status.h
+          curl --create-dirs -o include\tsl\platform\ctstring.h %TF_TAG%/third_party/xla/third_party/tsl/tsl/platform/ctstring.h
+          curl --create-dirs -o include\tsl\platform\ctstring_internal.h %TF_TAG%/third_party/xla/third_party/tsl/tsl/platform/ctstring_internal.h
+
       - name: Install Eigen3
         run: |
           cd external
@@ -40,7 +54,7 @@ jobs:
           curl -L -o eigen-3.4.0.tar.gz https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
           tar -xf eigen-3.4.0.tar.gz
           cd eigen-3.4.0
-          cmake -B build -DEIGEN_BUILD_DOC=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+          cmake -B build -DEIGEN_BUILD_DOC=OFF -DBUILD_TESTING=OFF -DCMAKE_Fortran_COMPILER="" -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
           cmake --build build --config ${{env.BUILD_TYPE}}
           cmake --install build --config ${{env.BUILD_TYPE}}
 
@@ -101,7 +115,7 @@ jobs:
       - name: Build Essentia
         run: |
           set PATH=%PATH%;%CD%\external\bin
-          cmake -B build -DCMAKE_PREFIX_PATH=%CD%\external
+          cmake -B build -DUSE_TENSORFLOW=ON -DCMAKE_PREFIX_PATH=%CD%\external
           cmake --build build --config ${{env.BUILD_TYPE}} --parallel
 
       - name: Test Essentia
