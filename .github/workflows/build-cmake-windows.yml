@@ -2,6 +2,10 @@ name: Build with CMake
 
 on: [push, pull_request]
 
+env:
+  # CMake build type (Debug, Release, RelWithDebInfo or MinSizeRel)
+  BUILD_TYPE: Debug
+
 jobs:
   windows:
     name: Windows (build and test)
@@ -37,8 +41,8 @@ jobs:
           tar -xf eigen-3.4.0.tar.gz
           cd eigen-3.4.0
           cmake -B build -DEIGEN_BUILD_DOC=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
-          cmake --build build --config Release
-          cmake --install build
+          cmake --build build --config ${{env.BUILD_TYPE}}
+          cmake --install build --config ${{env.BUILD_TYPE}}
 
       - name: Install FFTW
         run: |
@@ -48,11 +52,11 @@ jobs:
           tar -xf fftw-3.3.10.tar.gz
           cd fftw-3.3.10
           cmake -B build -DBUILD_TESTS=OFF -DDISABLE_FORTRAN=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
-          cmake --build build --config Release --parallel
-          cmake --install build
+          cmake --build build --config ${{env.BUILD_TYPE}} --parallel
+          cmake --install build --config ${{env.BUILD_TYPE}}
           cmake -B build -DBUILD_TESTS=OFF -DDISABLE_FORTRAN=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=ON
-          cmake --build build --clean-first --config Release --parallel
-          cmake --install build
+          cmake --build build --clean-first --config ${{env.BUILD_TYPE}} --parallel
+          cmake --install build --config ${{env.BUILD_TYPE}}
 
       - name: Install libsamplerate
         run: |
@@ -61,8 +65,8 @@ jobs:
           git clone https://github.com/libsndfile/libsamplerate.git
           cd libsamplerate
           cmake -B build -DLIBSAMPLERATE_EXAMPLES=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
-          cmake --build build --config Release
-          cmake --install build
+          cmake --build build --config ${{env.BUILD_TYPE}}
+          cmake --install build --config ${{env.BUILD_TYPE}}
 
       - name: Install TagLib
         run: |
@@ -71,8 +75,8 @@ jobs:
           git clone --recurse-submodules https://github.com/taglib/taglib.git
           cd taglib
           cmake -B build -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF -DBUILD_TESTING=OFF -DWITH_ZLIB=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
-          cmake --build build --config Release --parallel
-          cmake --install build
+          cmake --build build --config ${{env.BUILD_TYPE}} --parallel
+          cmake --install build --config ${{env.BUILD_TYPE}}
 
       - name: Install YAML
         run: |
@@ -81,8 +85,8 @@ jobs:
           git clone https://github.com/yaml/libyaml.git
           cd libyaml
           cmake -B build -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
-          cmake --build build --config Release
-          cmake --install build
+          cmake --build build --config ${{env.BUILD_TYPE}}
+          cmake --install build --config ${{env.BUILD_TYPE}}
 
       - name: Install Chromaprint
         run: |
@@ -91,16 +95,16 @@ jobs:
           git clone https://github.com/acoustid/chromaprint.git
           cd chromaprint
           cmake -B build -DBUILD_TOOLS=OFF -DBUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
-          cmake --build build --config Release
-          cmake --install build
+          cmake --build build --config ${{env.BUILD_TYPE}}
+          cmake --install build --config ${{env.BUILD_TYPE}}
 
       - name: Build Essentia
         run: |
           set PATH=%PATH%;%CD%\external\bin
           cmake -B build -DCMAKE_PREFIX_PATH=%CD%\external
-          cmake --build build --config Release --parallel
+          cmake --build build --config ${{env.BUILD_TYPE}} --parallel
 
       - name: Test Essentia
         run: |
           set PATH=%PATH%;%CD%\external\bin
-          ctest --test-dir build --output-on-failure -C Release
+          ctest --test-dir build --output-on-failure -C ${{env.BUILD_TYPE}}
