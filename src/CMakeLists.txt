@@ -21,7 +21,7 @@ if(ESSENTIA_USE_FFMPEG)
 endif()
 
 if(ESSENTIA_USE_FFTW)
-  include_directories(${FFTW3_INCLUDE_DIRS})
+  include_directories(${FFTW3_INCLUDE_DIR})
   target_link_libraries(essentia PUBLIC ${FFTW3_LIBRARIES} ${FFTW3_FFTWF_LIBRARY})
   set(ENABLE_FFTW ON)
 elseif(ESSENTIA_USE_VDSP)
