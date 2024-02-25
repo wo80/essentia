@@ -1,11 +1,9 @@
 include(FindPackageHandleStandardArgs)
 
-if (NOT WIN32)
-  find_package(PkgConfig)
-  if (PKG_CONFIG_FOUND)
-    pkg_check_modules(SAMPLERATE samplerate)
-  endif ()
-endif (NOT WIN32)
+find_package(PkgConfig QUIET)
+if (PKG_CONFIG_FOUND)
+  pkg_check_modules(SAMPLERATE samplerate)
+endif ()
 
 if ( NOT SAMPLERATE_FOUND )
   find_path(SAMPLERATE_INCLUDE_DIRS NAMES samplerate.h)

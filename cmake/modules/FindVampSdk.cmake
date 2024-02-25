@@ -1,11 +1,9 @@
 include(FindPackageHandleStandardArgs)
 
-if (NOT WIN32)
-    find_package(PkgConfig)
-    if (PKG_CONFIG_FOUND)
-         pkg_check_modules(VAMPSDK vamp-sdk)
-    endif ()
-endif (NOT WIN32)
+find_package(PkgConfig QUIET)
+if (PKG_CONFIG_FOUND)
+  pkg_check_modules(VAMPSDK vamp-sdk)
+endif ()
 
 if ( VAMPSDK_INCLUDEDIR AND NOT VAMPSDK_INCLUDE_DIRS )
   set (VAMPSDK_INCLUDE_DIRS ${VAMPSDK_INCLUDEDIR})

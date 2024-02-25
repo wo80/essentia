@@ -1,11 +1,9 @@
 include(FindPackageHandleStandardArgs)
 
-if (NOT WIN32)
-    find_package(PkgConfig)
-    if (PKG_CONFIG_FOUND)
-         pkg_check_modules(TENSORFLOW libtensorflow)
-    endif ()
-endif (NOT WIN32)
+find_package(PkgConfig QUIET)
+if (PKG_CONFIG_FOUND)
+  pkg_check_modules(TENSORFLOW libtensorflow)
+endif ()
 
 if ( NOT TENSORFLOW_FOUND )
   find_path(TENSORFLOW_INCLUDE_DIRS NAMES tensorflow/c/c_api.h)

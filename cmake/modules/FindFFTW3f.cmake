@@ -1,11 +1,9 @@
 include(FindPackageHandleStandardArgs)
 
-if (NOT WIN32)
-  find_package(PkgConfig)
-  if (PKG_CONFIG_FOUND)
-    pkg_check_modules(FFTW3f fftw3f)
-  endif ()
-endif (NOT WIN32)
+find_package(PkgConfig QUIET)
+if (PKG_CONFIG_FOUND)
+  pkg_check_modules(FFTW3f fftw3f)
+endif ()
 
 if ( NOT FFTW3f_FOUND )
   find_path(FFTW3f_INCLUDE_DIRS NAMES fftw3.h)

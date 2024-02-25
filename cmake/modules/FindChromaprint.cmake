@@ -1,11 +1,9 @@
 include(FindPackageHandleStandardArgs)
 
-if (NOT WIN32)
-  find_package(PkgConfig)
-  if (PKG_CONFIG_FOUND)
-    pkg_check_modules(CHROMAPRINT libchromaprint)
-  endif ()
-endif (NOT WIN32)
+find_package(PkgConfig QUIET)
+if (PKG_CONFIG_FOUND)
+  pkg_check_modules(CHROMAPRINT libchromaprint)
+endif ()
 
 if ( NOT CHROMAPRINT_FOUND )
   find_path(CHROMAPRINT_INCLUDE_DIRS NAMES chromaprint.h)
