@@ -3,7 +3,7 @@ include(FindPackageHandleStandardArgs)
 if (NOT WIN32)
   find_package(PkgConfig)
   if (PKG_CONFIG_FOUND)
-    pkg_check_modules(FFTW3f samplerate)
+    pkg_check_modules(FFTW3f fftw3f)
   endif ()
 endif (NOT WIN32)
 

@@ -103,18 +103,3 @@ endif()
 if(ESSENTIA_USE_GAIA2)
   essentia_add_example(streaming_extractor_music_svm.cpp)
 endif()
-
-# VAMP plugin
-if(ESSENTIA_USE_VAMP)
-  add_library(vamp_essentia SHARED
-    vampplugins.cpp
-    vamppluginsextra.cpp
-    vampwrapper.cpp
-    vampeasywrapper.h
-    vampwrapper.h)
-  target_link_libraries(vamp_essentia PRIVATE essentia ${VAMPSDK_LIBRARIES})
-  target_include_directories(vamp_essentia PRIVATE ${VAMPSDK_INCLUDE_DIRS})
-  if(BUILD_SHARED_LIBS)
-    target_compile_definitions(vamp_essentia PUBLIC ESSENTIA_EXPORTS=0)
-  endif()
-endif()

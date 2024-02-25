@@ -95,3 +95,18 @@ endif()
 if(BUILD_PYTHON_BINDINGS)
   add_subdirectory(python)
 endif()
+
+# VAMP plugin
+if(ESSENTIA_USE_VAMP)
+  add_library(vamp_essentia SHARED
+    examples/vampplugins.cpp
+    examples/vamppluginsextra.cpp
+    examples/vampwrapper.cpp
+    examples/vampeasywrapper.h
+    examples/vampwrapper.h)
+  target_link_libraries(vamp_essentia PRIVATE essentia ${VAMPSDK_LIBRARIES})
+  target_include_directories(vamp_essentia PRIVATE ${VAMPSDK_INCLUDE_DIRS})
+  if(BUILD_SHARED_LIBS)
+    target_compile_definitions(vamp_essentia PUBLIC ESSENTIA_EXPORTS=0)
+  endif()
+endif()
