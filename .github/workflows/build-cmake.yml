@@ -7,6 +7,50 @@ env:
   BUILD_TYPE: Debug
 
 jobs:
+  ubuntu:
+    name: Ubuntu (build and test)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: Install dependencies
+        run: sudo apt install -y cmake libeigen3-dev libyaml-dev libfftw3-dev libavcodec-dev libavformat-dev libavutil-dev libswresample-dev libsamplerate0-dev libtag1-dev libchromaprint-dev
+  
+      - name: Configure
+        run: cmake -B build
+
+      - name: Build
+        run: cmake --build build --config ${{env.BUILD_TYPE}}
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure -C ${{env.BUILD_TYPE}}
+
+  macos:
+    name: MacOS (build and test)
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: Install dependencies
+        run: brew install cmake eigen libyaml fftw ffmpeg libsamplerate libtag chromaprint
+        
+      - name: Configure
+        run: cmake -B build
+
+      - name: Build
+        run: cmake --build build --config ${{env.BUILD_TYPE}}
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure -C ${{env.BUILD_TYPE}}
+
   windows:
     name: Windows (build and test)
     runs-on: windows-latest
