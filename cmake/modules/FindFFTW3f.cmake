@@ -1,0 +1,34 @@
+include(FindPackageHandleStandardArgs)
+
+if (NOT WIN32)
+  find_package(PkgConfig)
+  if (PKG_CONFIG_FOUND)
+    pkg_check_modules(FFTW3f samplerate)
+  endif ()
+endif (NOT WIN32)
+
+if ( NOT FFTW3f_FOUND )
+  find_path(FFTW3f_INCLUDE_DIRS NAMES fftw3.h)
+  find_library(FFTW3f_LIBRARIES NAMES libfftw3f fftw3f)
+
+  if ( NOT "${FFTW3f_LIBRARIES}" STREQUAL "")
+    set (FFTW3f_FOUND TRUE)
+    set (FFTW3f_LINK_LIBRARIES ${FFTW3f_LINK_LIBRARIES} ${FFTW3f_LIBRARIES})
+  endif ()
+endif ()
+
+if ( FFTW3f_INCLUDEDIR AND NOT FFTW3f_INCLUDE_DIRS )
+  set (FFTW3f_INCLUDE_DIRS ${FFTW3f_INCLUDEDIR})
+endif ()
+
+find_package_handle_standard_args(FFTW3f DEFAULT_MSG FFTW3f_LIBRARIES FFTW3f_INCLUDE_DIRS)
+
+if ( FFTW3f_FOUND AND NOT TARGET FFTW3::fftw3f )
+  add_library(FFTW3::fftw3f INTERFACE IMPORTED GLOBAL)
+  set_target_properties(FFTW3::fftw3f
+    PROPERTIES
+      VERSION "${FFTW3f_VERSION}"
+      LOCATION "${FFTW3f_LINK_LIBRARIES}"
+      INTERFACE_INCLUDE_DIRECTORIES "${FFTW3f_INCLUDE_DIRS}"
+      INTERFACE_LINK_LIBRARIES "${FFTW3f_LINK_LIBRARIES}")
+endif ()
