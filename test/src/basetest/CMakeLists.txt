@@ -1,10 +1,10 @@
 include(GoogleTest)
 
-add_subdirectory("${PROJECT_SOURCE_DIR}/test/3rdparty/googletest" "test/3rdparty/googletest")
-
 set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
 set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 mark_as_advanced(BUILD_GMOCK INSTALL_GTEST GTEST_HAS_ABSL)
+
+add_subdirectory("${PROJECT_SOURCE_DIR}/test/3rdparty/googletest" "test/3rdparty/googletest")
 
 set_target_properties(gtest PROPERTIES FOLDER extern)
 set_target_properties(gtest_main PROPERTIES FOLDER extern)
