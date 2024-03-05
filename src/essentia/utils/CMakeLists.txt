@@ -2,7 +2,6 @@ target_sources(essentia
   PRIVATE
     asciidag.cpp
     asciidagparser.cpp
-    jsonconvert.cpp
     ringbufferimpl.h
     synth_utils.cpp
     asciidag.h
@@ -11,7 +10,6 @@ target_sources(essentia
     betools.h
     bpfutil.h
     bpmutil.h
-    jsonconvert.h
     metadatautils.h
     output.h
     peak.h
@@ -31,6 +29,8 @@ endif()
 if(ESSENTIA_USE_YAML)
   target_sources(essentia
     PRIVATE
+      jsonconvert.cpp
+      jsonconvert.h
       yamlast.cpp
       yamlast.h
   )
