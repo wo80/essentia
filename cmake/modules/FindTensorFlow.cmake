@@ -2,7 +2,7 @@ include(FindPackageHandleStandardArgs)
 
 find_package(PkgConfig QUIET)
 if (PKG_CONFIG_FOUND)
-  pkg_check_modules(TENSORFLOW libtensorflow)
+  pkg_check_modules(TENSORFLOW libtensorflow QUIET)
 endif ()
 
 if ( NOT TENSORFLOW_FOUND )
@@ -15,4 +15,11 @@ if ( NOT TENSORFLOW_FOUND )
   endif ()
 endif ()
 
-find_package_handle_standard_args(TensorFlow DEFAULT_MSG TENSORFLOW_LIBRARIES TENSORFLOW_INCLUDE_DIRS)
+find_package_handle_standard_args(TensorFlow
+  FOUND_VAR
+    TENSORFLOW_FOUND
+  REQUIRED_VARS
+    TENSORFLOW_LINK_LIBRARIES
+    TENSORFLOW_INCLUDE_DIRS
+  VERSION_VAR
+    TENSORFLOW_VERSION)

@@ -2,7 +2,7 @@ include(FindPackageHandleStandardArgs)
 
 find_package(PkgConfig QUIET)
 if (PKG_CONFIG_FOUND)
-  pkg_check_modules(YAML yaml-0.1)
+  pkg_check_modules(YAML yaml-0.1 QUIET)
 endif ()
 
 if ( NOT YAML_FOUND )
@@ -19,7 +19,14 @@ if ( YAML_INCLUDEDIR AND NOT YAML_INCLUDE_DIRS )
   set (YAML_INCLUDE_DIRS ${YAML_INCLUDEDIR})
 endif ()
 
-find_package_handle_standard_args(YAML DEFAULT_MSG YAML_LIBRARIES YAML_INCLUDE_DIRS)
+find_package_handle_standard_args(YAML
+  FOUND_VAR
+    YAML_FOUND
+  REQUIRED_VARS
+    YAML_LINK_LIBRARIES
+    YAML_INCLUDE_DIRS
+  VERSION_VAR
+    YAML_VERSION)
 
 if ( YAML_FOUND AND NOT TARGET yaml )
   add_library(yaml INTERFACE IMPORTED GLOBAL)

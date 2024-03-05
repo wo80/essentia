@@ -2,7 +2,7 @@ include(FindPackageHandleStandardArgs)
 
 find_package(PkgConfig QUIET)
 if (PKG_CONFIG_FOUND)
-  pkg_check_modules(CHROMAPRINT libchromaprint)
+  pkg_check_modules(CHROMAPRINT libchromaprint QUIET)
 endif ()
 
 if ( NOT CHROMAPRINT_FOUND )
@@ -19,4 +19,11 @@ if ( CHROMAPRINT_INCLUDEDIR AND NOT CHROMAPRINT_INCLUDE_DIRS )
   set (CHROMAPRINT_INCLUDE_DIRS ${CHROMAPRINT_INCLUDEDIR})
 endif ()
 
-find_package_handle_standard_args(Chromaprint DEFAULT_MSG CHROMAPRINT_LIBRARIES CHROMAPRINT_INCLUDE_DIRS)
+find_package_handle_standard_args(Chromaprint
+  FOUND_VAR
+    CHROMAPRINT_FOUND
+  REQUIRED_VARS
+    CHROMAPRINT_LINK_LIBRARIES
+    CHROMAPRINT_INCLUDE_DIRS
+  VERSION_VAR
+    CHROMAPRINT_VERSION)

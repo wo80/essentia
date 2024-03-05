@@ -2,7 +2,7 @@ include(FindPackageHandleStandardArgs)
 
 find_package(PkgConfig QUIET)
 if (PKG_CONFIG_FOUND)
-  pkg_check_modules(SAMPLERATE samplerate)
+  pkg_check_modules(SAMPLERATE samplerate QUIET)
 endif ()
 
 if ( NOT SAMPLERATE_FOUND )
@@ -19,7 +19,14 @@ if ( SAMPLERATE_INCLUDEDIR AND NOT SAMPLERATE_INCLUDE_DIRS )
   set (SAMPLERATE_INCLUDE_DIRS ${SAMPLERATE_INCLUDEDIR})
 endif ()
   
-find_package_handle_standard_args(SampleRate DEFAULT_MSG SAMPLERATE_LIBRARIES SAMPLERATE_INCLUDE_DIRS)
+find_package_handle_standard_args(SampleRate
+  FOUND_VAR
+    SAMPLERATE_FOUND
+  REQUIRED_VARS
+    SAMPLERATE_LINK_LIBRARIES
+    SAMPLERATE_INCLUDE_DIRS
+  VERSION_VAR
+    SAMPLERATE_VERSION)
 
 if ( SAMPLERATE_FOUND AND NOT TARGET SampleRate::samplerate )
   add_library(SampleRate::samplerate INTERFACE IMPORTED GLOBAL)

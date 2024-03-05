@@ -2,7 +2,7 @@ include(FindPackageHandleStandardArgs)
 
 find_package(PkgConfig QUIET)
 if (PKG_CONFIG_FOUND)
-  pkg_check_modules(VAMPSDK vamp-sdk)
+  pkg_check_modules(VAMPSDK vamp-sdk QUIET)
 endif ()
 
 if ( VAMPSDK_INCLUDEDIR AND NOT VAMPSDK_INCLUDE_DIRS )
@@ -19,4 +19,11 @@ if ( NOT VAMPSDK_FOUND )
   endif ()
 endif ()
 
-find_package_handle_standard_args(VampSdk DEFAULT_MSG VAMPSDK_LIBRARIES VAMPSDK_INCLUDE_DIRS)
+find_package_handle_standard_args(VampSdk
+  FOUND_VAR
+    VAMPSDK_FOUND
+  REQUIRED_VARS
+    VAMPSDK_LINK_LIBRARIES
+    VAMPSDK_INCLUDE_DIRS
+  VERSION_VAR
+    VAMPSDK_VERSION)

@@ -2,7 +2,7 @@ include(FindPackageHandleStandardArgs)
 
 find_package(PkgConfig QUIET)
 if (PKG_CONFIG_FOUND)
-  pkg_check_modules(FFTW3f fftw3f)
+  pkg_check_modules(FFTW3f fftw3f QUIET)
 endif ()
 
 if ( NOT FFTW3f_FOUND )
@@ -19,7 +19,14 @@ if ( FFTW3f_INCLUDEDIR AND NOT FFTW3f_INCLUDE_DIRS )
   set (FFTW3f_INCLUDE_DIRS ${FFTW3f_INCLUDEDIR})
 endif ()
 
-find_package_handle_standard_args(FFTW3f DEFAULT_MSG FFTW3f_LIBRARIES FFTW3f_INCLUDE_DIRS)
+find_package_handle_standard_args(FFTW3f
+  FOUND_VAR
+    FFTW3f_FOUND
+  REQUIRED_VARS
+    FFTW3f_LINK_LIBRARIES
+    FFTW3f_INCLUDE_DIRS
+  VERSION_VAR
+    FFTW3f_VERSION)
 
 if ( FFTW3f_FOUND AND NOT TARGET FFTW3::fftw3f )
   add_library(FFTW3::fftw3f INTERFACE IMPORTED GLOBAL)
