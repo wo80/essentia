@@ -1,7 +1,14 @@
-if (BUILD_SHARED_LIBS AND MSVC)
-  #set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-  #set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
-  set(WINDOWS_EXPORT_ALL_SYMBOLS YES)
+if (MSVC)
+  if (BUILD_SHARED_LIBS)
+    # In case of errors reporting missing exports, this option might help.
+    #set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
+  endif()
+  
+  if (ENABLE_STATIC_DEPENDENCIES)
+    # These are necessary to properly set up the __declspec attribute. It might be better
+    # to have separate options: ENABLE_STATIC_CHROMAPRINT, ENABLE_STATIC_YAML etc.
+    add_compile_definitions(CHROMAPRINT_NODLL YAML_DECLARE_STATIC TAGLIB_STATIC)
+  endif()
 endif()
 
 add_library(essentia)

@@ -21,6 +21,7 @@ option(BUILD_VAMP_PLUGIN "Build VAMP plugin" OFF)
 option(USE_KISSFFT "Use internal KissFFT" OFF)
 option(USE_TENSORFLOW "Use TensorFlow" OFF)
 option(USE_GAIA2 "Use Gaia2" OFF)
+option(ENABLE_STATIC_DEPENDENCIES "MSVC only: enable linking against static dependencies" OFF)
 
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 find_package(FFmpeg)
