@@ -109,11 +109,8 @@ jobs:
           curl -L -o fftw-3.3.10.tar.gz https://www.fftw.org/fftw-3.3.10.tar.gz
           tar -xf fftw-3.3.10.tar.gz
           cd fftw-3.3.10
-          cmake -B build -DBUILD_TESTS=OFF -DDISABLE_FORTRAN=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
-          cmake --build build --config ${{env.BUILD_TYPE}} --parallel
-          cmake --install build --config ${{env.BUILD_TYPE}}
           cmake -B build -DBUILD_TESTS=OFF -DDISABLE_FORTRAN=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=ON
-          cmake --build build --clean-first --config ${{env.BUILD_TYPE}} --parallel
+          cmake --build build --config ${{env.BUILD_TYPE}} --parallel
           cmake --install build --config ${{env.BUILD_TYPE}}
 
       - name: Install libsamplerate
