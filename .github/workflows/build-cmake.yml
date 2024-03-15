@@ -64,102 +64,18 @@ jobs:
         with:
           submodules: 'true'
 
-      - name: Install FFmpeg
-        run: |
-          mkdir external
-          cd external
-          mkdir bin
-          mkdir include
-          mkdir lib
-          curl -L -o ffmpeg-6.1.1-full_build-shared.zip https://github.com/GyanD/codexffmpeg/releases/download/6.1.1/ffmpeg-6.1.1-full_build-shared.zip
-          tar -xf ffmpeg-6.1.1-full_build-shared.zip
-          xcopy /s /y ffmpeg-6.1.1-full_build-shared\bin bin
-          xcopy /s /y ffmpeg-6.1.1-full_build-shared\include include
-          xcopy /s /y ffmpeg-6.1.1-full_build-shared\lib lib
+      - name: Install dependencies
+        run: .\packaging\build-dependencies-msvc.bat
+        
+      - name: Configure
+        run: cmake -B build -DUSE_TENSORFLOW=ON -DCMAKE_PREFIX_PATH=%CD%\packaging\msvc
 
-      - name: Install TensorFlow
+      - name: Build
         run: |
-          cd external
-          curl -L -o libtensorflow-cpu-windows-x86_64-2.15.0.zip https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-windows-x86_64-2.15.0.zip
-          tar -xf libtensorflow-cpu-windows-x86_64-2.15.0.zip
-          xcopy /s /y lib\tensorflow.dll bin
-          # Download missing headers
-          set TF_TAG=https://raw.githubusercontent.com/tensorflow/tensorflow/r2.15-66681ea34be
-          curl --create-dirs -o include\tensorflow\c\tf_buffer.h %TF_TAG%/tensorflow/c/tf_buffer.h
-          curl --create-dirs -o include\tensorflow\c\tf_tensor_helper.h %TF_TAG%/tensorflow/c/tf_tensor_helper.h
-          curl --create-dirs -o include\tsl\c\tsl_status.h %TF_TAG%/third_party/xla/third_party/tsl/tsl/c/tsl_status.h
-          curl --create-dirs -o include\tsl\platform\ctstring.h %TF_TAG%/third_party/xla/third_party/tsl/tsl/platform/ctstring.h
-          curl --create-dirs -o include\tsl\platform\ctstring_internal.h %TF_TAG%/third_party/xla/third_party/tsl/tsl/platform/ctstring_internal.h
-
-      - name: Install Eigen3
-        run: |
-          cd external
-          set INSTALL_PREFIX=%CD%
-          curl -L -o eigen-3.4.0.tar.gz https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
-          tar -xf eigen-3.4.0.tar.gz
-          cd eigen-3.4.0
-          cmake -B build -DEIGEN_BUILD_DOC=OFF -DBUILD_TESTING=OFF -DCMAKE_Fortran_COMPILER="" -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
-          cmake --build build --config ${{env.BUILD_TYPE}}
-          cmake --install build --config ${{env.BUILD_TYPE}}
-
-      - name: Install FFTW
-        run: |
-          cd external
-          set INSTALL_PREFIX=%CD%
-          curl -L -o fftw-3.3.10.tar.gz https://www.fftw.org/fftw-3.3.10.tar.gz
-          tar -xf fftw-3.3.10.tar.gz
-          cd fftw-3.3.10
-          cmake -B build -DBUILD_TESTS=OFF -DDISABLE_FORTRAN=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=ON
-          cmake --build build --config ${{env.BUILD_TYPE}} --parallel
-          cmake --install build --config ${{env.BUILD_TYPE}}
-
-      - name: Install libsamplerate
-        run: |
-          cd external
-          set INSTALL_PREFIX=%CD%
-          git clone https://github.com/libsndfile/libsamplerate.git
-          cd libsamplerate
-          cmake -B build -DLIBSAMPLERATE_EXAMPLES=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
-          cmake --build build --config ${{env.BUILD_TYPE}}
-          cmake --install build --config ${{env.BUILD_TYPE}}
-
-      - name: Install TagLib
-        run: |
-          cd external
-          set INSTALL_PREFIX=%CD%
-          git clone --recurse-submodules https://github.com/taglib/taglib.git
-          cd taglib
-          cmake -B build -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF -DBUILD_TESTING=OFF -DWITH_ZLIB=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
-          cmake --build build --config ${{env.BUILD_TYPE}} --parallel
-          cmake --install build --config ${{env.BUILD_TYPE}}
-
-      - name: Install YAML
-        run: |
-          cd external
-          set INSTALL_PREFIX=%CD%
-          git clone https://github.com/yaml/libyaml.git
-          cd libyaml
-          cmake -B build -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
-          cmake --build build --config ${{env.BUILD_TYPE}}
-          cmake --install build --config ${{env.BUILD_TYPE}}
-
-      - name: Install Chromaprint
-        run: |
-          cd external
-          set INSTALL_PREFIX=%CD%
-          git clone https://github.com/acoustid/chromaprint.git
-          cd chromaprint
-          cmake -B build -DBUILD_TOOLS=OFF -DBUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
-          cmake --build build --config ${{env.BUILD_TYPE}}
-          cmake --install build --config ${{env.BUILD_TYPE}}
-
-      - name: Build Essentia
-        run: |
-          set PATH=%PATH%;%CD%\external\bin
-          cmake -B build -DUSE_TENSORFLOW=ON -DCMAKE_PREFIX_PATH=%CD%\external
+          set PATH=%PATH%;%CD%\packaging\msvc\bin
           cmake --build build --config ${{env.BUILD_TYPE}} --parallel
 
-      - name: Test Essentia
+      - name: Test
         run: |
-          set PATH=%PATH%;%CD%\external\bin
+          set PATH=%PATH%;%CD%\packaging\msvc\bin
           ctest --test-dir build --output-on-failure -C ${{env.BUILD_TYPE}}
