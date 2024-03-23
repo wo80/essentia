@@ -207,6 +207,29 @@ if not exist "..\include\chromaprint.h" (
 )
 
 ::
+:: Install Vamp plugin SDK - https://github.com/vamp-plugins/vamp-plugin-sdk
+::
+
+if not exist "vamp-plugin-sdk-master.zip" (
+  echo Downloading vamp-plugins/vamp-plugin-sdk ...
+  curl -L -o "vamp-plugin-sdk-master.zip" "https://github.com/vamp-plugins/vamp-plugin-sdk/archive/refs/heads/master.zip"
+)
+
+if not exist "..\include\vamp\" (
+  if not exist "vamp-plugin-sdk-master\" (
+    echo Extracting vamp-plugins/vamp-plugin-sdk archive ...
+    tar -xf "vamp-plugin-sdk-master.zip"
+  )
+  cd "vamp-plugin-sdk-master"
+  cmake -B build -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake --build build --config %BUILD_TYPE%
+  cmake --install build --config %BUILD_TYPE%
+  cd ..
+) else (
+  echo Already installed: vamp-plugins/vamp-plugin-sdk
+)
+
+::
 :: Install FFmpeg - https://github.com/GyanD/codexffmpeg
 ::
 

@@ -11,7 +11,7 @@ endif ()
 
 if ( NOT VAMPSDK_FOUND )
   find_path(VAMPSDK_INCLUDE_DIRS NAMES vamp-sdk.h PATH_SUFFIXES vamp-sdk)
-  find_library(VAMPSDK_LIBRARIES NAMES libvamp-sdk VampPluginSDK)
+  find_library(VAMPSDK_LIBRARIES NAMES vamp-sdk libvamp-sdk VampPluginSDK)
 
   if ( NOT "${VAMPSDK_LIBRARIES}" STREQUAL "")
     set (VAMPSDK_FOUND TRUE)
