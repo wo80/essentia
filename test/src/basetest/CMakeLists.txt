@@ -39,6 +39,7 @@ target_link_libraries(essentia_tests PRIVATE gtest gtest_main essentia)
 
 gtest_discover_tests(essentia_tests
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+  DISCOVERY_TIMEOUT 100
   PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
 )
 set_target_properties(essentia_tests PROPERTIES FOLDER tests)
