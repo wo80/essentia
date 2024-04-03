@@ -5,6 +5,14 @@
 #ifndef ESSENTIA_ALGORITHMS_REG_H_
 #define ESSENTIA_ALGORITHMS_REG_H_
 
+#ifndef ENABLE_AUDIOLOADER
+#cmakedefine01 ENABLE_AUDIOLOADER
+#endif
+
+#ifndef ENABLE_AUDIOWRITER
+#cmakedefine01 ENABLE_AUDIOWRITER
+#endif
+
 #ifndef ENABLE_FFTW
 #cmakedefine01 ENABLE_FFTW
 #endif

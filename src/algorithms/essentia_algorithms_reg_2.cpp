@@ -52,17 +52,21 @@
 #include "algorithms/highlevel/intensity.h"
 #include "algorithms/highlevel/pca.h"
 #include "algorithms/highlevel/sbic.h"
-#include "algorithms/io/audioloader.h"
 #include "algorithms/io/audioonsetsmarker.h"
-#include "algorithms/io/audiowriter.h"
+#if ENABLE_AUDIOLOADER
+#include "algorithms/io/audioloader.h"
 #include "algorithms/io/easyloader.h"
 #include "algorithms/io/eqloudloader.h"
+#include "algorithms/io/monoloader.h"
+#endif
+#if ENABLE_AUDIOWRITER
+#include "algorithms/io/audiowriter.h"
+#include "algorithms/io/monowriter.h"
+#endif
 #include "algorithms/io/fileoutputproxy.h"
 #if ENABLE_TAGLIB
 #include "algorithms/io/metadatareader.h"
 #endif
-#include "algorithms/io/monoloader.h"
-#include "algorithms/io/monowriter.h"
 #if ENABLE_YAML
 #include "algorithms/io/yamlinput.h"
 #endif
@@ -350,16 +354,20 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<Intensity> regIntensity;
     AlgorithmFactory::Registrar<PCA> regPCA;
     AlgorithmFactory::Registrar<SBic> regSBic;
-    AlgorithmFactory::Registrar<AudioLoader> regAudioLoader;
     AlgorithmFactory::Registrar<AudioOnsetsMarker> regAudioOnsetsMarker;
-    AlgorithmFactory::Registrar<AudioWriter> regAudioWriter;
+#if ENABLE_AUDIOLOADER
+    AlgorithmFactory::Registrar<AudioLoader> regAudioLoader;
     AlgorithmFactory::Registrar<EasyLoader> regEasyLoader;
     AlgorithmFactory::Registrar<EqloudLoader> regEqloudLoader;
+    AlgorithmFactory::Registrar<MonoLoader> regMonoLoader;
+#endif
+#if ENABLE_AUDIOWRITER
+    AlgorithmFactory::Registrar<AudioWriter> regAudioWriter;
+    AlgorithmFactory::Registrar<MonoWriter> regMonoWriter;
+#endif
 #if ENABLE_TAGLIB
     AlgorithmFactory::Registrar<MetadataReader> regMetadataReader;
 #endif
-    AlgorithmFactory::Registrar<MonoLoader> regMonoLoader;
-    AlgorithmFactory::Registrar<MonoWriter> regMonoWriter;
 #if ENABLE_YAML
     AlgorithmFactory::Registrar<YamlInput> regYamlInput;
 #endif
@@ -633,17 +641,21 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<DynamicComplexity, essentia::standard::DynamicComplexity> regDynamicComplexity;
     AlgorithmFactory::Registrar<FadeDetection, essentia::standard::FadeDetection> regFadeDetection;
     AlgorithmFactory::Registrar<SBic, essentia::standard::SBic> regSBic;
-    AlgorithmFactory::Registrar<AudioLoader, essentia::standard::AudioLoader> regAudioLoader;
     AlgorithmFactory::Registrar<AudioOnsetsMarker, essentia::standard::AudioOnsetsMarker> regAudioOnsetsMarker;
-    AlgorithmFactory::Registrar<AudioWriter, essentia::standard::AudioWriter> regAudioWriter;
+#if ENABLE_AUDIOLOADER
+    AlgorithmFactory::Registrar<AudioLoader, essentia::standard::AudioLoader> regAudioLoader;
     AlgorithmFactory::Registrar<EasyLoader, essentia::standard::EasyLoader> regEasyLoader;
+#endif
+#if ENABLE_AUDIOWRITER
     AlgorithmFactory::Registrar<EqloudLoader, essentia::standard::EqloudLoader> regEqloudLoader;
+    AlgorithmFactory::Registrar<MonoLoader, essentia::standard::MonoLoader> regMonoLoader;
+    AlgorithmFactory::Registrar<AudioWriter, essentia::standard::AudioWriter> regAudioWriter;
+    AlgorithmFactory::Registrar<MonoWriter, essentia::standard::MonoWriter> regMonoWriter;
+#endif
     AlgorithmFactory::Registrar<FileOutputProxy> regFileOutputProxy;
 #if ENABLE_TAGLIB
     AlgorithmFactory::Registrar<MetadataReader, essentia::standard::MetadataReader> regMetadataReader;
 #endif
-    AlgorithmFactory::Registrar<MonoLoader, essentia::standard::MonoLoader> regMonoLoader;
-    AlgorithmFactory::Registrar<MonoWriter, essentia::standard::MonoWriter> regMonoWriter;
     AlgorithmFactory::Registrar<BeatsLoudness, essentia::standard::BeatsLoudness> regBeatsLoudness;
     AlgorithmFactory::Registrar<BeatTrackerDegara, essentia::standard::BeatTrackerDegara> regBeatTrackerDegara;
     AlgorithmFactory::Registrar<BeatTrackerMultiFeature, essentia::standard::BeatTrackerMultiFeature> regBeatTrackerMultiFeature;

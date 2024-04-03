@@ -1,27 +1,27 @@
 target_sources(essentia
   PRIVATE
     audioonsetsmarker.cpp
-    audiowriter.cpp
-    easyloader.cpp
-    eqloudloader.cpp
     fileoutputproxy.cpp
-    monoloader.cpp
-    monowriter.cpp
     yamloutput.cpp
     audioonsetsmarker.h
-    audiowriter.h
-    easyloader.h
-    eqloudloader.h
     fileoutputproxy.h
-    monoloader.h
-    monowriter.h
     yamloutput.h)
 
 if(ESSENTIA_USE_FFMPEG)
   target_sources(essentia
     PRIVATE
       audioloader.cpp
-      audioloader.h)
+      audiowriter.cpp
+      easyloader.cpp
+      eqloudloader.cpp
+      monoloader.cpp
+      monowriter.cpp
+      audioloader.h
+      audiowriter.h
+      easyloader.h
+      eqloudloader.h
+      monoloader.h
+      monowriter.h)
 endif()
 
 if(ESSENTIA_USE_YAML)

@@ -59,10 +59,6 @@ set(ESSENTIA_USE_TENSORFLOW OFF)
 set(ESSENTIA_USE_VAMP OFF)
 set(ESSENTIA_USE_GAIA OFF)
 
-if(FFMPEG_FOUND)
-  set(ESSENTIA_USE_FFMPEG ON)
-endif()
-
 if(USE_KISSFFT)
   set(ESSENTIA_USE_KISSFFT ON)
 else()
@@ -79,6 +75,12 @@ else()
   else()
     set(ESSENTIA_USE_KISSFFT ON)
   endif()
+endif()
+
+if(FFMPEG_FOUND)
+  set(ESSENTIA_USE_FFMPEG ON)
+else()
+  message(WARNING "FFmpeg not found - compilation of audio loaders/writers disabled!")
 endif()
 
 if(SAMPLERATE_FOUND)
