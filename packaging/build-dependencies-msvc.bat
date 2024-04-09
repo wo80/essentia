@@ -4,8 +4,20 @@
 :: A script to download and build Essentia dependencies with MSVC.
 ::
 
+:: Check if tools are available.
+for %%x in (cmake curl tar) do (
+  where /q %%x
+  if ERRORLEVEL 1 (
+    echo The application "%%x" is missing. Ensure it is installed and placed in your PATH.
+    goto error
+  )
+)
+
 :: Check whether the script is called from the root directory.
 if not exist "build-dependencies-msvc.bat" (cd "packaging")
+
+:: Abort if we're not in the correct directory.
+if not exist "build-dependencies-msvc.bat" (goto error)
 
 :: The msvc directory will be the install prefix.
 if not exist "msvc\" (mkdir "msvc")
@@ -25,6 +37,10 @@ cd "download"
 if not exist "eigen-3.4.0.tar.gz" (
   echo Downloading libeigen/eigen ...
   curl -L -o "eigen-3.4.0.tar.gz" "https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz"
+  if ERRORLEVEL 1 (
+    echo Failed to download libeigen/eigen ...
+    goto error
+  )
 )
 
 if not exist "..\include\eigen3\" (
@@ -126,7 +142,6 @@ if not exist "..\include\utf8cpp\" (
     tar -xf "v4.0.5.tar.gz"
   )
   cd "utfcpp-4.0.5"
-
   cmake -B build
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE% --prefix %INSTALL_PREFIX%
@@ -139,17 +154,17 @@ if not exist "..\include\utf8cpp\" (
 :: Install TagLib - https://github.com/taglib/taglib
 ::
 
-if not exist "taglib-2.0.tar.gz" (
+if not exist "taglib-2.0.1.tar.gz" (
   echo Downloading taglib ...
-  curl -L -o "taglib-2.0.tar.gz" "https://github.com/taglib/taglib/releases/download/v2.0/taglib-2.0.tar.gz"
+  curl -L -o "taglib-2.0.1.tar.gz" "https://github.com/taglib/taglib/releases/download/v2.0.1/taglib-2.0.1.tar.gz"
 )
 
 if not exist "..\include\taglib\" (
-  if not exist "taglib-2.0\" (
+  if not exist "taglib-2.0.1\" (
     echo Extracting taglib archive ...
-    tar -xf "taglib-2.0.tar.gz"
+    tar -xf "taglib-2.0.1.tar.gz"
   )
-  cd "taglib-2.0"
+  cd "taglib-2.0.1"
   cmake -B build -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
@@ -285,4 +300,16 @@ if not exist "..\include\tensorflow\" (
   echo Already installed: tensorflow-cpu
 )
 
+:: Change back to Essentia root directory
 cd ..\..\..
+
+goto done
+
+:error
+
+echo An error occurred.
+exit /b %ERRORLEVEL%
+
+:done
+
+echo Done.
