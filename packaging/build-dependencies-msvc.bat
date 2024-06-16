@@ -248,17 +248,17 @@ if not exist "..\include\vamp\" (
 :: Install FFmpeg - https://github.com/GyanD/codexffmpeg
 ::
 
-if not exist "ffmpeg-6.1.1-full_build-shared.zip" (
+if not exist "ffmpeg-6.1.1-win64-shared.zip" (
   echo Downloading GyanD/codexffmpeg ...
-  curl -L -o "ffmpeg-6.1.1-full_build-shared.zip" "https://github.com/GyanD/codexffmpeg/releases/download/6.1.1/ffmpeg-6.1.1-full_build-shared.zip"
+  curl -L -o "ffmpeg-6.1.1-win64-shared.zip" "https://github.com/wo80/ffmpeg-audio-only/releases/download/v6.1.1/ffmpeg-6.1.1-win64-shared.zip"
 )
 
 if not exist "..\include\libavcodec\" (
-  if not exist "ffmpeg-6.1.1-full_build-shared\" (
+  if not exist "ffmpeg-6.1.1-win64-shared\" (
     echo Extracting GyanD/codexffmpeg archive ...
-    tar -xf "ffmpeg-6.1.1-full_build-shared.zip"
+    tar -xf "ffmpeg-6.1.1-win64-shared.zip"
   )
-  cd "ffmpeg-6.1.1-full_build-shared"
+  cd "ffmpeg-6.1.1-win64-shared"
   xcopy /s /y bin %INSTALL_PREFIX%\bin
   xcopy /s /y lib %INSTALL_PREFIX%\lib
   xcopy /s /y include %INSTALL_PREFIX%\include
@@ -271,25 +271,16 @@ if not exist "..\include\libavcodec\" (
 :: Install TensorFlow - https://www.tensorflow.org/install/lang_c
 ::
 
-if not exist "libtensorflow-cpu-windows-x86_64-2.15.0.zip" (
+if not exist "libtensorflow-cpu-windows-x86_64.zip" (
   echo Downloading tensorflow-cpu ...
-  curl -L -o "libtensorflow-cpu-windows-x86_64-2.15.0.zip" "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-windows-x86_64-2.15.0.zip"
+  curl -L -o "libtensorflow-cpu-windows-x86_64.zip" "https://storage.googleapis.com/tensorflow/versions/2.16.1/libtensorflow-cpu-windows-x86_64.zip"
 )
-
-:: Need to set the variable outside the if-block below.
-set TF_TAG=https://raw.githubusercontent.com/tensorflow/tensorflow/r2.15-66681ea34be
 
 if not exist "..\include\tensorflow\c\tf_buffer.h" (
   if not exist "lib\tensorflow.dll" (
     echo Extracting tensorflow-cpu archive ...
-    tar -xf "libtensorflow-cpu-windows-x86_64-2.15.0.zip"
+    tar -xf "libtensorflow-cpu-windows-x86_64.zip"
   )
-  echo Downloading missing tensorflow-cpu headers ...
-  curl --create-dirs -o "include\tensorflow\c\tf_buffer.h" "%TF_TAG%/tensorflow/c/tf_buffer.h"
-  curl --create-dirs -o "include\tensorflow\c\tf_tensor_helper.h" "%TF_TAG%/tensorflow/c/tf_tensor_helper.h"
-  curl --create-dirs -o "include\tsl\c\tsl_status.h" "%TF_TAG%/third_party/xla/third_party/tsl/tsl/c/tsl_status.h"
-  curl --create-dirs -o "include\tsl\platform\ctstring.h" "%TF_TAG%/third_party/xla/third_party/tsl/tsl/platform/ctstring.h"
-  curl --create-dirs -o "include\tsl\platform\ctstring_internal.h" "%TF_TAG%/third_party/xla/third_party/tsl/tsl/platform/ctstring_internal.h"
 )
 
 if not exist "..\include\tensorflow\" (
