@@ -17,7 +17,6 @@ target_sources(essentia
     pitchcontoursmelody.cpp
     pitchcontoursmonomelody.cpp
     pitchcontoursmultimelody.cpp
-    pitchcrepe.cpp
     pitchfilter.cpp
     pitchmelodia.cpp
     pitchsaliencefunction.cpp
@@ -49,7 +48,6 @@ target_sources(essentia
     pitchcontoursmelody.h
     pitchcontoursmonomelody.h
     pitchcontoursmultimelody.h
-    pitchcrepe.h
     pitchfilter.h
     pitchmelodia.h
     pitchsaliencefunction.h
@@ -64,3 +62,10 @@ target_sources(essentia
     tristimulus.h
     tuningfrequency.h
     vibrato.h)
+
+if(ESSENTIA_USE_TENSORFLOW)
+  target_sources(essentia
+    PRIVATE
+      pitchcrepe.cpp
+      pitchcrepe.h)
+endif()

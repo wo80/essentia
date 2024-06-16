@@ -23,7 +23,9 @@
 #include "algorithms/extractor/lowlevelspectraleqloudextractor.h"
 #include "algorithms/extractor/lowlevelspectralextractor.h"
 #include "algorithms/extractor/musicextractor.h"
+#if ENABLE_GAIA2
 #include "algorithms/extractor/musicextractorsvm.h"
+#endif
 #include "algorithms/extractor/rhythmdescriptors.h"
 #include "algorithms/extractor/tonalextractor.h"
 #include "algorithms/extractor/tuningfrequencyextractor.h"
@@ -96,7 +98,9 @@
 #include "algorithms/rhythm/superfluxextractor.h"
 #include "algorithms/rhythm/superfluxnovelty.h"
 #include "algorithms/rhythm/superfluxpeaks.h"
+#if ENABLE_TENSORFLOW
 #include "algorithms/rhythm/tempocnn.h"
+#endif
 #include "algorithms/rhythm/temposcalebands.h"
 #include "algorithms/rhythm/tempotap.h"
 #include "algorithms/rhythm/tempotapdegara.h"
@@ -283,7 +287,9 @@
 #include "algorithms/tonal/pitchcontoursmelody.h"
 #include "algorithms/tonal/pitchcontoursmonomelody.h"
 #include "algorithms/tonal/pitchcontoursmultimelody.h"
+#if ENABLE_TENSORFLOW
 #include "algorithms/tonal/pitchcrepe.h"
+#endif
 #include "algorithms/tonal/pitchfilter.h"
 #include "algorithms/tonal/pitchmelodia.h"
 #include "algorithms/tonal/pitchsaliencefunction.h"
@@ -325,7 +331,9 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<LowLevelSpectralEqloudExtractor> regLowLevelSpectralEqloudExtractor;
     AlgorithmFactory::Registrar<LowLevelSpectralExtractor> regLowLevelSpectralExtractor;
     AlgorithmFactory::Registrar<MusicExtractor> regMusicExtractor;
+#if ENABLE_GAIA2
     AlgorithmFactory::Registrar<MusicExtractorSVM> regMusicExtractorSVM;
+#endif
     AlgorithmFactory::Registrar<RhythmDescriptors> regRhythmDescriptors;
     AlgorithmFactory::Registrar<TonalExtractor> regTonalExtractor;
     AlgorithmFactory::Registrar<TuningFrequencyExtractor> regTuningFrequencyExtractor;
@@ -397,7 +405,9 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<SuperFluxExtractor> regSuperFluxExtractor;
     AlgorithmFactory::Registrar<SuperFluxNovelty> regSuperFluxNovelty;
     AlgorithmFactory::Registrar<SuperFluxPeaks> regSuperFluxPeaks;
+#if ENABLE_TENSORFLOW
     AlgorithmFactory::Registrar<TempoCNN> regTempoCNN;
+#endif
     AlgorithmFactory::Registrar<TempoScaleBands> regTempoScaleBands;
     AlgorithmFactory::Registrar<TempoTap> regTempoTap;
     AlgorithmFactory::Registrar<TempoTapDegara> regTempoTapDegara;
@@ -576,7 +586,9 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<PitchContoursMelody> regPitchContoursMelody;
     AlgorithmFactory::Registrar<PitchContoursMonoMelody> regPitchContoursMonoMelody;
     AlgorithmFactory::Registrar<PitchContoursMultiMelody> regPitchContoursMultiMelody;
+#if ENABLE_TENSORFLOW
     AlgorithmFactory::Registrar<PitchCREPE> regPitchCREPE;
+#endif
     AlgorithmFactory::Registrar<PitchFilter> regPitchFilter;
     AlgorithmFactory::Registrar<PitchMelodia> regPitchMelodia;
     AlgorithmFactory::Registrar<PitchSalienceFunction> regPitchSalienceFunction;
@@ -680,7 +692,9 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<SuperFluxExtractor, essentia::standard::SuperFluxExtractor> regSuperFluxExtractor;
     AlgorithmFactory::Registrar<SuperFluxNovelty, essentia::standard::SuperFluxNovelty> regSuperFluxNovelty;
     AlgorithmFactory::Registrar<SuperFluxPeaks, essentia::standard::SuperFluxPeaks> regSuperFluxPeaks;
+#if ENABLE_TENSORFLOW
     AlgorithmFactory::Registrar<TempoCNN, essentia::standard::TempoCNN> regTempoCNN;
+#endif
     AlgorithmFactory::Registrar<TempoScaleBands, essentia::standard::TempoScaleBands> regTempoScaleBands;
     AlgorithmFactory::Registrar<TempoTap, essentia::standard::TempoTap> regTempoTap;
     AlgorithmFactory::Registrar<TempoTapDegara, essentia::standard::TempoTapDegara> regTempoTapDegara;
@@ -864,7 +878,9 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<PitchContoursMelody, essentia::standard::PitchContoursMelody> regPitchContoursMelody;
     AlgorithmFactory::Registrar<PitchContoursMonoMelody, essentia::standard::PitchContoursMonoMelody> regPitchContoursMonoMelody;
     AlgorithmFactory::Registrar<PitchContoursMultiMelody, essentia::standard::PitchContoursMultiMelody> regPitchContoursMultiMelody;
+#if ENABLE_TENSORFLOW
     AlgorithmFactory::Registrar<PitchCREPE, essentia::standard::PitchCREPE> regPitchCREPE;
+#endif
     AlgorithmFactory::Registrar<PitchFilter, essentia::standard::PitchFilter> regPitchFilter;
     AlgorithmFactory::Registrar<PitchMelodia, essentia::standard::PitchMelodia> regPitchMelodia;
     AlgorithmFactory::Registrar<PitchSalienceFunction, essentia::standard::PitchSalienceFunction> regPitchSalienceFunction;

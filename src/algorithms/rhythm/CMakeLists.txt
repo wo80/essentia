@@ -25,7 +25,6 @@ target_sources(essentia
     superfluxextractor.cpp
     superfluxnovelty.cpp
     superfluxpeaks.cpp
-    tempocnn.cpp
     temposcalebands.cpp
     tempotap.cpp
     tempotapdegara.cpp
@@ -56,9 +55,15 @@ target_sources(essentia
     superfluxextractor.h
     superfluxnovelty.h
     superfluxpeaks.h
-    tempocnn.h
     temposcalebands.h
     tempotap.h
     tempotapdegara.h
     tempotapmaxagreement.h
     tempotapticks.h)
+
+if(ESSENTIA_USE_TENSORFLOW)
+  target_sources(essentia
+    PRIVATE
+      tempocnn.cpp
+      tempocnn.h)
+endif()

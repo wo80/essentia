@@ -8,7 +8,6 @@ target_sources(essentia
     lowlevelspectraleqloudextractor.cpp
     lowlevelspectralextractor.cpp
     musicextractor.cpp
-    musicextractorsvm.cpp
     rhythmdescriptors.cpp
     tonalextractor.cpp
     tuningfrequencyextractor.cpp
@@ -20,7 +19,13 @@ target_sources(essentia
     lowlevelspectraleqloudextractor.h
     lowlevelspectralextractor.h
     musicextractor.h
-    musicextractorsvm.h
     rhythmdescriptors.h
     tonalextractor.h
     tuningfrequencyextractor.h)
+
+if(ESSENTIA_USE_GAIA2)
+  target_sources(essentia
+    PRIVATE
+      musicextractorsvm.cpp
+      musicextractorsvm.h)
+endif()
