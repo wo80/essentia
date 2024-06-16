@@ -72,7 +72,7 @@ if not exist "..\include\fftw3.h" (
     tar -xf "fftw-3.3.10.tar.gz"
   )
   cd "fftw-3.3.10"
-  cmake -B build -DBUILD_TESTS=OFF -DDISABLE_FORTRAN=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=ON
+  cmake -B build -DBUILD_TESTS=OFF -DDISABLE_FORTRAN=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=ON
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -96,7 +96,7 @@ if not exist "..\include\samplerate.h" (
     rename "libsamplerate-master" "libsamplerate"
   )
   cd "libsamplerate"
-  cmake -B build -DLIBSAMPLERATE_EXAMPLES=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DLIBSAMPLERATE_EXAMPLES=OFF -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -165,7 +165,7 @@ if not exist "..\include\taglib\" (
     tar -xf "taglib-2.0.1.tar.gz"
   )
   cd "taglib-2.0.1"
-  cmake -B build -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DWITH_ZLIB=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -189,7 +189,7 @@ if not exist "..\include\yaml.h" (
     rename "libyaml-master" "libyaml"
   )
   cd "libyaml"
-  cmake -B build -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -213,7 +213,7 @@ if not exist "..\include\chromaprint.h" (
     rename "chromaprint-master" "chromaprint"
   )
   cd "chromaprint"
-  cmake -B build -DBUILD_TOOLS=OFF -DBUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DBUILD_TOOLS=OFF -DBUILD_TESTS=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -245,26 +245,26 @@ if not exist "..\include\vamp\" (
 )
 
 ::
-:: Install FFmpeg - https://github.com/GyanD/codexffmpeg
+:: Install FFmpeg - https://github.com/wo80/ffmpeg-audio-only
 ::
 
-if not exist "ffmpeg-6.1.1-win64-shared.zip" (
-  echo Downloading GyanD/codexffmpeg ...
-  curl -L -o "ffmpeg-6.1.1-win64-shared.zip" "https://github.com/wo80/ffmpeg-audio-only/releases/download/v6.1.1/ffmpeg-6.1.1-win64-shared.zip"
+if not exist "ffmpeg-6.1.1-win64-static.zip" (
+  echo Downloading wo80/ffmpeg-audio-only ...
+  curl -L -o "ffmpeg-6.1.1-win64-static.zip" "https://github.com/wo80/ffmpeg-audio-only/releases/download/v6.1.1/ffmpeg-6.1.1-win64-static.zip"
 )
 
 if not exist "..\include\libavcodec\" (
-  if not exist "ffmpeg-6.1.1-win64-shared\" (
-    echo Extracting GyanD/codexffmpeg archive ...
-    tar -xf "ffmpeg-6.1.1-win64-shared.zip"
+  if not exist "ffmpeg-6.1.1-win64-static\" (
+    echo Extracting wo80/ffmpeg-audio-only archive ...
+    tar -xf "ffmpeg-6.1.1-win64-static.zip"
   )
-  cd "ffmpeg-6.1.1-win64-shared"
+  cd "ffmpeg-6.1.1-win64-static"
   xcopy /s /y bin %INSTALL_PREFIX%\bin
   xcopy /s /y lib %INSTALL_PREFIX%\lib
   xcopy /s /y include %INSTALL_PREFIX%\include
   cd ..
 ) else (
-  echo Already installed: GyanD/codexffmpeg
+  echo Already installed: wo80/ffmpeg-audio-only
 )
 
 ::
