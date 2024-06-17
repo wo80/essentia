@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 env:
   # CMake build type (Debug, Release, RelWithDebInfo or MinSizeRel)
-  BUILD_TYPE: Release
+  BUILD_TYPE: RelWithDebInfo
 
 jobs:
   ubuntu:
