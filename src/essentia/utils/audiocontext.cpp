@@ -85,8 +85,12 @@ int AudioContext::create(const std::string& filename,
   _codecCtx->codec_type     = AVMEDIA_TYPE_AUDIO;
   _codecCtx->bit_rate       = bitrate;
   _codecCtx->sample_rate    = sampleRate;
-  _codecCtx->channels       = nChannels;
+#if LIBAVCODEC_VERSION_MAJOR < 59
+  _codecCtx->channels = nChannels;
   _codecCtx->channel_layout = av_get_default_channel_layout(nChannels);
+#else
+  av_channel_layout_default(&_codecCtx->ch_layout, nChannels);
+#endif
 
   switch (_codecCtx->codec_id) {
     case AV_CODEC_ID_VORBIS:
@@ -133,7 +137,11 @@ int AudioContext::create(const std::string& filename,
     case AV_CODEC_ID_PCM_U16LE:
     case AV_CODEC_ID_PCM_U16BE:
       // PCM codecs do not provide frame size in samples, use 4096 bytes on input
-      _codecCtx->frame_size = 4096 / _codecCtx->channels / av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
+#if LIBAVCODEC_VERSION_MAJOR < 59
+        _codecCtx->frame_size = 4096 / _codecCtx->channels / av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
+#else
+        _codecCtx->frame_size = 4096 / _codecCtx->ch_layout.nb_channels / av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
+#endif
       break;
 
     //case AV_CODEC_ID_FLAC:
@@ -151,10 +159,13 @@ int AudioContext::create(const std::string& filename,
   }
 
   // Allocate input audio FLT buffer
-  _inputBufSize = av_samples_get_buffer_size(NULL, 
-                                             _codecCtx->channels, 
-                                             _codecCtx->frame_size, 
-                                             AV_SAMPLE_FMT_FLT, 0);
+  _inputBufSize = av_samples_get_buffer_size(NULL,
+#if LIBAVCODEC_VERSION_MAJOR < 59
+      _codecCtx->channels,
+#else
+      _codecCtx->ch_layout.nb_channels,
+#endif
+      _codecCtx->frame_size, AV_SAMPLE_FMT_FLT, 0);
 
   _buffer = (float*)av_malloc(_inputBufSize);
 
@@ -261,8 +272,13 @@ void AudioContext::close() {
 
 
 void AudioContext::write(const vector<StereoSample>& stereoData) {
-  if (_codecCtx->channels != 2) {
-    throw EssentiaException("Trying to write stereo audio data to an audio file with ", _codecCtx->channels, " channels");
+#if LIBAVCODEC_VERSION_MAJOR < 59
+    int channels = _codecCtx->channels;
+#else
+    int channels = _codecCtx->ch_layout.nb_channels;
+#endif
+  if (channels != 2) {
+    throw EssentiaException("Trying to write stereo audio data to an audio file with ", channels, " channels");
   }
 
   int dsize = (int)stereoData.size();
@@ -286,8 +302,13 @@ void AudioContext::write(const vector<StereoSample>& stereoData) {
 
 
 void AudioContext::write(const vector<AudioSample>& monoData) {
-  if (_codecCtx->channels != 1) {
-    throw EssentiaException("Trying to write mono audio data to an audio file with ", _codecCtx->channels, " channels");
+#if LIBAVCODEC_VERSION_MAJOR < 59
+    int channels = _codecCtx->channels;
+#else
+    int channels = _codecCtx->ch_layout.nb_channels;
+#endif
+  if (channels != 1) {
+    throw EssentiaException("Trying to write mono audio data to an audio file with ", channels, " channels");
   }
 
   int dsize = (int)monoData.size();
@@ -325,7 +346,12 @@ void AudioContext::encodePacket(int size) {
       if (_convert_buffer)
           av_freep(&_convert_buffer[0]);
       _convert_buffer_size = num_out_samples;
-      if (av_samples_alloc_array_and_samples(&_convert_buffer, &linesize, _codecCtx->channels,
+      if (av_samples_alloc_array_and_samples(&_convert_buffer, &linesize,
+#if LIBAVCODEC_VERSION_MAJOR < 59
+          _codecCtx->channels,
+#else
+          _codecCtx->ch_layout.nb_channels,
+#endif
           num_out_samples, _codecCtx->sample_fmt, 0) < 0) {
           throw EssentiaException("Could not allocate output buffer for sample format conversion");
       }
@@ -365,9 +391,14 @@ void AudioContext::encodePacket(int size) {
   }
 #endif
 
-  int buffer_size = av_samples_get_buffer_size(NULL, _codecCtx->channels, size, AV_SAMPLE_FMT_FLT, 0);
+#if LIBAVCODEC_VERSION_MAJOR < 59
+  int channels = _codecCtx->channels;
+#else
+  int channels = _codecCtx->ch_layout.nb_channels;
+#endif
+  int buffer_size = av_samples_get_buffer_size(NULL, channels, size, AV_SAMPLE_FMT_FLT, 0);
 
-  int result = avcodec_fill_audio_frame(_frame, _codecCtx->channels, _codecCtx->sample_fmt,
+  int result = avcodec_fill_audio_frame(_frame, channels, _codecCtx->sample_fmt,
                                         _convert_buffer[0], buffer_size, 0);
   if (result < 0) {
     char errstring[1204];

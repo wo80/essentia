@@ -96,9 +96,6 @@ void AudioLoader::openAudioFile(const string& filename) {
         throw EssentiaException("AudioLoader: Unable to instantiate codec...");
     }
 
-    // Configure format conversion  (no samplerate conversion yet)
-    int64_t layout = av_get_default_channel_layout(_audioCtx->channels);
-
     /*
     const char* fmt = 0;
     get_format_from_sample_fmt(&fmt, _audioCtx->sample_fmt);
@@ -106,6 +103,10 @@ void AudioLoader::openAudioFile(const string& filename) {
     */
 
     E_DEBUG(EAlgorithm, "AudioLoader: using sample format conversion from libswresample");
+#if LIBSWRESAMPLE_VERSION_MAJOR < 5
+    // Configure format conversion  (no samplerate conversion yet)
+    int64_t layout = av_get_default_channel_layout(_audioCtx->channels);
+
     _convertCtxAv = swr_alloc();
         
     av_opt_set_int(_convertCtxAv, "in_channel_layout", layout, 0);
@@ -114,6 +115,19 @@ void AudioLoader::openAudioFile(const string& filename) {
     av_opt_set_int(_convertCtxAv, "out_sample_rate", _audioCtx->sample_rate, 0);
     av_opt_set_int(_convertCtxAv, "in_sample_fmt", _audioCtx->sample_fmt, 0);
     av_opt_set_int(_convertCtxAv, "out_sample_fmt", AV_SAMPLE_FMT_FLT, 0);
+#else
+    int error = swr_alloc_set_opts2(&_convertCtxAv,
+        &_audioCtx->ch_layout,
+        AV_SAMPLE_FMT_FLT,
+        _audioCtx->sample_rate,
+        &_audioCtx->ch_layout,
+        _audioCtx->sample_fmt,
+        _audioCtx->sample_rate,
+        0, NULL);
+    if (error < 0) {
+        throw EssentiaException("AudioLoader: Could not allocate resample context\n");
+    }
+#endif
 
     if (swr_init(_convertCtxAv) < 0) {
         throw EssentiaException("AudioLoader: Could not initialize swresample context");
@@ -466,7 +480,11 @@ void AudioLoader::reset() {
     closeAudioFile();
     openAudioFile(filename);
 
+#if LIBAVCODEC_VERSION_MAJOR < 59
     pushChannelsSampleRateInfo(_audioCtx->channels, _audioCtx->sample_rate);
+#else
+    pushChannelsSampleRateInfo(_audioCtx->ch_layout.nb_channels, _audioCtx->sample_rate);
+#endif
     pushCodecInfo(_audioCodecName, _audioCtx->bit_rate);
 }
 
