@@ -12,6 +12,7 @@ target_sources(essentia
     dct.cpp
     derivative.cpp
     envelope.cpp
+    framebuffer.cpp
     framecutter.cpp
     frametoreal.cpp
     idct.cpp
@@ -65,6 +66,7 @@ target_sources(essentia
     dct.h
     derivative.h
     envelope.h
+    framebuffer.h
     framecutter.h
     frametoreal.h
     idct.h

@@ -184,6 +184,7 @@
 #include "algorithms/standard/ffta.h"
 #include "algorithms/standard/fftacomplex.h"
 #endif
+#include "algorithms/standard/framebuffer.h"
 #include "algorithms/standard/framecutter.h"
 #include "algorithms/standard/frametoreal.h"
 #include "algorithms/standard/idct.h"
@@ -491,6 +492,7 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<IFFTA> regIFFTA;
     AlgorithmFactory::Registrar<IFFTAComplex> regIFFTAComplex;
 #endif
+    AlgorithmFactory::Registrar<FrameBuffer> regFrameBuffer;
     AlgorithmFactory::Registrar<FrameCutter> regFrameCutter;
     AlgorithmFactory::Registrar<FrameToReal> regFrameToReal;
     AlgorithmFactory::Registrar<IDCT> regIDCT;
@@ -778,6 +780,7 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<IFFTA, essentia::standard::IFFTA> regIFFTA;
     AlgorithmFactory::Registrar<IFFTAComplex, essentia::standard::IFFTAComplex> regIFFTAComplex;
 #endif
+    AlgorithmFactory::Registrar<FrameBuffer, essentia::standard::FrameBuffer> regFrameBuffer;
     AlgorithmFactory::Registrar<FrameCutter, essentia::standard::FrameCutter> regFrameCutter;
     AlgorithmFactory::Registrar<FrameToReal, essentia::standard::FrameToReal> regFrameToReal;
     AlgorithmFactory::Registrar<IDCT, essentia::standard::IDCT> regIDCT;
