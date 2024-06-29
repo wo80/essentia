@@ -23,6 +23,14 @@ if not exist "build-dependencies-msvc.bat" (goto error)
 if not exist "msvc\" (mkdir "msvc")
 cd "msvc"
 
+:: Build shared libs?
+set SHARED_LIBS=YES
+
+:: Check commandline argument for static build.
+if "%1"=="--build-static" (
+    set SHARED_LIBS=NO
+)
+
 set INSTALL_PREFIX=%cd%
 set BUILD_TYPE="Release"
 
@@ -49,7 +57,7 @@ if not exist "..\include\eigen3\" (
     tar -xf "eigen-3.4.0.tar.gz"
   )
   cd "eigen-3.4.0"
-  cmake -B build -DEIGEN_BUILD_DOC=OFF -DBUILD_TESTING=OFF -DCMAKE_Fortran_COMPILER="" -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DEIGEN_BUILD_DOC=NO -DBUILD_TESTING=NO -DCMAKE_Fortran_COMPILER="" -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -72,7 +80,7 @@ if not exist "..\include\fftw3.h" (
     tar -xf "fftw-3.3.10.tar.gz"
   )
   cd "fftw-3.3.10"
-  cmake -B build -DBUILD_TESTS=OFF -DDISABLE_FORTRAN=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=ON
+  cmake -B build -DBUILD_TESTS=NO -DDISABLE_FORTRAN=YES -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=YES
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -96,7 +104,7 @@ if not exist "..\include\samplerate.h" (
     rename "libsamplerate-master" "libsamplerate"
   )
   cd "libsamplerate"
-  cmake -B build -DLIBSAMPLERATE_EXAMPLES=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DLIBSAMPLERATE_EXAMPLES=NO -DBUILD_TESTING=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -119,7 +127,7 @@ if not exist "..\include\zlib.h" (
     tar -xf "zlib-1.3.1.tar.gz"
   )
   cd "zlib-1.3.1"
-  cmake -B build -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DZLIB_BUILD_EXAMPLES=NO -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -165,7 +173,7 @@ if not exist "..\include\taglib\" (
     tar -xf "taglib-2.0.1.tar.gz"
   )
   cd "taglib-2.0.1"
-  cmake -B build -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DWITH_ZLIB=NO -DBUILD_EXAMPLES=NO -DBUILD_BINDINGS=NO -DBUILD_TESTING=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -189,7 +197,7 @@ if not exist "..\include\yaml.h" (
     rename "libyaml-master" "libyaml"
   )
   cd "libyaml"
-  cmake -B build -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DBUILD_TESTING=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -213,7 +221,7 @@ if not exist "..\include\chromaprint.h" (
     rename "chromaprint-master" "chromaprint"
   )
   cd "chromaprint"
-  cmake -B build -DBUILD_TOOLS=OFF -DBUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DBUILD_TOOLS=NO -DBUILD_TESTS=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -248,17 +256,23 @@ if not exist "..\include\vamp\" (
 :: Install FFmpeg - https://github.com/wo80/ffmpeg-audio-only
 ::
 
-if not exist "ffmpeg-7.0.1-win64-shared.zip" (
+if %SHARED_LIBS%==YES (
+  set ffmpeg_type=shared
+) else (
+  set ffmpeg_type=static
+)
+
+if not exist "ffmpeg-7.0.1-win64-%ffmpeg_type%.zip" (
   echo Downloading wo80/ffmpeg-audio-only ...
-  curl -L -o "ffmpeg-7.0.1-win64-shared.zip" "https://github.com/wo80/ffmpeg-audio-only/releases/download/v7.0.1/ffmpeg-7.0.1-win64-shared.zip"
+  curl -L -o "ffmpeg-7.0.1-win64-%ffmpeg_type%.zip" "https://github.com/wo80/ffmpeg-audio-only/releases/download/v7.0.1/ffmpeg-7.0.1-win64-%ffmpeg_type%.zip"
 )
 
 if not exist "..\include\libavcodec\" (
-  if not exist "ffmpeg-7.0.1-win64-shared\" (
+  if not exist "ffmpeg-7.0.1-win64-%ffmpeg_type%\" (
     echo Extracting wo80/ffmpeg-audio-only archive ...
-    tar -xf "ffmpeg-7.0.1-win64-shared.zip"
+    tar -xf "ffmpeg-7.0.1-win64-%ffmpeg_type%.zip"
   )
-  cd "ffmpeg-7.0.1-win64-shared"
+  cd "ffmpeg-7.0.1-win64-%ffmpeg_type%"
   xcopy /s /y bin %INSTALL_PREFIX%\bin
   xcopy /s /y lib %INSTALL_PREFIX%\lib
   xcopy /s /y include %INSTALL_PREFIX%\include
