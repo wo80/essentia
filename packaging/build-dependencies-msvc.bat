@@ -3,6 +3,11 @@
 ::
 :: A script to download and build Essentia dependencies with MSVC.
 ::
+:: Optional parameters:
+::
+:: --static     = Flag to enable static build
+:: --build-type = CMake build type (Debug, Release, RelWithDebInfo or MinSizeRel)
+::
 
 :: Check if tools are available.
 for %%x in (cmake curl tar) do (
@@ -23,16 +28,36 @@ if not exist "build-dependencies-msvc.bat" (goto error)
 if not exist "msvc\" (mkdir "msvc")
 cd "msvc"
 
-:: Build shared libs?
+:: Default build options
 set SHARED_LIBS=YES
+set BUILD_TYPE=Debug
 
-:: Check commandline argument for static build.
-if "%1"=="--build-static" (
+:: Parse commandline arguments
+
+setlocal EnableDelayedExpansion
+
+set HAS_BUILD_TYPE=0
+
+for %%A in (%*) do (
+  if /I %%A==--static (
     set SHARED_LIBS=NO
+  ) else ( if /I %%A==--build-type (
+    set HAS_BUILD_TYPE=1
+  ) else ( if !HAS_BUILD_TYPE!==1 (
+    set BUILD_TYPE=%%A
+  )))
 )
 
+for %%A in (Debug Release RelWithDebInfo MinSizeRel) do (
+  if %BUILD_TYPE%==%%A (goto valid)
+)
+
+echo Invalid build type: %BUILD_TYPE%. Using default (Debug)
+set BUILD_TYPE=Debug
+
+:valid
+
 set INSTALL_PREFIX=%cd%
-set BUILD_TYPE="Release"
 
 :: The directory where archives are downloaded and extracted to.
 if not exist "download\" (mkdir "download")
