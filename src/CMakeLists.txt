@@ -14,6 +14,12 @@ endif()
 add_library(essentia)
 add_library(Essentia::essentia ALIAS essentia)
 
+if (MSVC AND ENABLE_STATIC_DEPENDENCIES)
+  # In case Essentia is linked against static FFmpeg libraries, we need to add
+  # the bcrypt dependency manually (required by avutil).
+  target_link_libraries(essentia PUBLIC bcrypt.lib)
+endif()
+
 set_target_properties(essentia PROPERTIES DEBUG_POSTFIX _d)
 set_target_properties(essentia PROPERTIES
   VERSION   ${essentia_VERSION}
