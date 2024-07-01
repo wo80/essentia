@@ -40,7 +40,7 @@ jobs:
           submodules: 'true'
 
       - name: Install dependencies
-        run: brew install cmake eigen libyaml fftw ffmpeg libsamplerate libtag chromaprint
+        run: brew install eigen libyaml fftw ffmpeg libsamplerate libtag chromaprint
         
       - name: Configure
         run: cmake -B build
