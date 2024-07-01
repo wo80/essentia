@@ -43,4 +43,4 @@ add_wheel(_essentia
   DEPLOY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/essentia"
   README_PATH "${CMAKE_SOURCE_DIR}/README.md"
   LICENSE_PATH "${CMAKE_SOURCE_DIR}/COPYING.txt"
-  MODULE_DEPENDENCIES "numpy>=1.8.2" "pyyaml" "six")
+  MODULE_DEPENDENCIES "numpy>=1.8.2,<2.0" "pyyaml" "six")
