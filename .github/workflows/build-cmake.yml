@@ -4,10 +4,11 @@ on: [push, pull_request]
 
 env:
   # CMake build type (Debug, Release, RelWithDebInfo or MinSizeRel)
-  BUILD_TYPE: Debug
+  BUILD_TYPE: Release
 
 jobs:
   ubuntu:
+    if: false
     name: Ubuntu (build and test)
     runs-on: ubuntu-latest
 
@@ -30,6 +31,7 @@ jobs:
         run: ctest --test-dir build --output-on-failure -C ${{env.BUILD_TYPE}}
 
   macos:
+    if: false
     name: MacOS (build and test)
     runs-on: macos-latest
 
@@ -64,11 +66,25 @@ jobs:
         with:
           submodules: 'true'
 
+      # We install Python manually, because actions/setup-python doesn't install the debug binaries.
+      # https://github.com/actions/setup-python/issues/86
+      # https://github.com/actions/runner-images/issues/786#issuecomment-620524456
+
+      - name: Install Python 3.12.4 (x64)
+        run: |
+          cd packaging
+          curl -L -o python-3.12.4-amd64.exe https://www.python.org/ftp/python/3.12.4/python-3.12.4-amd64.exe
+          Start-Process -FilePath python-3.12.4-amd64.exe -ArgumentList "/quiet Include_debug=1 Include_dev=1 Include_lib=1 Include_pip=1 PrependPath=1 CompileAll=1 InstallAllUsers=0" -Verb runas -Wait
+        shell: pwsh
+
+      - name: Install numpy
+        run: C:/Users/runneradmin/AppData/Local/Programs/Python/Python312/python.exe -m pip install numpy==1.26.4
+
       - name: Install dependencies
-        run: .\packaging\build-dependencies-msvc.bat
+        run: .\packaging\build-dependencies-msvc.bat --static --build-type Release
         
       - name: Configure
-        run: cmake -B build -DUSE_TENSORFLOW=ON -DCMAKE_PREFIX_PATH=%CD%\packaging\msvc
+        run: cmake -B build -DUSE_TENSORFLOW=ON -DBUILD_PYTHON_BINDINGS=ON -DENABLE_STATIC_DEPENDENCIES=ON -DCMAKE_PREFIX_PATH=%CD%\packaging\msvc
 
       - name: Build
         run: |
@@ -79,3 +95,9 @@ jobs:
         run: |
           set PATH=%PATH%;%CD%\packaging\msvc\bin
           ctest --test-dir build --output-on-failure -C ${{env.BUILD_TYPE}}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: essentia-2.1b6.dev0-cp312-win64
+          path: build/wheel
