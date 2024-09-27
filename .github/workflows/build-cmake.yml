@@ -97,7 +97,7 @@ jobs:
           ctest --test-dir build --output-on-failure -C ${{env.BUILD_TYPE}}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: essentia-2.1b6.dev0-cp312-win64
           path: build/wheel
