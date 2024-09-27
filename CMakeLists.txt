@@ -149,14 +149,13 @@ write_basic_package_version_file(
 )
 
 # Maybe not the best idea to install headers this way.
-install(DIRECTORY src/
+install(DIRECTORY src/essentia/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/essentia
-  FILES_MATCHING
-    PATTERN "*.h"
-    PATTERN "3rdparty" EXCLUDE
-    PATTERN "algorithms" EXCLUDE
-    PATTERN "examples" EXCLUDE
-    PATTERN "python" EXCLUDE
+  FILES_MATCHING PATTERN "*.h"
+)
+
+install(FILES src/version.h
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/essentia
 )
 
 install(FILES
