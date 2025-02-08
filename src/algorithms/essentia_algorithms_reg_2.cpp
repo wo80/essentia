@@ -271,6 +271,8 @@
 #include "algorithms/temporal/loudnessvickers.h"
 #include "algorithms/temporal/lpc.h"
 #include "algorithms/temporal/zerocrossingrate.h"
+#include "algorithms/tonal/audio2midi.h"
+#include "algorithms/tonal/audio2pitch.h"
 #include "algorithms/tonal/chordsdescriptors.h"
 #include "algorithms/tonal/chordsdetection.h"
 #include "algorithms/tonal/chordsdetectionbeats.h"
@@ -283,6 +285,7 @@
 #include "algorithms/tonal/multipitchmelodia.h"
 #include "algorithms/tonal/nnlschroma.h"
 #include "algorithms/tonal/oddtoevenharmonicenergyratio.h"
+#include "algorithms/tonal/pitch2midi.h"
 #include "algorithms/tonal/pitchcontours.h"
 #include "algorithms/tonal/pitchcontoursegmentation.h"
 #include "algorithms/tonal/pitchcontoursmelody.h"
@@ -601,6 +604,9 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<PitchYinProbabilities> regPitchYinProbabilities;
     AlgorithmFactory::Registrar<PitchYinProbabilitiesHMM> regPitchYinProbabilitiesHMM;
     AlgorithmFactory::Registrar<PredominantPitchMelodia> regPredominantPitchMelodia;
+    AlgorithmFactory::Registrar<Audio2Midi> regAudio2Midi;
+    AlgorithmFactory::Registrar<Audio2Pitch> regAudio2Pitch;
+    AlgorithmFactory::Registrar<Pitch2Midi> regPitch2Midi;
     AlgorithmFactory::Registrar<TonicIndianArtMusic> regTonicIndianArtMusic;
     AlgorithmFactory::Registrar<Tristimulus> regTristimulus;
     AlgorithmFactory::Registrar<TuningFrequency> regTuningFrequency;

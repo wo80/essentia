@@ -1,5 +1,7 @@
 target_sources(essentia
   PRIVATE
+    audio2midi.cpp
+    audio2pitch.cpp
     chordsdescriptors.cpp
     chordsdetection.cpp
     chordsdetectionbeats.cpp
@@ -12,6 +14,7 @@ target_sources(essentia
     multipitchmelodia.cpp
     nnlschroma.cpp
     oddtoevenharmonicenergyratio.cpp
+    pitch2midi.cpp
     pitchcontours.cpp
     pitchcontoursegmentation.cpp
     pitchcontoursmelody.cpp
@@ -31,6 +34,8 @@ target_sources(essentia
     tristimulus.cpp
     tuningfrequency.cpp
     vibrato.cpp
+    audio2midi.h
+    audio2pitch.h
     chordsdescriptors.h
     chordsdetection.h
     chordsdetectionbeats.h
@@ -43,6 +48,7 @@ target_sources(essentia
     multipitchmelodia.h
     nnlschroma.h
     oddtoevenharmonicenergyratio.h
+    pitch2midi.h
     pitchcontours.h
     pitchcontoursegmentation.h
     pitchcontoursmelody.h
