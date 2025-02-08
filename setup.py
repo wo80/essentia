@@ -109,9 +109,6 @@ Essentia is an open-source C++ library with Python bindings for audio analysis a
 Website: https://essentia.upf.edu
 '''
 
-setup_requires = ['numpy>=1.8.2', 'six']
-install_requires = setup_requires + ['pyyaml']
-
 # Require tensorflow for the package essentia-tensorflow
 # We are using version 2.5.0 as it is the newest version supported by the C API
 # https://www.tensorflow.org/guide/versions
@@ -121,7 +118,6 @@ if project_name == 'essentia-tensorflow':
 module = Extension('name', sources=[])
 
 setup(
-    name=project_name,
     version=get_version(),
     description=description,
     long_description=long_description,
@@ -136,8 +132,6 @@ setup(
     license='AGPLv3',
     platforms='any',
     classifiers=classifiers,
-    setup_requires=setup_requires,
-    install_requires=install_requires,
     ext_modules=[module],
     cmdclass={
         'build_ext': EssentiaBuildExtension,
