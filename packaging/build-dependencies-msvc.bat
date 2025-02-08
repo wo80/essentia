@@ -164,17 +164,17 @@ if not exist "..\include\zlib.h" (
 :: Install utf8cpp (TagLib dependency) - https://github.com/nemtrif/utfcpp
 ::
 
-if not exist "v4.0.5.tar.gz" (
+if not exist "v4.0.6.tar.gz" (
   echo Downloading utf8cpp ...
-  curl -L -o "v4.0.5.tar.gz" "https://github.com/nemtrif/utfcpp/archive/refs/tags/v4.0.5.tar.gz"
+  curl -L -o "v4.0.6.tar.gz" "https://github.com/nemtrif/utfcpp/archive/refs/tags/v4.0.6.tar.gz"
 )
 
 if not exist "..\include\utf8cpp\" (
-  if not exist "utfcpp-4.0.5\" (
+  if not exist "utfcpp-4.0.6\" (
     echo Extracting utf8cpp archive ...
-    tar -xf "v4.0.5.tar.gz"
+    tar -xf "v4.0.6.tar.gz"
   )
-  cd "utfcpp-4.0.5"
+  cd "utfcpp-4.0.6"
   cmake -B build
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE% --prefix %INSTALL_PREFIX%
@@ -187,17 +187,17 @@ if not exist "..\include\utf8cpp\" (
 :: Install TagLib - https://github.com/taglib/taglib
 ::
 
-if not exist "taglib-2.0.1.tar.gz" (
+if not exist "taglib-2.0.2.tar.gz" (
   echo Downloading taglib ...
-  curl -L -o "taglib-2.0.1.tar.gz" "https://github.com/taglib/taglib/releases/download/v2.0.1/taglib-2.0.1.tar.gz"
+  curl -L -o "taglib-2.0.2.tar.gz" "https://github.com/taglib/taglib/releases/download/v2.0.2/taglib-2.0.2.tar.gz"
 )
 
 if not exist "..\include\taglib\" (
-  if not exist "taglib-2.0.1\" (
+  if not exist "taglib-2.0.2\" (
     echo Extracting taglib archive ...
-    tar -xf "taglib-2.0.1.tar.gz"
+    tar -xf "taglib-2.0.2.tar.gz"
   )
-  cd "taglib-2.0.1"
+  cd "taglib-2.0.2"
   cmake -B build -DWITH_ZLIB=NO -DBUILD_EXAMPLES=NO -DBUILD_BINDINGS=NO -DBUILD_TESTING=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
@@ -312,7 +312,7 @@ if not exist "..\include\libavcodec\" (
 
 if not exist "libtensorflow-cpu-windows-x86_64.zip" (
   echo Downloading tensorflow-cpu ...
-  curl -L -o "libtensorflow-cpu-windows-x86_64.zip" "https://storage.googleapis.com/tensorflow/versions/2.16.1/libtensorflow-cpu-windows-x86_64.zip"
+  curl -L -o "libtensorflow-cpu-windows-x86_64.zip" "https://storage.googleapis.com/tensorflow/versions/2.16.2/libtensorflow-cpu-windows-x86_64.zip"
 )
 
 if not exist "..\include\tensorflow\c\tf_buffer.h" (
