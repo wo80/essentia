@@ -94,6 +94,7 @@ target_sources(streaming_spectrogram
 
 # Tensorflow
 if(ESSENTIA_USE_TENSORFLOW)
+  essentia_add_example(standard_tempocnn.cpp)
   essentia_add_example(streaming_tensorflowpredict.cpp)
   essentia_add_example(streaming_musicnn_predict.cpp)
   essentia_add_example(streaming_vggish_predict.cpp)
