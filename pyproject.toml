@@ -4,7 +4,6 @@
 manylinux-x86_64-image = "mtgupf/essentia-builds:manylinux2014_x86_64"
 manylinux-i686-image = "mtgupf/essentia-builds:manylinux2014_i686"
 
-# TODO: skipping Python 3.12 for now until we create manylinux images supporting this version.
 skip = ["pp*", "*-musllinux*", "*i686", "*cp36*", "*cp37*", "*cp38*"]
 
 environment = { PROJECT_NAME="essentia", ESSENTIA_PROJECT_NAME="${PROJECT_NAME}", ESSENTIA_WHEEL_SKIP_3RDPARTY=1, ESSENTIA_WHEEL_ONLY_PYTHON=1 }
@@ -21,7 +20,7 @@ test-command = "python -c 'import essentia; import essentia.standard; import ess
 
 [tool.cibuildwheel.macos]
 
-skip = ["pp*"]
+skip = ["pp*", "*cp36*", "*cp37*", "*cp38*"]
 
 environment = { PROJECT_NAME="essentia", ESSENTIA_PROJECT_NAME="${PROJECT_NAME}", ESSENTIA_WHEEL_SKIP_3RDPARTY=1, ESSENTIA_WHEEL_ONLY_PYTHON=1 }
 
@@ -43,7 +42,7 @@ test-command = "python -c 'import essentia; import essentia.standard; import ess
 [[tool.cibuildwheel.overrides]]
 select = "*macosx_arm64*"
 
-skip = ["pp*"]
+skip = ["pp*", "*cp36*", "*cp37*", "*cp38*"]
 
 environment = { PROJECT_NAME="essentia", ESSENTIA_PROJECT_NAME="${PROJECT_NAME}", ESSENTIA_WHEEL_SKIP_3RDPARTY=1, ESSENTIA_WHEEL_ONLY_PYTHON=1, ESSENTIA_MACOSX_ARM64=1 }
 
@@ -84,7 +83,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name="essentia"
-dynamic = ["version", "description", "readme", "license", "authors", "keywords", "classifiers", "urls"]
+license = "AGPL-3.0-only"
+dynamic = ["version", "description", "readme", "authors", "keywords", "classifiers", "urls"]
 dependencies = [
     "numpy>=1.25",
     "pyyaml",
