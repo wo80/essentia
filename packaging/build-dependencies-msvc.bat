@@ -287,17 +287,17 @@ if %SHARED_LIBS%==YES (
   set ffmpeg_type=static
 )
 
-if not exist "ffmpeg-7.0.1-win64-%ffmpeg_type%.zip" (
+if not exist "ffmpeg-7.1.1-win64-%ffmpeg_type%.zip" (
   echo Downloading wo80/ffmpeg-audio-only ...
-  curl -L -o "ffmpeg-7.0.1-win64-%ffmpeg_type%.zip" "https://github.com/wo80/ffmpeg-audio-only/releases/download/v7.0.1/ffmpeg-7.0.1-win64-%ffmpeg_type%.zip"
+  curl -L -o "ffmpeg-7.1.1-win64-%ffmpeg_type%.zip" "https://github.com/wo80/ffmpeg-audio-only/releases/download/v7.1.1/ffmpeg-7.1.1-win64-%ffmpeg_type%.zip"
 )
 
 if not exist "..\include\libavcodec\" (
-  if not exist "ffmpeg-7.0.1-win64-%ffmpeg_type%\" (
+  if not exist "ffmpeg-7.1.1-win64-%ffmpeg_type%\" (
     echo Extracting wo80/ffmpeg-audio-only archive ...
-    tar -xf "ffmpeg-7.0.1-win64-%ffmpeg_type%.zip"
+    tar -xf "ffmpeg-7.1.1-win64-%ffmpeg_type%.zip"
   )
-  cd "ffmpeg-7.0.1-win64-%ffmpeg_type%"
+  cd "ffmpeg-7.1.1-win64-%ffmpeg_type%"
   xcopy /s /y bin %INSTALL_PREFIX%\bin
   xcopy /s /y lib %INSTALL_PREFIX%\lib
   xcopy /s /y include %INSTALL_PREFIX%\include
