@@ -130,11 +130,13 @@ function (add_wheel WHEEL_TARGET)
 
   if (WHEEL_LICENSE_PATH)
     add_custom_command(TARGET ${WHEEL_TARGET}-copy-files
+      POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy "${WHEEL_LICENSE_PATH}" "${WHEEL_PACKAGE_DIR}/LICENSE.txt")
   endif()
 
   if (WHEEL_README_PATH)
     add_custom_command(TARGET ${WHEEL_TARGET}-copy-files
+      POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy "${WHEEL_README_PATH}" "${WHEEL_PACKAGE_DIR}/README.txt")
   endif()
 

@@ -31,8 +31,7 @@ find_package(Chromaprint)
 find_package(YAML)
 
 if(BUILD_PYTHON_BINDINGS)
-  # Restrict Python version since last NumPy 1.x supports that range only
-  find_package(Python3 3.9...<3.13 COMPONENTS Interpreter Development NumPy REQUIRED)
+  find_package(Python3 3.10...<3.14 COMPONENTS Interpreter Development NumPy REQUIRED)
 endif()
 
 if(BUILD_VAMP_PLUGIN)

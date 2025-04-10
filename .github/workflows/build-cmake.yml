@@ -75,23 +75,23 @@ jobs:
       - name: Install Python
         run: |
           cd packaging
-          curl -L -o python-3.12.9-amd64.exe https://www.python.org/ftp/python/3.12.9/python-3.12.9-amd64.exe
-          Start-Process -FilePath python-3.12.9-amd64.exe -ArgumentList "/quiet Include_debug=1 Include_dev=1 Include_lib=1 Include_pip=1 PrependPath=1 CompileAll=1 InstallAllUsers=0" -Verb runas -Wait
-          Add-Content $env:GITHUB_PATH "C:\Users\runneradmin\AppData\Local\Programs\Python\Python312\Launcher"
-          Add-Content $env:GITHUB_PATH "C:\Users\runneradmin\AppData\Local\Programs\Python\Python312"
-          Add-Content $env:GITHUB_PATH "C:\Users\runneradmin\AppData\Local\Programs\Python\Python312\Scripts"
+          curl -L -o python-3.13.3-amd64.exe https://www.python.org/ftp/python/3.13.3/python-3.13.3-amd64.exe
+          Start-Process -FilePath python-3.13.3-amd64.exe -ArgumentList "/quiet Include_debug=1 Include_dev=1 Include_lib=1 Include_pip=1 PrependPath=1 CompileAll=1 InstallAllUsers=0" -Verb runas -Wait
+          Add-Content $env:GITHUB_PATH "C:\Users\runneradmin\AppData\Local\Programs\Python\Python313\Launcher"
+          Add-Content $env:GITHUB_PATH "C:\Users\runneradmin\AppData\Local\Programs\Python\Python313"
+          Add-Content $env:GITHUB_PATH "C:\Users\runneradmin\AppData\Local\Programs\Python\Python313\Scripts"
         shell: pwsh
 
       - name: Install numpy
         run: |
           python -m pip install --upgrade pip
-          python -m pip install numpy==1.26.4
+          python -m pip install numpy
 
       - name: Install dependencies
         run: .\packaging\build-dependencies-msvc.bat --static --build-type Release
         
       - name: Configure
-        run: cmake -B build -DUSE_TENSORFLOW=ON -DBUILD_PYTHON_BINDINGS=ON -DPython3_ROOT_DIR=C:\Users\runneradmin\AppData\Local\Programs\Python\Python312 -DENABLE_STATIC_DEPENDENCIES=ON -DCMAKE_PREFIX_PATH=%CD%\packaging\msvc
+        run: cmake -B build -DUSE_TENSORFLOW=ON -DBUILD_PYTHON_BINDINGS=ON -DPython3_ROOT_DIR=C:\Users\runneradmin\AppData\Local\Programs\Python\Python313 -DENABLE_STATIC_DEPENDENCIES=ON -DCMAKE_PREFIX_PATH=%CD%\packaging\msvc
 
       - name: Build
         run: |
@@ -106,5 +106,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: essentia-2.1b6.dev0-cp312-win64
+          name: essentia-2.1b6.dev0-cp313-win64
           path: build/wheel
