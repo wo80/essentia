@@ -6,6 +6,7 @@
 :: Optional parameters:
 ::
 :: --static     = Flag to enable static build
+:: --with-gaia  = Flag to enable Gaia build
 :: --build-type = CMake build type (Debug, Release, RelWithDebInfo or MinSizeRel)
 ::
 
@@ -30,6 +31,7 @@ cd "msvc"
 
 :: Default build options
 set SHARED_LIBS=YES
+set WITH_GAIA=NO
 set BUILD_TYPE=Debug
 
 :: Parse commandline arguments
@@ -41,11 +43,13 @@ set HAS_BUILD_TYPE=0
 for %%A in (%*) do (
   if /I %%A==--static (
     set SHARED_LIBS=NO
+  ) else ( if /I %%A==--with-gaia (
+    set WITH_GAIA=YES
   ) else ( if /I %%A==--build-type (
     set HAS_BUILD_TYPE=1
   ) else ( if !HAS_BUILD_TYPE!==1 (
     set BUILD_TYPE=%%A
-  )))
+  ))))
 )
 
 for %%A in (Debug Release RelWithDebInfo MinSizeRel) do (
@@ -329,6 +333,56 @@ if not exist "..\include\tensorflow\" (
 ) else (
   echo Already installed: tensorflow-cpu
 )
+
+:: -- Begin Gaia specific code
+
+if %WITH_GAIA%==NO (goto end)
+
+::
+:: Install Qt5
+::
+
+if not exist "qtbase.7z" (
+  echo Downloading Qt5 ...
+  curl -L -o "qtbase.7z" "https://github.com/wo80/qt-msvc-build/releases/download/v5.15.17/qt-5.15.17-msvc2022-x64.7z"
+)
+
+if not exist "..\Qt5\include\QtCore\" (
+  if not exist "Qt5\" (
+    echo Extracting Qt5 archive ...
+    7z x -y qtbase.7z -oQt5
+  )
+  xcopy /s /y Qt5\ %INSTALL_PREFIX%\Qt5\
+) else (
+  echo Already installed: Qt5
+)
+
+::
+:: Install Gaia - https://github.com/wo80/gaia/tree/cmake
+::
+
+if not exist "gaia-cmake.zip" (
+  echo Downloading wo80/gaia ...
+  curl -L -o "gaia-cmake.zip" "https://github.com/wo80/gaia/archive/refs/heads/cmake.zip"
+)
+
+if not exist "..\include\gaia.h" (
+  if not exist "gaia-cmake\" (
+    echo Extracting wo80/gaia archive ...
+    tar -xf "gaia-cmake.zip"
+  )
+  cd "gaia-cmake"
+  cmake -B build -DBUILD_TOOLS=NO -DBUILD_TESTS=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DCMAKE_PREFIX_PATH=%INSTALL_PREFIX%\Qt5
+  cmake --build build --config %BUILD_TYPE%
+  cmake --install build --config %BUILD_TYPE%
+  cd ..
+) else (
+  echo Already installed: wo80/gaia
+)
+
+:end
+
+:: -- End Gaia specific code
 
 :: Change back to Essentia root directory
 cd ..\..\..
