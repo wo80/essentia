@@ -105,7 +105,7 @@ if not exist "..\include\fftw3.h" (
     tar -xf "fftw-3.3.10.tar.gz"
   )
   cd "fftw-3.3.10"
-  cmake -B build -DBUILD_TESTS=NO -DDISABLE_FORTRAN=YES -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=YES
+  cmake -B build -DBUILD_TESTS=NO -DDISABLE_FORTRAN=YES -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=YES -DCMAKE_POLICY_VERSION_MINIMUM=3.5
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -129,7 +129,7 @@ if not exist "..\include\samplerate.h" (
     rename "libsamplerate-master" "libsamplerate"
   )
   cd "libsamplerate"
-  cmake -B build -DLIBSAMPLERATE_EXAMPLES=NO -DBUILD_TESTING=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DLIBSAMPLERATE_EXAMPLES=NO -DBUILD_TESTING=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DCMAKE_POLICY_VERSION_MINIMUM=3.5
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -222,7 +222,7 @@ if not exist "..\include\yaml.h" (
     rename "libyaml-master" "libyaml"
   )
   cd "libyaml"
-  cmake -B build -DBUILD_TESTING=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DBUILD_TESTING=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DCMAKE_POLICY_VERSION_MINIMUM=3.5
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -246,7 +246,7 @@ if not exist "..\include\chromaprint.h" (
     rename "chromaprint-master" "chromaprint"
   )
   cd "chromaprint"
-  cmake -B build -DBUILD_TOOLS=NO -DBUILD_TESTS=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DBUILD_TOOLS=NO -DBUILD_TESTS=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DCMAKE_POLICY_VERSION_MINIMUM=3.5
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..
