@@ -44,7 +44,10 @@ endif()
 
 if(USE_GAIA2)
   find_package(Gaia2)
-  find_package(Qt5 COMPONENTS Core Concurrent REQUIRED)
+
+  if(NOT Qt5_FOUND)
+    find_package(Qt5 COMPONENTS Core Concurrent REQUIRED)
+  endif()
 endif()
 
 set(ESSENTIA_USE_FFMPEG OFF)
@@ -107,7 +110,7 @@ if(VAMPSDK_FOUND)
   set(ESSENTIA_USE_VAMP ON)
 endif()
 
-if(GAIA2_FOUND)
+if(Gaia2_FOUND)
   set(ESSENTIA_USE_GAIA2 ON)
 endif()
 

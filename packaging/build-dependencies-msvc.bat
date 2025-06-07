@@ -250,7 +250,7 @@ if not exist "..\include\chromaprint.h" (
     rename "chromaprint-master" "chromaprint"
   )
   cd "chromaprint"
-  cmake -B build -DBUILD_TOOLS=NO -DBUILD_TESTS=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+  cmake -B build -DBUILD_TOOLS=NO -DBUILD_TESTS=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..

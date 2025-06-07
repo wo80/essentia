@@ -103,4 +103,8 @@ endif()
 # Gaia SVM
 if(ESSENTIA_USE_GAIA2)
   essentia_add_example(streaming_extractor_music_svm.cpp)
+  target_sources(streaming_extractor_music_svm
+    PRIVATE
+      music_extractor/extractor_utils.cpp
+      music_extractor/extractor_utils.h)
 endif()
