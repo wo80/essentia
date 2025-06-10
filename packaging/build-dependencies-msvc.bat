@@ -366,13 +366,19 @@ if not exist "gaia-cmake.zip" (
   curl -L -o "gaia-cmake.zip" "https://github.com/wo80/gaia/archive/refs/heads/cmake.zip"
 )
 
+if %SHARED_LIBS%==YES (
+  set gaia_static_deps=NO
+) else (
+  set gaia_static_deps=YES
+)
+
 if not exist "..\include\gaia.h" (
   if not exist "gaia-cmake\" (
     echo Extracting wo80/gaia archive ...
     tar -xf "gaia-cmake.zip"
   )
   cd "gaia-cmake"
-  cmake -B build -DBUILD_TOOLS=NO -DBUILD_TESTS=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DCMAKE_PREFIX_PATH=%INSTALL_PREFIX%\Qt5
+  cmake -B build -DBUILD_TOOLS=NO -DBUILD_TESTS=NO -DENABLE_STATIC_DEPENDENCIES=%gaia_static_deps% -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DCMAKE_PREFIX_PATH=%INSTALL_PREFIX%\Qt5
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..
