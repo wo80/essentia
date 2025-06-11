@@ -65,7 +65,7 @@ jobs:
           submodules: 'true'
 
       - name: Install dependencies
-        run: .\packaging\build-dependencies-msvc.bat
+        run: .\packaging\build-dependencies-msvc.bat --with-tensorflow
         
       - name: Configure
         run: cmake -B build -DUSE_TENSORFLOW=ON -DCMAKE_PREFIX_PATH=%CD%\packaging\msvc
