@@ -8,6 +8,8 @@
 :: --prefix     = The install prefix (the directory has to exist)
 :: --build-type = CMake build type (Debug, Release, RelWithDebInfo or MinSizeRel)
 :: --static     = Flag to enable static build
+:: --shared     = List of shared dependencies, ignoring the '--static' flag, separated by a colon,
+::                for example  '--shared ffmpeg:fftw'. Only FFmpeg and FFTW supported for now.
 :: --with-gaia  = Flag to enable Gaia build
 :: --with-tensorflow  = Flag to download and install TensorFlow
 ::
@@ -55,11 +57,18 @@ for %%A in (%*) do (
     set OPT=1
   ) else ( if /I %%A==--prefix (
     set OPT=2
+  ) else ( if /I %%A==--shared (
+    set OPT=3
   ) else ( if !OPT!==1 (
     set BUILD_TYPE=%%A
+    set OPT=0
   ) else ( if !OPT!==2 (
     set INSTALL_PREFIX=%%A
-  )))))))
+    set OPT=0
+  ) else ( if !OPT!==3 (
+    set SHARED_LIB_NAMES=%%A
+    set OPT=0
+  )))))))))
 )
 
 if "%INSTALL_PREFIX%" == "" (
@@ -72,6 +81,19 @@ if not exist "%INSTALL_PREFIX%" (
   goto error
 )
 
+:: Set default shared lib value for FFmpeg and FFTW.
+set ffmpeg_shared=%SHARED_LIBS%
+set fftw_shared=%SHARED_LIBS%
+
+:: Update shared lib values.
+if not "!SHARED_LIB_NAMES:ffmpeg=!"=="%SHARED_LIB_NAMES%" (
+    set ffmpeg_shared=YES
+)
+if not "!SHARED_LIB_NAMES:fftw=!"=="%SHARED_LIB_NAMES%" (
+    set fftw_shared=YES
+)
+
+:: Check build type
 for %%A in (Debug Release RelWithDebInfo MinSizeRel) do (
   if %BUILD_TYPE%==%%A (goto valid)
 )
@@ -127,7 +149,7 @@ if not exist "%INSTALL_PREFIX%\include\fftw3.h" (
     tar -xf "fftw-3.3.10.tar.gz"
   )
   cd "fftw-3.3.10"
-  cmake -B build -DBUILD_TESTS=NO -DDISABLE_FORTRAN=YES -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=YES -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+  cmake -B build -DBUILD_TESTS=NO -DDISABLE_FORTRAN=YES -DBUILD_SHARED_LIBS=%fftw_shared% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=YES -DCMAKE_POLICY_VERSION_MINIMUM=3.5
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -303,7 +325,7 @@ if not exist "%INSTALL_PREFIX%\include\vamp\" (
 :: Install FFmpeg - https://github.com/wo80/ffmpeg-audio-only
 ::
 
-if %SHARED_LIBS%==YES (
+if %ffmpeg_shared%==YES (
   set ffmpeg_type=shared
 ) else (
   set ffmpeg_type=static
