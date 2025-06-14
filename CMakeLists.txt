@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
 option(BUILD_TESTS "Build tests" ON)
@@ -71,7 +72,7 @@ else()
     find_library(ACCELERATE_LIBRARIES Accelerate)
   endif()
 
-  if(FFTW3f_FOUND)
+  if(TARGET FFTW3::fftw3f)
     set(ESSENTIA_USE_FFTW ON)
   elseif(APPLE AND ACCELERATE_LIBRARIES)
     set(ESSENTIA_USE_VDSP ON)
@@ -86,31 +87,31 @@ else()
   message(WARNING "FFmpeg not found - compilation of audio loaders/writers disabled!")
 endif()
 
-if(SAMPLERATE_FOUND)
+if(TARGET SampleRate::samplerate)
   set(ESSENTIA_USE_LIBSAMPLERATE ON)
 endif()
 
-if(TAGLIB_FOUND)
+if(TARGET TagLib::tag)
   set(ESSENTIA_USE_TAGLIB ON)
 endif()
 
-if(CHROMAPRINT_FOUND)
+if(TARGET Chromaprint::chromaprint)
   set(ESSENTIA_USE_CHROMAPRINT ON)
 endif()
 
-if(YAML_FOUND)
+if(TARGET yaml)
   set(ESSENTIA_USE_YAML ON)
 endif()
 
-if(TENSORFLOW_FOUND)
+if(TARGET TensorFlow::tensorflow)
   set(ESSENTIA_USE_TENSORFLOW ON)
 endif()
 
-if(VAMPSDK_FOUND)
+if(TARGET VampSdk::vamp)
   set(ESSENTIA_USE_VAMP ON)
 endif()
 
-if(Gaia2_FOUND)
+if(TARGET Gaia2::gaia2)
   set(ESSENTIA_USE_GAIA2 ON)
 endif()
 
