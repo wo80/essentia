@@ -1,6 +1,5 @@
-function(essentia_add_example example_src)
-  string( REPLACE ".cpp" "" example ${example_src} )
-  add_executable( ${example} ${example_src} )
+function(essentia_add_example example)
+  add_executable( ${example} "${example}.cpp" )
   target_link_libraries(${example} PRIVATE essentia)
   if(BUILD_SHARED_LIBS)
     target_compile_definitions(${example} PUBLIC ESSENTIA_EXPORTS=0)
@@ -8,73 +7,73 @@ function(essentia_add_example example_src)
 endfunction()
 
 set(ESSENTIA_EXAMPLES_standard
-  onset_detector.cpp
-  standard_beatsmarker.cpp
-  standard_chromacrosssimilarity.cpp
-  standard_chromaprinter.cpp
-  standard_coversongsimilarity.cpp
-  standard_crosssimilaritymatrix.cpp
-  standard_discontinuitydetector.cpp
-  standard_extractor_la-cupula.cpp
-  standard_fadedetection.cpp
-  standard_gapsdetector.cpp
-  standard_harmonicmodel.cpp
-  standard_hpsmodel.cpp
-  standard_hprmodel.cpp
-  standard_humdetector.cpp
-  standard_loudnessebur128.cpp
-  standard_loudnessebur128_double_input.cpp
-  standard_mfcc.cpp
-  #standard_nnls.cpp
-  standard_onsetrate.cpp
-  standard_pca.cpp
-  standard_pitchdemo.cpp
-  standard_predominantmask.cpp
-  standard_rhythmtransform.cpp
-  standard_saturationdetector.cpp
-  standard_sinemodel.cpp
-  standard_sinesubtraction.cpp
-  standard_snr.cpp
-  standard_spectralcontrast.cpp
-  standard_sprmodel.cpp
-  standard_spsmodel.cpp
-  standard_stft.cpp
-  standard_stochasticmodel.cpp
-  standard_vibrato.cpp
-  standard_welch.cpp)
+  onset_detector
+  standard_beatsmarker
+  standard_chromacrosssimilarity
+  standard_chromaprinter
+  standard_coversongsimilarity
+  standard_crosssimilaritymatrix
+  standard_discontinuitydetector
+  standard_extractor_la-cupula
+  standard_fadedetection
+  standard_gapsdetector
+  standard_harmonicmodel
+  standard_hpsmodel
+  standard_hprmodel
+  standard_humdetector
+  standard_loudnessebur128
+  standard_loudnessebur128_double_input
+  standard_mfcc
+  #standard_nnls
+  standard_onsetrate
+  standard_pca
+  standard_pitchdemo
+  standard_predominantmask
+  standard_rhythmtransform
+  standard_saturationdetector
+  standard_sinemodel
+  standard_sinesubtraction
+  standard_snr
+  standard_spectralcontrast
+  standard_sprmodel
+  standard_spsmodel
+  standard_stft
+  standard_stochasticmodel
+  standard_vibrato
+  standard_welch)
 
 set(ESSENTIA_EXAMPLES_streaming
-  streaming_beatsmarker.cpp
-  streaming_beattracker_multifeature_mirex2013.cpp
-  streaming_coversongsimilarity.cpp
-  streaming_chromacrosssimilarity.cpp
-  streaming_extractor_music.cpp
-  streaming_extractor_freesound.cpp
-  streaming_gfcc.cpp
-  streaming_humdetector.cpp
-  streaming_key.cpp
-  streaming_md5.cpp
-  streaming_mfcc.cpp
-  streaming_onsetrate.cpp
-  streaming_panning.cpp
-  streaming_pitchyinfft.cpp
-  streaming_predominantpitchmelodia.cpp
-  streaming_rhythmextractor_multifeature.cpp
-  streaming_spectrogram.cpp
-  streaming_stft.cpp
-  streaming_tuningfrequency.cpp
-  streaming_vibrato.cpp
-  streaming_yinprobabilistic.cpp)
+  streaming_beatsmarker
+  streaming_beattracker_multifeature_mirex2013
+  streaming_coversongsimilarity
+  streaming_chromacrosssimilarity
+  streaming_extractor_music
+  streaming_extractor_freesound
+  streaming_gfcc
+  streaming_humdetector
+  streaming_key
+  streaming_md5
+  streaming_mfcc
+  streaming_onsetrate
+  streaming_panning
+  streaming_pitchyinfft
+  streaming_predominantpitchmelodia
+  streaming_rhythmextractor_multifeature
+  streaming_spectrogram
+  streaming_stft
+  streaming_tuningfrequency
+  streaming_vibrato
+  streaming_yinprobabilistic)
 
 # Setup target executable for each standard example.
-foreach( example_src ${ESSENTIA_EXAMPLES_standard} )
-  essentia_add_example(${example_src})
-endforeach( example_src ${ESSENTIA_EXAMPLES_standard} )
+foreach( example ${ESSENTIA_EXAMPLES_standard} )
+  essentia_add_example(${example})
+endforeach()
 
 # Setup target executable for each streaming example.
-foreach( example_src ${ESSENTIA_EXAMPLES_streaming} )
-  essentia_add_example(${example_src})
-endforeach( example_src ${ESSENTIA_EXAMPLES_streaming} )
+foreach( example ${ESSENTIA_EXAMPLES_streaming} )
+  essentia_add_example(${example})
+endforeach()
 
 # Take care of additional dependencies.
 target_sources(streaming_extractor_music
@@ -94,15 +93,20 @@ target_sources(streaming_spectrogram
 
 # Tensorflow
 if(ESSENTIA_USE_TENSORFLOW)
-  essentia_add_example(standard_tempocnn.cpp)
-  essentia_add_example(streaming_tensorflowpredict.cpp)
-  essentia_add_example(streaming_musicnn_predict.cpp)
-  essentia_add_example(streaming_vggish_predict.cpp)
+  set(ESSENTIA_EXAMPLES_tf
+    standard_tempocnn
+    streaming_tensorflowpredict
+    streaming_musicnn_predict
+    streaming_vggish_predict)
+
+  foreach(example ${ESSENTIA_EXAMPLES_tf})
+    essentia_add_example(${example})
+  endforeach()
 endif()
 
 # Gaia SVM
 if(ESSENTIA_USE_GAIA2)
-  essentia_add_example(streaming_extractor_music_svm.cpp)
+  essentia_add_example(streaming_extractor_music_svm)
   target_sources(streaming_extractor_music_svm
     PRIVATE
       music_extractor/extractor_utils.cpp
