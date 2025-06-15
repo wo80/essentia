@@ -1,10 +1,24 @@
 function(essentia_add_example example)
-  add_executable( ${example} "${example}.cpp" )
-  target_link_libraries(${example} PRIVATE essentia)
-  if(BUILD_SHARED_LIBS)
-    target_compile_definitions(${example} PUBLIC ESSENTIA_EXPORTS=0)
+  if(BUILD_EXAMPLES EQUAL 1 OR example IN_LIST BUILD_EXAMPLES)
+    add_executable(${example} "${example}.cpp")
+    target_link_libraries(${example} PRIVATE essentia)
+    if(BUILD_SHARED_LIBS)
+      target_compile_definitions(${example} PUBLIC ESSENTIA_EXPORTS=0)
+    endif()
   endif()
 endfunction()
+
+string(TOUPPER ${BUILD_EXAMPLES} BUILD_EXAMPLES_UPPER)
+
+# All examples are built if BUILD_EXAMPLES is one of the following:
+if( "${BUILD_EXAMPLES_UPPER}" STREQUAL "ON"   OR
+    "${BUILD_EXAMPLES_UPPER}" STREQUAL "Y"    OR
+    "${BUILD_EXAMPLES_UPPER}" STREQUAL "YES"  OR
+    "${BUILD_EXAMPLES_UPPER}" STREQUAL "TRUE" OR
+    "${BUILD_EXAMPLES_UPPER}" STREQUAL "ALL" OR
+    "${BUILD_EXAMPLES_UPPER}" STREQUAL "1")
+    set(BUILD_EXAMPLES 1)
+endif()
 
 set(ESSENTIA_EXAMPLES_standard
   onset_detector
@@ -75,22 +89,6 @@ foreach( example ${ESSENTIA_EXAMPLES_streaming} )
   essentia_add_example(${example})
 endforeach()
 
-# Take care of additional dependencies.
-target_sources(streaming_extractor_music
-  PRIVATE
-    music_extractor/extractor_utils.cpp
-    music_extractor/extractor_utils.h)
-    
-target_sources(streaming_extractor_freesound
-  PRIVATE
-    music_extractor/extractor_utils.cpp
-    music_extractor/extractor_utils.h)
-    
-target_sources(streaming_spectrogram
-  PRIVATE
-    music_extractor/extractor_utils.cpp
-    music_extractor/extractor_utils.h)
-
 # Tensorflow
 if(ESSENTIA_USE_TENSORFLOW)
   set(ESSENTIA_EXAMPLES_tf
@@ -107,6 +105,31 @@ endif()
 # Gaia SVM
 if(ESSENTIA_USE_GAIA2)
   essentia_add_example(streaming_extractor_music_svm)
+endif()
+
+# Take care of additional dependencies.
+if(TARGET streaming_extractor_music)
+  target_sources(streaming_extractor_music
+    PRIVATE
+      music_extractor/extractor_utils.cpp
+      music_extractor/extractor_utils.h)
+endif()
+
+if(TARGET streaming_extractor_freesound)
+  target_sources(streaming_extractor_freesound
+    PRIVATE
+      music_extractor/extractor_utils.cpp
+      music_extractor/extractor_utils.h)
+endif()
+
+if(TARGET streaming_spectrogram)
+  target_sources(streaming_spectrogram
+    PRIVATE
+      music_extractor/extractor_utils.cpp
+      music_extractor/extractor_utils.h)
+endif()
+
+if(TARGET streaming_extractor_music_svm)
   target_sources(streaming_extractor_music_svm
     PRIVATE
       music_extractor/extractor_utils.cpp
