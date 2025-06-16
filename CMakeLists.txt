@@ -24,6 +24,12 @@ option(USE_TENSORFLOW "Use TensorFlow" OFF)
 option(USE_GAIA2 "Use Gaia2" OFF)
 option(ENABLE_STATIC_DEPENDENCIES "MSVC only: enable linking against static dependencies" OFF)
 
+# Options from src/essentia/config.h
+option(DEBUGGING_ENABLED "Enable Essentia debugging mode" ON)
+option(STRIP_DOCUMENTATION "Strip documentation from binaries" OFF)
+
+mark_as_advanced(DEBUGGING_ENABLED STRIP_DOCUMENTATION)
+
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 find_package(FFmpeg)
 find_package(SampleRate)

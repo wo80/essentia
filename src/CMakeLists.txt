@@ -26,6 +26,16 @@ if (MSVC AND ENABLE_STATIC_DEPENDENCIES)
   target_link_libraries(essentia PUBLIC bcrypt.lib)
 endif()
 
+# Debugging option is enabled by default (see src/essentia/config.h)
+if(NOT DEBUGGING_ENABLED)
+  add_compile_definitions(DEBUGGING_ENABLED=0)
+endif()
+
+# Strip documentation option is disabled by default (see src/essentia/config.h)
+if(STRIP_DOCUMENTATION)
+  add_compile_definitions(STRIP_DOCUMENTATION=1)
+endif()
+
 set_target_properties(essentia PROPERTIES DEBUG_POSTFIX _d)
 set_target_properties(essentia PROPERTIES
   VERSION   ${essentia_VERSION}
