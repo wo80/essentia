@@ -4,10 +4,16 @@ if (MSVC)
     #set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
   endif()
   
+  # The following compile definitions are necessary to properly setup
+  # the "__declspec" attribute for Chromaprint, Yaml or TagLib.
   if (ENABLE_STATIC_DEPENDENCIES)
-    # These are necessary to properly set up the __declspec attribute. It might be better
-    # to have separate options: ENABLE_STATIC_CHROMAPRINT, ENABLE_STATIC_YAML etc.
     add_compile_definitions(CHROMAPRINT_NODLL YAML_DECLARE_STATIC TAGLIB_STATIC)
+  elseif(ENABLE_STATIC_CHROMAPRINT)
+    add_compile_definitions(CHROMAPRINT_NODLL)
+  elseif(ENABLE_STATIC_YAML)
+    add_compile_definitions(YAML_DECLARE_STATIC)
+  elseif(ENABLE_STATIC_TAGLIB)
+    add_compile_definitions(TAGLIB_STATIC)
   endif()
 endif()
 
