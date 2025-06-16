@@ -86,11 +86,13 @@ set ffmpeg_shared=%SHARED_LIBS%
 set fftw_shared=%SHARED_LIBS%
 
 :: Update shared lib values.
-if not "!SHARED_LIB_NAMES:ffmpeg=!"=="%SHARED_LIB_NAMES%" (
+if not "%SHARED_LIB_NAMES%" == "" (
+  if not "!SHARED_LIB_NAMES:ffmpeg=!"=="%SHARED_LIB_NAMES%" (
     set ffmpeg_shared=YES
-)
-if not "!SHARED_LIB_NAMES:fftw=!"=="%SHARED_LIB_NAMES%" (
+  )
+  if not "!SHARED_LIB_NAMES:fftw=!"=="%SHARED_LIB_NAMES%" (
     set fftw_shared=YES
+  )
 )
 
 :: Check build type
