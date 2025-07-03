@@ -8,17 +8,7 @@ function(essentia_add_example example)
   endif()
 endfunction()
 
-string(TOUPPER ${BUILD_EXAMPLES} BUILD_EXAMPLES_UPPER)
-
-# All examples are built if BUILD_EXAMPLES is one of the following:
-if( "${BUILD_EXAMPLES_UPPER}" STREQUAL "ON"   OR
-    "${BUILD_EXAMPLES_UPPER}" STREQUAL "Y"    OR
-    "${BUILD_EXAMPLES_UPPER}" STREQUAL "YES"  OR
-    "${BUILD_EXAMPLES_UPPER}" STREQUAL "TRUE" OR
-    "${BUILD_EXAMPLES_UPPER}" STREQUAL "ALL" OR
-    "${BUILD_EXAMPLES_UPPER}" STREQUAL "1")
-    set(BUILD_EXAMPLES 1)
-endif()
+essentia_check_set(BUILD_EXAMPLES)
 
 set(ESSENTIA_EXAMPLES_standard
   onset_detector

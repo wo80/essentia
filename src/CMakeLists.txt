@@ -1,39 +1,45 @@
-if (MSVC)
-  if (BUILD_SHARED_LIBS)
-    # In case of errors reporting missing exports, this option might help.
-    #set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
-  endif()
-  
-  # The following compile definitions are necessary to properly setup
-  # the "__declspec" attribute for Chromaprint, Yaml or TagLib.
-  if (ENABLE_STATIC_DEPENDENCIES)
-    add_compile_definitions(CHROMAPRINT_NODLL YAML_DECLARE_STATIC TAGLIB_STATIC)
-  elseif(ENABLE_STATIC_CHROMAPRINT)
-    add_compile_definitions(CHROMAPRINT_NODLL)
-  elseif(ENABLE_STATIC_YAML)
-    add_compile_definitions(YAML_DECLARE_STATIC)
-  elseif(ENABLE_STATIC_TAGLIB)
-    add_compile_definitions(TAGLIB_STATIC)
-  endif()
-endif()
-
 add_library(essentia)
 add_library(Essentia::essentia ALIAS essentia)
 
-if (MSVC AND ENABLE_STATIC_DEPENDENCIES)
+if (MSVC)
+  if (BUILD_SHARED_LIBS)
+    # In case of errors reporting missing exports, this option might help.
+    #set_target_properties(essentia PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS)
+  endif()
+
+  essentia_check_set(ENABLE_STATIC_DEPENDENCIES)
+
+  # The following compile definitions are necessary to properly setup
+  # the "__declspec" attribute for Chromaprint, Yaml or TagLib.
+
+  if (ENABLE_STATIC_DEPENDENCIES EQUAL 1 OR "chromaprint" IN_LIST ENABLE_STATIC_DEPENDENCIES)
+    target_compile_definitions(essentia PUBLIC CHROMAPRINT_NODLL)
+  endif()
+
+  if (ENABLE_STATIC_DEPENDENCIES EQUAL 1 OR "yaml" IN_LIST ENABLE_STATIC_DEPENDENCIES)
+    target_compile_definitions(essentia PUBLIC YAML_DECLARE_STATIC)
+  endif()
+
+  if (ENABLE_STATIC_DEPENDENCIES EQUAL 1 OR "taglib" IN_LIST ENABLE_STATIC_DEPENDENCIES)
+    target_compile_definitions(essentia PUBLIC TAGLIB_STATIC)
+  endif()
+
   # In case Essentia is linked against static FFmpeg libraries, we need to add
   # the bcrypt dependency manually (required by avutil).
-  target_link_libraries(essentia PUBLIC bcrypt.lib)
+
+  if (ENABLE_STATIC_DEPENDENCIES EQUAL 1 OR "ffmpeg" IN_LIST ENABLE_STATIC_DEPENDENCIES)
+    target_link_libraries(essentia PUBLIC bcrypt.lib)
+  endif()
 endif()
 
 # Debugging option is enabled by default (see src/essentia/config.h)
 if(NOT DEBUGGING_ENABLED)
-  add_compile_definitions(DEBUGGING_ENABLED=0)
+  target_compile_definitions(essentia PUBLIC DEBUGGING_ENABLED=0)
 endif()
 
 # Strip documentation option is disabled by default (see src/essentia/config.h)
 if(STRIP_DOCUMENTATION)
-  add_compile_definitions(STRIP_DOCUMENTATION=1)
+  target_compile_definitions(essentia PUBLIC STRIP_DOCUMENTATION=1)
 endif()
 
 set_target_properties(essentia PROPERTIES DEBUG_POSTFIX _d)

@@ -15,6 +15,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/EssentiaUtilities.cmake)
+
 option(BUILD_TESTS "Build tests" ON)
 option(BUILD_EXAMPLES "Build examples" OFF)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings" OFF)
