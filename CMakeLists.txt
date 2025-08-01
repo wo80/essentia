@@ -34,25 +34,25 @@ mark_as_advanced(DEBUGGING_ENABLED STRIP_DOCUMENTATION)
 
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 find_package(FFmpeg)
-find_package(SampleRate)
-find_package(Taglib)
-find_package(Chromaprint)
-find_package(Yaml)
+find_package(SampleRate QUIET)
+find_package(Taglib QUIET)
+find_package(Chromaprint QUIET)
+find_package(Yaml QUIET)
 
 if(BUILD_PYTHON_BINDINGS)
   find_package(Python3 COMPONENTS Development NumPy)
 endif()
 
 if(BUILD_VAMP_PLUGIN)
-  find_package(VampSdk)
+  find_package(VampSdk QUIET)
 endif()
 
 if(USE_TENSORFLOW)
-  find_package(TensorFlow)
+  find_package(TensorFlow QUIET)
 endif()
 
 if(USE_GAIA2)
-  find_package(Gaia2)
+  find_package(Gaia2 QUIET)
 
   if(NOT Qt5_FOUND)
     find_package(Qt5 COMPONENTS Core Concurrent REQUIRED)
@@ -96,30 +96,37 @@ else()
 endif()
 
 if(TARGET SampleRate::samplerate)
+  essentia_package_info(SampleRate SampleRate::samplerate)
   set(ESSENTIA_USE_LIBSAMPLERATE ON)
 endif()
 
 if(TARGET TagLib::tag)
+  essentia_package_info(Taglib TagLib::tag)
   set(ESSENTIA_USE_TAGLIB ON)
 endif()
 
 if(TARGET Chromaprint::chromaprint)
+  essentia_package_info(Chromaprint Chromaprint::chromaprint)
   set(ESSENTIA_USE_CHROMAPRINT ON)
 endif()
 
 if(TARGET yaml)
+  essentia_package_info(yaml yaml)
   set(ESSENTIA_USE_YAML ON)
 endif()
 
 if(TARGET TensorFlow::tensorflow)
+  essentia_package_info(TensorFlow TensorFlow::tensorflow)
   set(ESSENTIA_USE_TENSORFLOW ON)
 endif()
 
 if(TARGET VampSdk::vamp)
+  essentia_package_info(VampSdk VampSdk::vamp)
   set(ESSENTIA_USE_VAMP ON)
 endif()
 
 if(TARGET Gaia2::gaia2)
+  essentia_package_info(Gaia2 Gaia2::gaia2)
   set(ESSENTIA_USE_GAIA2 ON)
 endif()
 
