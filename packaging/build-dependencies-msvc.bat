@@ -233,17 +233,17 @@ if not exist "%INSTALL_PREFIX%\include\utf8cpp\" (
 :: Install TagLib - https://github.com/taglib/taglib
 ::
 
-if not exist "taglib-2.1.tar.gz" (
+if not exist "taglib-2.1.1.tar.gz" (
   echo Downloading taglib ...
-  curl -L -o "taglib-2.1.tar.gz" "https://github.com/taglib/taglib/releases/download/v2.1/taglib-2.1.tar.gz"
+  curl -L -o "taglib-2.1.1.tar.gz" "https://github.com/taglib/taglib/releases/download/v2.1.1/taglib-2.1.1.tar.gz"
 )
 
 if not exist "%INSTALL_PREFIX%\include\taglib\" (
-  if not exist "taglib-2.1\" (
+  if not exist "taglib-2.1.1\" (
     echo Extracting taglib archive ...
-    tar -xf "taglib-2.1.tar.gz"
+    tar -xf "taglib-2.1.1.tar.gz"
   )
-  cd "taglib-2.1"
+  cd "taglib-2.1.1"
   cmake -B build -DWITH_ZLIB=NO -DBUILD_EXAMPLES=NO -DBUILD_BINDINGS=NO -DBUILD_TESTING=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
