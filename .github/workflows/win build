@@ -1,0 +1,153 @@
+name: Build Windows Python Wheels for essenta CMake fork
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  build-wheels:
+    runs-on: windows-2022
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+
+    steps:
+    # ------------------------------------------------------------
+    # Checkout the CMake fork (wo80/essentia)
+    # ------------------------------------------------------------
+    - name: Checkout CMake Fork
+      uses: actions/checkout@v4
+      with:
+        repository: wo80/essentia
+        ref: master
+        submodules: true
+
+    # ------------------------------------------------------------
+    # Setup Python
+    # ------------------------------------------------------------
+    - name: Setup Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        architecture: x64
+
+    - name: Upgrade pip
+      shell: pwsh
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install numpy
+
+    # ------------------------------------------------------------
+    # Setup MSVC Environment
+    # ------------------------------------------------------------
+    - name: Setup MSVC Build Tools
+      uses: ilammy/msvc-dev-cmd@v1
+
+    # ------------------------------------------------------------
+    # Dependencies: FFTW via vcpkg
+    # ------------------------------------------------------------
+    - name: Install vcpkg and FFTW
+      shell: pwsh
+      run: |
+        git clone https://github.com/microsoft/vcpkg.git vcpkg
+        ./vcpkg/bootstrap-vcpkg.bat
+        ./vcpkg/vcpkg install fftw3:x64-windows
+
+    # ------------------------------------------------------------
+    # Dependencies: FFmpeg download (hardened)
+    # ------------------------------------------------------------
+    - name: Download FFmpeg
+      shell: pwsh
+      run: |
+        $url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
+        curl.exe -L `
+          -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" `
+          --retry 5 --retry-delay 5 `
+          -o ffmpeg.zip `
+          $url
+
+        Expand-Archive ffmpeg.zip -Force
+        $dir = Get-ChildItem -Recurse -Directory |
+               Where-Object { $_.Name -like "ffmpeg*-essentials_build" } |
+               Select-Object -First 1
+        Rename-Item -Path $dir.FullName -NewName "ffmpeg"
+
+    # ------------------------------------------------------------
+    # Configure CMake Build
+    # ------------------------------------------------------------
+    - name: Configure with CMake
+      shell: pwsh
+      run: |
+        $root = "${{ github.workspace }}"
+        $fftw = Resolve-Path vcpkg/installed/x64-windows
+
+        New-Item -ItemType Directory -Force build | Out-Null
+        Set-Location build
+
+        cmake $root `
+          -G "Visual Studio 17 2022" ^
+          -A x64 ^
+          -DBUILD_PYTHON_BINDINGS=ON `
+          -DFFTW_ROOT="$fftw" `
+          -DFFMPEG_ROOT="$root/ffmpeg"
+
+    # ------------------------------------------------------------
+    # Build the library
+    # ------------------------------------------------------------
+    - name: Build with CMake
+      shell: pwsh
+      run: |
+        Set-Location build
+        cmake --build . --config Release --parallel
+
+    # ------------------------------------------------------------
+    # Bundle necessary DLLs
+    # ------------------------------------------------------------
+    - name: Bundle DLLs
+      shell: pwsh
+      run: |
+        $pkg = "python/essentia"
+        New-Item -Force -ItemType Directory "$pkg/ffmpeg" | Out-Null
+        New-Item -Force -ItemType Directory "$pkg/fftw" | Out-Null
+
+        Copy-Item "ffmpeg/bin/av*.dll" "$pkg/ffmpeg/" -Force
+        Copy-Item "ffmpeg/bin/sw*.dll" "$pkg/ffmpeg/" -Force
+        Copy-Item "vcpkg/installed/x64-windows/bin/libfftw3-3.dll" "$pkg/fftw/fftw3.dll" -Force
+
+    # ------------------------------------------------------------
+    # Patch Python DLL loading
+    # ------------------------------------------------------------
+    - name: Enable DLL search
+      shell: pwsh
+      run: |
+        $init = "python/essentia/__init__.py"
+        Add-Content $init ""
+        Add-Content $init "import os, sys"
+        Add-Content $init "from pathlib import Path"
+        Add-Content $init ""
+        Add-Content $init "if sys.platform == 'win32':"
+        Add-Content $init "    base = Path(__file__).parent"
+        Add-Content $init "    os.add_dll_directory(str(base / 'ffmpeg'))"
+        Add-Content $init "    os.add_dll_directory(str(base / 'fftw'))"
+
+    # ------------------------------------------------------------
+    # Build Python Wheel
+    # ------------------------------------------------------------
+    - name: Build Python wheel
+      shell: pwsh
+      run: |
+        Set-Location python
+        python setup.py bdist_wheel
+
+    # ------------------------------------------------------------
+    # Upload the wheel artifact
+    # ------------------------------------------------------------
+    - name: Upload wheel
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-essentia-wheel-py${{ matrix.python-version }}
+        path: python/dist/*.whl
