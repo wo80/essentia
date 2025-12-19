@@ -3,7 +3,7 @@ name: Build Windows Python Wheels for essenta CMake fork
 on:
   workflow_dispatch:
   push:
-    branches: [ main, master ]
+    branches: [ cmake ]
   pull_request:
 
 jobs:
