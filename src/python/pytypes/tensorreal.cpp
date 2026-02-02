@@ -43,7 +43,7 @@ PyObject* TensorReal::toPythonCopy(const essentia::Tensor<essentia::Real>* tenso
   const Real* src = tensor->data();
   fastcopy(dest, src, tensor->size());
 
-  assert(PyArray_STRIDES(result)[3] == sizeof(Real));
+  assert(PyArray_STRIDES((PyArrayObject*)result)[3] == sizeof(Real));
 
   if (result == NULL) {
     throw EssentiaException("TensorReal: dang null object");

@@ -12,7 +12,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/EssentiaUtilities.cmake)
 
 option(BUILD_TESTS "Build tests" ON)
 option(BUILD_EXAMPLES "Build examples" OFF)
@@ -23,28 +26,37 @@ option(USE_TENSORFLOW "Use TensorFlow" OFF)
 option(USE_GAIA2 "Use Gaia2" OFF)
 option(ENABLE_STATIC_DEPENDENCIES "MSVC only: enable linking against static dependencies" OFF)
 
-find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+# Options from src/essentia/config.h
+option(DEBUGGING_ENABLED "Enable Essentia debugging mode" ON)
+option(STRIP_DOCUMENTATION "Strip documentation from binaries" OFF)
+
+mark_as_advanced(DEBUGGING_ENABLED STRIP_DOCUMENTATION)
+
+find_package(Eigen3 REQUIRED NO_MODULE)
 find_package(FFmpeg)
-find_package(SampleRate)
-find_package(Taglib)
-find_package(Chromaprint)
-find_package(YAML)
+find_package(SampleRate QUIET)
+find_package(Taglib QUIET)
+find_package(Chromaprint QUIET)
+find_package(Yaml QUIET)
 
 if(BUILD_PYTHON_BINDINGS)
   find_package(Python3 3.10...<3.14 COMPONENTS Interpreter Development NumPy REQUIRED)
 endif()
 
 if(BUILD_VAMP_PLUGIN)
-  find_package(VampSdk)
+  find_package(VampSdk QUIET)
 endif()
 
 if(USE_TENSORFLOW)
-  find_package(TensorFlow)
+  find_package(TensorFlow QUIET)
 endif()
 
 if(USE_GAIA2)
-  find_package(Gaia2)
-  find_package(Qt5 COMPONENTS Core Concurrent REQUIRED)
+  find_package(Gaia2 QUIET)
+
+  if(NOT Qt5_FOUND)
+    find_package(Qt5 COMPONENTS Core Concurrent REQUIRED)
+  endif()
 endif()
 
 set(ESSENTIA_USE_FFMPEG OFF)
@@ -68,7 +80,7 @@ else()
     find_library(ACCELERATE_LIBRARIES Accelerate)
   endif()
 
-  if(FFTW3f_FOUND)
+  if(TARGET FFTW3::fftw3f)
     set(ESSENTIA_USE_FFTW ON)
   elseif(APPLE AND ACCELERATE_LIBRARIES)
     set(ESSENTIA_USE_VDSP ON)
@@ -83,31 +95,38 @@ else()
   message(WARNING "FFmpeg not found - compilation of audio loaders/writers disabled!")
 endif()
 
-if(SAMPLERATE_FOUND)
+if(TARGET SampleRate::samplerate)
+  essentia_package_info(SampleRate SampleRate::samplerate)
   set(ESSENTIA_USE_LIBSAMPLERATE ON)
 endif()
 
-if(TAGLIB_FOUND)
+if(TARGET TagLib::tag)
+  essentia_package_info(Taglib TagLib::tag)
   set(ESSENTIA_USE_TAGLIB ON)
 endif()
 
-if(CHROMAPRINT_FOUND)
+if(TARGET Chromaprint::chromaprint)
+  essentia_package_info(Chromaprint Chromaprint::chromaprint)
   set(ESSENTIA_USE_CHROMAPRINT ON)
 endif()
 
-if(YAML_FOUND)
+if(TARGET yaml)
+  essentia_package_info(yaml yaml)
   set(ESSENTIA_USE_YAML ON)
 endif()
 
-if(TENSORFLOW_FOUND)
+if(TARGET TensorFlow::tensorflow)
+  essentia_package_info(TensorFlow TensorFlow::tensorflow)
   set(ESSENTIA_USE_TENSORFLOW ON)
 endif()
 
-if(VAMPSDK_FOUND)
+if(TARGET VampSdk::vamp)
+  essentia_package_info(VampSdk VampSdk::vamp)
   set(ESSENTIA_USE_VAMP ON)
 endif()
 
-if(GAIA2_FOUND)
+if(TARGET Gaia2::gaia2)
+  essentia_package_info(Gaia2 Gaia2::gaia2)
   set(ESSENTIA_USE_GAIA2 ON)
 endif()
 
@@ -130,10 +149,10 @@ include(CMakePackageConfigHelpers)
 
 install(TARGETS essentia
   EXPORT EssentiaTargets
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-  INCLUDES DESTINATION include)
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 configure_package_config_file(
   cmake/EssentiaConfig.cmake.in

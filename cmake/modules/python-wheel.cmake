@@ -23,10 +23,12 @@ function (_copy_target TARGET SOURCE DEST)
     get_target_property(source_libs ${SOURCE} INTERFACE_LINK_LIBRARIES)
     foreach (source_lib IN LISTS source_libs)
       add_custom_command(TARGET ${TARGET}
+        PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:${source_lib}>" "${DEST}")
     endforeach()
   else()
     add_custom_command(TARGET ${TARGET}
+      PRE_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:${SOURCE}>" "${DEST}")
   endif()
 endfunction()

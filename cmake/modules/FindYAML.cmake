@@ -1,39 +1,86 @@
-include(FindPackageHandleStandardArgs)
+# Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
+# file LICENSE.rst or https://cmake.org/licensing for details.
+
+#[=======================================================================[.rst:
+FindYaml
+-------
+
+Finds the yaml library, https://github.com/yaml/libyaml.
+
+Imported Targets
+^^^^^^^^^^^^^^^^
+
+This module provides the following imported targets, if found:
+
+``yaml``
+  The yaml library
+
+Result Variables
+^^^^^^^^^^^^^^^^
+
+This will define the following variables:
+
+``yaml_FOUND``
+  True if the system has the yaml library.
+``yaml_VERSION``
+  The version of the yaml library which was found.
+``yaml_INCLUDE_DIRS``
+  Include directories needed to use yaml.
+``yaml_LIBRARIES``
+  Libraries needed to link to yaml.
+
+Cache Variables
+^^^^^^^^^^^^^^^
+
+The following cache variables may also be set:
+
+``yaml_INCLUDE_DIR``
+  The directory containing ``yaml.h``.
+``yaml_LIBRARY``
+  The path to the Yaml library.
+
+#]=======================================================================]
 
 find_package(PkgConfig QUIET)
+
 if (PKG_CONFIG_FOUND)
-  pkg_check_modules(YAML yaml-0.1 QUIET)
+  pkg_check_modules(PC_YAML yaml-0.1 QUIET)
 endif ()
 
-if ( NOT YAML_FOUND )
-  find_path(YAML_INCLUDE_DIRS NAMES yaml.h)
-  find_library(YAML_LIBRARIES NAMES yaml)
+find_path(yaml_INCLUDE_DIR
+  NAMES yaml.h
+  HINTS ${PC_YAML_INCLUDE_DIRS}
+)
 
-  if ( NOT "${YAML_LIBRARIES}" STREQUAL "")
-    set (YAML_FOUND TRUE)
-    set (YAML_LINK_LIBRARIES ${YAML_LINK_LIBRARIES} ${YAML_LIBRARIES})
-  endif ()
-endif ()
+find_library(yaml_LIBRARY
+  NAMES yaml
+  HINTS ${PC_YAML_LIBRARY_DIRS}
+)
 
-if ( YAML_INCLUDEDIR AND NOT YAML_INCLUDE_DIRS )
-  set (YAML_INCLUDE_DIRS ${YAML_INCLUDEDIR})
-endif ()
+set(yaml_VERSION ${PC_YAML_VERSION})
 
-find_package_handle_standard_args(YAML
-  FOUND_VAR
-    YAML_FOUND
+include(FindPackageHandleStandardArgs)
+
+find_package_handle_standard_args(Yaml
   REQUIRED_VARS
-    YAML_LINK_LIBRARIES
-    YAML_INCLUDE_DIRS
+    yaml_LIBRARY
+    yaml_INCLUDE_DIR
   VERSION_VAR
-    YAML_VERSION)
+    yaml_VERSION
+)
 
-if ( YAML_FOUND AND NOT TARGET yaml )
-  add_library(yaml INTERFACE IMPORTED GLOBAL)
-  set_target_properties(yaml
-    PROPERTIES
-      VERSION "${YAML_VERSION}"
-      IMPORTED_LOCATION "${YAML_LINK_LIBRARIES}"
-      INTERFACE_INCLUDE_DIRECTORIES "${YAML_INCLUDE_DIRS}"
-      INTERFACE_LINK_LIBRARIES "${YAML_LINK_LIBRARIES}")
-endif ()
+if(Yaml_FOUND)
+  set(yaml_FOUND TRUE)
+  set(yaml_LIBRARIES ${yaml_LIBRARY})
+  set(yaml_INCLUDE_DIRS ${yaml_INCLUDE_DIR})
+  set(yaml_DEFINITIONS ${PC_YAML_CFLAGS_OTHER})
+endif()
+
+if(yaml_FOUND AND NOT TARGET yaml)
+  add_library(yaml UNKNOWN IMPORTED)
+  set_target_properties(yaml PROPERTIES
+    IMPORTED_LOCATION "${yaml_LIBRARY}"
+    INTERFACE_COMPILE_OPTIONS "${PC_YAML_CFLAGS_OTHER}"
+    INTERFACE_INCLUDE_DIRECTORIES "${yaml_INCLUDE_DIR}"
+  )
+endif()

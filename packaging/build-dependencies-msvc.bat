@@ -5,8 +5,13 @@
 ::
 :: Optional parameters:
 ::
-:: --static     = Flag to enable static build
+:: --prefix     = The install prefix (the directory has to exist)
 :: --build-type = CMake build type (Debug, Release, RelWithDebInfo or MinSizeRel)
+:: --static     = Flag to enable static build
+:: --shared     = List of shared dependencies, ignoring the '--static' flag, separated by a colon,
+::                for example  '--shared ffmpeg:fftw'. Only FFmpeg and FFTW supported for now.
+:: --with-gaia  = Flag to enable Gaia build
+:: --with-tensorflow  = Flag to download and install TensorFlow
 ::
 
 :: Check if tools are available.
@@ -29,25 +34,68 @@ if not exist "msvc\" (mkdir "msvc")
 cd "msvc"
 
 :: Default build options
-set SHARED_LIBS=YES
+set INSTALL_PREFIX=
 set BUILD_TYPE=Debug
+set SHARED_LIBS=YES
+set WITH_GAIA=NO
+set WITH_TENSORFLOW=NO
 
 :: Parse commandline arguments
 
 setlocal EnableDelayedExpansion
 
-set HAS_BUILD_TYPE=0
+set OPT=
 
 for %%A in (%*) do (
   if /I %%A==--static (
     set SHARED_LIBS=NO
+  ) else ( if /I %%A==--with-gaia (
+    set WITH_GAIA=YES
+  ) else ( if /I %%A==--with-tensorflow (
+    set WITH_TENSORFLOW=YES
   ) else ( if /I %%A==--build-type (
-    set HAS_BUILD_TYPE=1
-  ) else ( if !HAS_BUILD_TYPE!==1 (
+    set OPT=1
+  ) else ( if /I %%A==--prefix (
+    set OPT=2
+  ) else ( if /I %%A==--shared (
+    set OPT=3
+  ) else ( if !OPT!==1 (
     set BUILD_TYPE=%%A
-  )))
+    set OPT=0
+  ) else ( if !OPT!==2 (
+    set INSTALL_PREFIX=%%A
+    set OPT=0
+  ) else ( if !OPT!==3 (
+    set SHARED_LIB_NAMES=%%A
+    set OPT=0
+  )))))))))
 )
 
+if "%INSTALL_PREFIX%" == "" (
+  set INSTALL_PREFIX=%cd%
+)
+
+:: Abort if install prefix doesn't exist.
+if not exist "%INSTALL_PREFIX%" (
+  echo Invalid install prefix - directory does not exist
+  goto error
+)
+
+:: Set default shared lib value for FFmpeg and FFTW.
+set ffmpeg_shared=%SHARED_LIBS%
+set fftw_shared=%SHARED_LIBS%
+
+:: Update shared lib values.
+if not "%SHARED_LIB_NAMES%" == "" (
+  if not "!SHARED_LIB_NAMES:ffmpeg=!"=="%SHARED_LIB_NAMES%" (
+    set ffmpeg_shared=YES
+  )
+  if not "!SHARED_LIB_NAMES:fftw=!"=="%SHARED_LIB_NAMES%" (
+    set fftw_shared=YES
+  )
+)
+
+:: Check build type
 for %%A in (Debug Release RelWithDebInfo MinSizeRel) do (
   if %BUILD_TYPE%==%%A (goto valid)
 )
@@ -57,8 +105,6 @@ set BUILD_TYPE=Debug
 
 :valid
 
-set INSTALL_PREFIX=%cd%
-
 :: The directory where archives are downloaded and extracted to.
 if not exist "download\" (mkdir "download")
 cd "download"
@@ -67,22 +113,22 @@ cd "download"
 :: Install Eigen3 - https://gitlab.com/libeigen/eigen
 ::
 
-if not exist "eigen-3.4.0.tar.gz" (
+if not exist "eigen-5.0.1.tar.gz" (
   echo Downloading libeigen/eigen ...
-  curl -L -o "eigen-3.4.0.tar.gz" "https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz"
+  curl -L -o "eigen-5.0.1.tar.gz" "https://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz"
   if ERRORLEVEL 1 (
     echo Failed to download libeigen/eigen ...
     goto error
   )
 )
 
-if not exist "..\include\eigen3\" (
-  if not exist "eigen-3.4.0\" (
+if not exist "%INSTALL_PREFIX%\include\eigen3\" (
+  if not exist "eigen-5.0.1\" (
     echo Extracting libeigen/eigen archive ...
-    tar -xf "eigen-3.4.0.tar.gz"
+    tar -xf "eigen-5.0.1.tar.gz"
   )
-  cd "eigen-3.4.0"
-  cmake -B build -DEIGEN_BUILD_DOC=NO -DBUILD_TESTING=NO -DCMAKE_Fortran_COMPILER="" -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cd "eigen-5.0.1"
+  cmake -B build -DEIGEN_BUILD_DOC=NO -DBUILD_TESTING=NO -DEIGEN_BUILD_BLAS=NO -DEIGEN_BUILD_LAPACK=NO -DCMAKE_Fortran_COMPILER="" -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -99,13 +145,13 @@ if not exist "fftw-3.3.10.tar.gz" (
   curl -L -o "fftw-3.3.10.tar.gz" "https://www.fftw.org/fftw-3.3.10.tar.gz"
 )
 
-if not exist "..\include\fftw3.h" (
+if not exist "%INSTALL_PREFIX%\include\fftw3.h" (
   if not exist "fftw-3.3.10\" (
     echo Extracting fftw archive ...
     tar -xf "fftw-3.3.10.tar.gz"
   )
   cd "fftw-3.3.10"
-  cmake -B build -DBUILD_TESTS=NO -DDISABLE_FORTRAN=YES -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=YES
+  cmake -B build -DBUILD_TESTS=NO -DDISABLE_FORTRAN=YES -DBUILD_SHARED_LIBS=%fftw_shared% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=YES -DCMAKE_POLICY_VERSION_MINIMUM=3.5
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -122,14 +168,14 @@ if not exist "libsamplerate-master.zip" (
   curl -L -o "libsamplerate-master.zip" "https://github.com/libsndfile/libsamplerate/archive/refs/heads/master.zip"
 )
 
-if not exist "..\include\samplerate.h" (
+if not exist "%INSTALL_PREFIX%\include\samplerate.h" (
   if not exist "libsamplerate\" (
     echo Extracting libsndfile/libsamplerate archive ...
     tar -xf "libsamplerate-master.zip"
     rename "libsamplerate-master" "libsamplerate"
   )
   cd "libsamplerate"
-  cmake -B build -DLIBSAMPLERATE_EXAMPLES=NO -DBUILD_TESTING=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DLIBSAMPLERATE_EXAMPLES=NO -DBUILD_TESTING=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DCMAKE_POLICY_VERSION_MINIMUM=3.5
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -146,7 +192,7 @@ if not exist "zlib-1.3.1.tar.gz" (
   curl -L -o "zlib-1.3.1.tar.gz" "https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz"
 )
 
-if not exist "..\include\zlib.h" (
+if not exist "%INSTALL_PREFIX%\include\zlib.h" (
   if not exist "zlib-1.3.1\" (
     echo Extracting madler/zlib archive ...
     tar -xf "zlib-1.3.1.tar.gz"
@@ -164,17 +210,17 @@ if not exist "..\include\zlib.h" (
 :: Install utf8cpp (TagLib dependency) - https://github.com/nemtrif/utfcpp
 ::
 
-if not exist "v4.0.6.tar.gz" (
+if not exist "v4.0.9.tar.gz" (
   echo Downloading utf8cpp ...
-  curl -L -o "v4.0.6.tar.gz" "https://github.com/nemtrif/utfcpp/archive/refs/tags/v4.0.6.tar.gz"
+  curl -L -o "v4.0.9.tar.gz" "https://github.com/nemtrif/utfcpp/archive/refs/tags/v4.0.9.tar.gz"
 )
 
-if not exist "..\include\utf8cpp\" (
-  if not exist "utfcpp-4.0.6\" (
+if not exist "%INSTALL_PREFIX%\include\utf8cpp\" (
+  if not exist "utfcpp-4.0.9\" (
     echo Extracting utf8cpp archive ...
-    tar -xf "v4.0.6.tar.gz"
+    tar -xf "v4.0.9.tar.gz"
   )
-  cd "utfcpp-4.0.6"
+  cd "utfcpp-4.0.9"
   cmake -B build
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE% --prefix %INSTALL_PREFIX%
@@ -187,17 +233,17 @@ if not exist "..\include\utf8cpp\" (
 :: Install TagLib - https://github.com/taglib/taglib
 ::
 
-if not exist "taglib-2.0.2.tar.gz" (
+if not exist "taglib-2.1.1.tar.gz" (
   echo Downloading taglib ...
-  curl -L -o "taglib-2.0.2.tar.gz" "https://github.com/taglib/taglib/releases/download/v2.0.2/taglib-2.0.2.tar.gz"
+  curl -L -o "taglib-2.1.1.tar.gz" "https://github.com/taglib/taglib/releases/download/v2.1.1/taglib-2.1.1.tar.gz"
 )
 
-if not exist "..\include\taglib\" (
-  if not exist "taglib-2.0.2\" (
+if not exist "%INSTALL_PREFIX%\include\taglib\" (
+  if not exist "taglib-2.1.1\" (
     echo Extracting taglib archive ...
-    tar -xf "taglib-2.0.2.tar.gz"
+    tar -xf "taglib-2.1.1.tar.gz"
   )
-  cd "taglib-2.0.2"
+  cd "taglib-2.1.1"
   cmake -B build -DWITH_ZLIB=NO -DBUILD_EXAMPLES=NO -DBUILD_BINDINGS=NO -DBUILD_TESTING=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
@@ -215,14 +261,14 @@ if not exist "libyaml-master.zip" (
   curl -L -o "libyaml-master.zip" "https://github.com/yaml/libyaml/archive/refs/heads/master.zip"
 )
 
-if not exist "..\include\yaml.h" (
+if not exist "%INSTALL_PREFIX%\include\yaml.h" (
   if not exist "libyaml\" (
     echo Extracting yaml/libyaml archive ...
     tar -xf "libyaml-master.zip"
     rename "libyaml-master" "libyaml"
   )
   cd "libyaml"
-  cmake -B build -DBUILD_TESTING=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DBUILD_TESTING=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DCMAKE_POLICY_VERSION_MINIMUM=3.5
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -239,7 +285,7 @@ if not exist "chromaprint-master.zip" (
   curl -L -o "chromaprint-master.zip" "https://github.com/acoustid/chromaprint/archive/refs/heads/master.zip"
 )
 
-if not exist "..\include\chromaprint.h" (
+if not exist "%INSTALL_PREFIX%\include\chromaprint.h" (
   if not exist "chromaprint\" (
     echo Extracting acoustid/chromaprint archive ...
     tar -xf "chromaprint-master.zip"
@@ -263,7 +309,7 @@ if not exist "vamp-plugin-sdk-master.zip" (
   curl -L -o "vamp-plugin-sdk-master.zip" "https://github.com/vamp-plugins/vamp-plugin-sdk/archive/refs/heads/master.zip"
 )
 
-if not exist "..\include\vamp\" (
+if not exist "%INSTALL_PREFIX%\include\vamp\" (
   if not exist "vamp-plugin-sdk-master\" (
     echo Extracting vamp-plugins/vamp-plugin-sdk archive ...
     tar -xf "vamp-plugin-sdk-master.zip"
@@ -281,23 +327,23 @@ if not exist "..\include\vamp\" (
 :: Install FFmpeg - https://github.com/wo80/ffmpeg-audio-only
 ::
 
-if %SHARED_LIBS%==YES (
+if %ffmpeg_shared%==YES (
   set ffmpeg_type=shared
 ) else (
   set ffmpeg_type=static
 )
 
-if not exist "ffmpeg-7.1.1-win64-%ffmpeg_type%.zip" (
+if not exist "ffmpeg-8.0.1-win64-%ffmpeg_type%.zip" (
   echo Downloading wo80/ffmpeg-audio-only ...
-  curl -L -o "ffmpeg-7.1.1-win64-%ffmpeg_type%.zip" "https://github.com/wo80/ffmpeg-audio-only/releases/download/v7.1.1/ffmpeg-7.1.1-win64-%ffmpeg_type%.zip"
+  curl -L -o "ffmpeg-8.0.1-win64-%ffmpeg_type%.zip" "https://github.com/wo80/ffmpeg-audio-only/releases/download/v8.0.1/ffmpeg-8.0.1-win64-%ffmpeg_type%.zip"
 )
 
-if not exist "..\include\libavcodec\" (
-  if not exist "ffmpeg-7.1.1-win64-%ffmpeg_type%\" (
+if not exist "%INSTALL_PREFIX%\include\libavcodec\" (
+  if not exist "ffmpeg-8.0.1-win64-%ffmpeg_type%\" (
     echo Extracting wo80/ffmpeg-audio-only archive ...
-    tar -xf "ffmpeg-7.1.1-win64-%ffmpeg_type%.zip"
+    tar -xf "ffmpeg-8.0.1-win64-%ffmpeg_type%.zip"
   )
-  cd "ffmpeg-7.1.1-win64-%ffmpeg_type%"
+  cd "ffmpeg-8.0.1-win64-%ffmpeg_type%"
   xcopy /s /y bin %INSTALL_PREFIX%\bin
   xcopy /s /y lib %INSTALL_PREFIX%\lib
   xcopy /s /y include %INSTALL_PREFIX%\include
@@ -310,25 +356,81 @@ if not exist "..\include\libavcodec\" (
 :: Install TensorFlow - https://www.tensorflow.org/install/lang_c
 ::
 
+if %WITH_TENSORFLOW%==NO (goto tf_end)
+
 if not exist "libtensorflow-cpu-windows-x86_64.zip" (
   echo Downloading tensorflow-cpu ...
   curl -L -o "libtensorflow-cpu-windows-x86_64.zip" "https://storage.googleapis.com/tensorflow/versions/2.16.2/libtensorflow-cpu-windows-x86_64.zip"
 )
 
-if not exist "..\include\tensorflow\c\tf_buffer.h" (
+if not exist "%INSTALL_PREFIX%\include\tensorflow\c\tf_buffer.h" (
   if not exist "lib\tensorflow.dll" (
     echo Extracting tensorflow-cpu archive ...
     tar -xf "libtensorflow-cpu-windows-x86_64.zip"
   )
 )
 
-if not exist "..\include\tensorflow\" (
+if not exist "%INSTALL_PREFIX%\include\tensorflow\" (
   xcopy /s /y lib\tensorflow.dll %INSTALL_PREFIX%\bin
   xcopy /s /y lib\tensorflow.lib %INSTALL_PREFIX%\lib
   xcopy /s /y include %INSTALL_PREFIX%\include
 ) else (
   echo Already installed: tensorflow-cpu
 )
+
+:tf_end
+
+if %WITH_GAIA%==NO (goto gaia_end)
+
+::
+:: Install Qt5
+::
+
+if not exist "qtbase.7z" (
+  echo Downloading Qt5 ...
+  curl -L -o "qtbase.7z" "https://github.com/wo80/qt-msvc-build/releases/download/v5.15.18/qt-5.15.18-msvc2022-x64.7z"
+)
+
+if not exist "%INSTALL_PREFIX%\Qt5\include\QtCore\" (
+  if not exist "Qt5\" (
+    echo Extracting Qt5 archive ...
+    7z x -y qtbase.7z -oQt5
+  )
+  xcopy /s /y Qt5\ %INSTALL_PREFIX%\Qt5\
+) else (
+  echo Already installed: Qt5
+)
+
+::
+:: Install Gaia - https://github.com/wo80/gaia/tree/cmake
+::
+
+if not exist "gaia-cmake.zip" (
+  echo Downloading wo80/gaia ...
+  curl -L -o "gaia-cmake.zip" "https://github.com/wo80/gaia/archive/refs/heads/cmake.zip"
+)
+
+if %SHARED_LIBS%==YES (
+  set gaia_static_deps=NO
+) else (
+  set gaia_static_deps=YES
+)
+
+if not exist "%INSTALL_PREFIX%\include\gaia2\gaia.h" (
+  if not exist "gaia-cmake\" (
+    echo Extracting wo80/gaia archive ...
+    tar -xf "gaia-cmake.zip"
+  )
+  cd "gaia-cmake"
+  cmake -B build -DBUILD_TOOLS=NO -DBUILD_TESTS=NO -DENABLE_STATIC_DEPENDENCIES=%gaia_static_deps% -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DCMAKE_PREFIX_PATH=%INSTALL_PREFIX%\Qt5
+  cmake --build build --config %BUILD_TYPE%
+  cmake --install build --config %BUILD_TYPE%
+  cd ..
+) else (
+  echo Already installed: wo80/gaia
+)
+
+:gaia_end
 
 :: Change back to Essentia root directory
 cd ..\..\..

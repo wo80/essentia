@@ -158,7 +158,7 @@ void AudioLoader::closeAudioFile() {
     }
 
     // Close the codec
-    if (_audioCtx) avcodec_close(_audioCtx);
+    if (_audioCtx) avcodec_free_context(&_audioCtx);
     // Close the audio file
     if (_demuxCtx) avformat_close_input(&_demuxCtx);
 

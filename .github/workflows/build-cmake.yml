@@ -19,7 +19,7 @@ jobs:
           submodules: 'true'
 
       - name: Install dependencies
-        run: sudo apt-get install -y libeigen3-dev libyaml-dev libfftw3-dev libavcodec-dev libavformat-dev libavutil-dev libswresample-dev libsamplerate0-dev libtag1-dev libchromaprint-dev
+        run: sudo apt-get update && sudo apt-get install -y libeigen3-dev libyaml-dev libfftw3-dev libavcodec-dev libavformat-dev libavutil-dev libswresample-dev libsamplerate0-dev libtag1-dev libchromaprint-dev
   
       - name: Configure
         run: cmake -B build

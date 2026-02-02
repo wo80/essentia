@@ -1,23 +1,45 @@
-if (MSVC)
-  if (BUILD_SHARED_LIBS)
-    # In case of errors reporting missing exports, this option might help.
-    #set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS YES)
-  endif()
-  
-  if (ENABLE_STATIC_DEPENDENCIES)
-    # These are necessary to properly set up the __declspec attribute. It might be better
-    # to have separate options: ENABLE_STATIC_CHROMAPRINT, ENABLE_STATIC_YAML etc.
-    add_compile_definitions(CHROMAPRINT_NODLL YAML_DECLARE_STATIC TAGLIB_STATIC)
-  endif()
-endif()
-
 add_library(essentia)
 add_library(Essentia::essentia ALIAS essentia)
 
-if (MSVC AND ENABLE_STATIC_DEPENDENCIES)
+if (MSVC)
+  if (BUILD_SHARED_LIBS)
+    # In case of errors reporting missing exports, this option might help.
+    #set_target_properties(essentia PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS)
+  endif()
+
+  essentia_check_set(ENABLE_STATIC_DEPENDENCIES)
+
+  # The following compile definitions are necessary to properly setup
+  # the "__declspec" attribute for Chromaprint, Yaml or TagLib.
+
+  if (ENABLE_STATIC_DEPENDENCIES EQUAL 1 OR "chromaprint" IN_LIST ENABLE_STATIC_DEPENDENCIES)
+    target_compile_definitions(essentia PUBLIC CHROMAPRINT_NODLL)
+  endif()
+
+  if (ENABLE_STATIC_DEPENDENCIES EQUAL 1 OR "yaml" IN_LIST ENABLE_STATIC_DEPENDENCIES)
+    target_compile_definitions(essentia PUBLIC YAML_DECLARE_STATIC)
+  endif()
+
+  if (ENABLE_STATIC_DEPENDENCIES EQUAL 1 OR "taglib" IN_LIST ENABLE_STATIC_DEPENDENCIES)
+    target_compile_definitions(essentia PUBLIC TAGLIB_STATIC)
+  endif()
+
   # In case Essentia is linked against static FFmpeg libraries, we need to add
   # the bcrypt dependency manually (required by avutil).
-  target_link_libraries(essentia PUBLIC bcrypt.lib)
+
+  if (ENABLE_STATIC_DEPENDENCIES EQUAL 1 OR "ffmpeg" IN_LIST ENABLE_STATIC_DEPENDENCIES)
+    target_link_libraries(essentia PUBLIC bcrypt.lib)
+  endif()
+endif()
+
+# Debugging option is enabled by default (see src/essentia/config.h)
+if(NOT DEBUGGING_ENABLED)
+  target_compile_definitions(essentia PUBLIC DEBUGGING_ENABLED=0)
+endif()
+
+# Strip documentation option is disabled by default (see src/essentia/config.h)
+if(STRIP_DOCUMENTATION)
+  target_compile_definitions(essentia PUBLIC STRIP_DOCUMENTATION=1)
 endif()
 
 set_target_properties(essentia PROPERTIES DEBUG_POSTFIX _d)
@@ -36,8 +58,7 @@ if(ESSENTIA_USE_FFMPEG)
 endif()
 
 if(ESSENTIA_USE_FFTW)
-  include_directories(${FFTW3f_INCLUDE_DIRS})
-  target_link_libraries(essentia PUBLIC ${FFTW3f_LINK_LIBRARIES})
+  target_link_libraries(essentia PUBLIC FFTW3::fftw3f)
   set(ENABLE_FFTW ON)
 elseif(ESSENTIA_USE_VDSP)
   target_link_libraries(essentia PUBLIC ${ACCELERATE_LIBRARIES})
@@ -49,39 +70,33 @@ else()
 endif()
 
 if(ESSENTIA_USE_YAML)
-  include_directories(${YAML_INCLUDE_DIRS})
-  target_link_libraries(essentia PUBLIC ${YAML_LINK_LIBRARIES})
+  target_link_libraries(essentia PUBLIC yaml)
   set(ENABLE_YAML ON)
 endif()
 
 if(ESSENTIA_USE_LIBSAMPLERATE)
-  include_directories(${SAMPLERATE_INCLUDE_DIRS})
-  target_link_libraries(essentia PUBLIC ${SAMPLERATE_LINK_LIBRARIES})
+  target_link_libraries (essentia PUBLIC SampleRate::samplerate)
   set(ENABLE_SAMPLERATE ON)
 endif()
 
 if(ESSENTIA_USE_TAGLIB)
-  include_directories(${TAGLIB_INCLUDE_DIRS})
-  target_link_libraries (essentia PUBLIC ${TAGLIB_LIBRARIES})
+  target_link_libraries (essentia PUBLIC TagLib::tag)
   set(ENABLE_TAGLIB ON)
 endif()
 
 if(ESSENTIA_USE_CHROMAPRINT)
-  include_directories(${CHROMAPRINT_INCLUDE_DIRS})
-  target_link_libraries (essentia PUBLIC ${CHROMAPRINT_LINK_LIBRARIES})
+  target_link_libraries (essentia PUBLIC Chromaprint::chromaprint)
   add_compile_definitions(HAVE_LIBCHROMAPRINT)
   set(ENABLE_CHROMAPRINT ON)
 endif()
 
 if(ESSENTIA_USE_TENSORFLOW)
-  include_directories(${TENSORFLOW_INCLUDE_DIRS})
-  target_link_libraries(essentia PUBLIC ${TENSORFLOW_LINK_LIBRARIES})
+  target_link_libraries(essentia PUBLIC TensorFlow::tensorflow)
   set(ENABLE_TENSORFLOW ON)
 endif()
 
 if(ESSENTIA_USE_GAIA2)
-  include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Concurrent_INCLUDE_DIRS} ${GAIA2_INCLUDE_DIRS})
-  target_link_libraries(essentia PUBLIC ${GAIA2_LINK_LIBRARIES})
+  target_link_libraries(essentia PUBLIC Gaia2::gaia2 Qt5::Core Qt5::Concurrent)
   add_compile_definitions(HAVE_GAIA2)
   set(ENABLE_GAIA2 ON)
 endif()
@@ -119,8 +134,7 @@ if(ESSENTIA_USE_VAMP)
     examples/vampwrapper.cpp
     examples/vampeasywrapper.h
     examples/vampwrapper.h)
-  target_link_libraries(vamp_essentia PRIVATE essentia ${VAMPSDK_LINK_LIBRARIES})
-  target_include_directories(vamp_essentia PRIVATE ${VAMPSDK_INCLUDE_DIRS})
+  target_link_libraries(vamp_essentia PRIVATE essentia VampSdk::vamp)
   if(BUILD_SHARED_LIBS)
     target_compile_definitions(vamp_essentia PUBLIC ESSENTIA_EXPORTS=0)
   endif()
