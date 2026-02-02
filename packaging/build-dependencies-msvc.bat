@@ -113,9 +113,9 @@ cd "download"
 :: Install Eigen3 - https://gitlab.com/libeigen/eigen
 ::
 
-if not exist "eigen-3.4.0.tar.gz" (
+if not exist "eigen-5.0.1.tar.gz" (
   echo Downloading libeigen/eigen ...
-  curl -L -o "eigen-3.4.0.tar.gz" "https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz"
+  curl -L -o "eigen-5.0.1.tar.gz" "https://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz"
   if ERRORLEVEL 1 (
     echo Failed to download libeigen/eigen ...
     goto error
@@ -123,12 +123,12 @@ if not exist "eigen-3.4.0.tar.gz" (
 )
 
 if not exist "%INSTALL_PREFIX%\include\eigen3\" (
-  if not exist "eigen-3.4.0\" (
+  if not exist "eigen-5.0.1\" (
     echo Extracting libeigen/eigen archive ...
-    tar -xf "eigen-3.4.0.tar.gz"
+    tar -xf "eigen-5.0.1.tar.gz"
   )
-  cd "eigen-3.4.0"
-  cmake -B build -DEIGEN_BUILD_DOC=NO -DBUILD_TESTING=NO -DCMAKE_Fortran_COMPILER="" -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cd "eigen-5.0.1"
+  cmake -B build -DEIGEN_BUILD_DOC=NO -DBUILD_TESTING=NO -DEIGEN_BUILD_BLAS=NO -DEIGEN_BUILD_LAPACK=NO -DCMAKE_Fortran_COMPILER="" -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -210,17 +210,17 @@ if not exist "%INSTALL_PREFIX%\include\zlib.h" (
 :: Install utf8cpp (TagLib dependency) - https://github.com/nemtrif/utfcpp
 ::
 
-if not exist "v4.0.6.tar.gz" (
+if not exist "v4.0.9.tar.gz" (
   echo Downloading utf8cpp ...
-  curl -L -o "v4.0.6.tar.gz" "https://github.com/nemtrif/utfcpp/archive/refs/tags/v4.0.6.tar.gz"
+  curl -L -o "v4.0.9.tar.gz" "https://github.com/nemtrif/utfcpp/archive/refs/tags/v4.0.9.tar.gz"
 )
 
 if not exist "%INSTALL_PREFIX%\include\utf8cpp\" (
-  if not exist "utfcpp-4.0.6\" (
+  if not exist "utfcpp-4.0.9\" (
     echo Extracting utf8cpp archive ...
-    tar -xf "v4.0.6.tar.gz"
+    tar -xf "v4.0.9.tar.gz"
   )
-  cd "utfcpp-4.0.6"
+  cd "utfcpp-4.0.9"
   cmake -B build
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE% --prefix %INSTALL_PREFIX%
@@ -333,17 +333,17 @@ if %ffmpeg_shared%==YES (
   set ffmpeg_type=static
 )
 
-if not exist "ffmpeg-7.1.1-win64-%ffmpeg_type%.zip" (
+if not exist "ffmpeg-8.0.1-win64-%ffmpeg_type%.zip" (
   echo Downloading wo80/ffmpeg-audio-only ...
-  curl -L -o "ffmpeg-7.1.1-win64-%ffmpeg_type%.zip" "https://github.com/wo80/ffmpeg-audio-only/releases/download/v7.1.1/ffmpeg-7.1.1-win64-%ffmpeg_type%.zip"
+  curl -L -o "ffmpeg-8.0.1-win64-%ffmpeg_type%.zip" "https://github.com/wo80/ffmpeg-audio-only/releases/download/v8.0.1/ffmpeg-8.0.1-win64-%ffmpeg_type%.zip"
 )
 
 if not exist "%INSTALL_PREFIX%\include\libavcodec\" (
-  if not exist "ffmpeg-7.1.1-win64-%ffmpeg_type%\" (
+  if not exist "ffmpeg-8.0.1-win64-%ffmpeg_type%\" (
     echo Extracting wo80/ffmpeg-audio-only archive ...
-    tar -xf "ffmpeg-7.1.1-win64-%ffmpeg_type%.zip"
+    tar -xf "ffmpeg-8.0.1-win64-%ffmpeg_type%.zip"
   )
-  cd "ffmpeg-7.1.1-win64-%ffmpeg_type%"
+  cd "ffmpeg-8.0.1-win64-%ffmpeg_type%"
   xcopy /s /y bin %INSTALL_PREFIX%\bin
   xcopy /s /y lib %INSTALL_PREFIX%\lib
   xcopy /s /y include %INSTALL_PREFIX%\include
@@ -388,7 +388,7 @@ if %WITH_GAIA%==NO (goto gaia_end)
 
 if not exist "qtbase.7z" (
   echo Downloading Qt5 ...
-  curl -L -o "qtbase.7z" "https://github.com/wo80/qt-msvc-build/releases/download/v5.15.17/qt-5.15.17-msvc2022-x64.7z"
+  curl -L -o "qtbase.7z" "https://github.com/wo80/qt-msvc-build/releases/download/v5.15.18/qt-5.15.18-msvc2022-x64.7z"
 )
 
 if not exist "%INSTALL_PREFIX%\Qt5\include\QtCore\" (
