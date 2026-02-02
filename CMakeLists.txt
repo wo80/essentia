@@ -40,7 +40,7 @@ find_package(Chromaprint QUIET)
 find_package(Yaml QUIET)
 
 if(BUILD_PYTHON_BINDINGS)
-  find_package(Python3 3.10...<3.14 COMPONENTS Interpreter Development NumPy REQUIRED)
+  find_package(Python3 3.10...<3.15 COMPONENTS Interpreter Development NumPy REQUIRED)
 endif()
 
 if(BUILD_VAMP_PLUGIN)
