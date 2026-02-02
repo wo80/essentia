@@ -23,10 +23,12 @@ function (_copy_target TARGET SOURCE DEST)
     get_target_property(source_libs ${SOURCE} INTERFACE_LINK_LIBRARIES)
     foreach (source_lib IN LISTS source_libs)
       add_custom_command(TARGET ${TARGET}
+        PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:${source_lib}>" "${DEST}")
     endforeach()
   else()
     add_custom_command(TARGET ${TARGET}
+      PRE_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:${SOURCE}>" "${DEST}")
   endif()
 endfunction()
@@ -130,11 +132,13 @@ function (add_wheel WHEEL_TARGET)
 
   if (WHEEL_LICENSE_PATH)
     add_custom_command(TARGET ${WHEEL_TARGET}-copy-files
+      POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy "${WHEEL_LICENSE_PATH}" "${WHEEL_PACKAGE_DIR}/LICENSE.txt")
   endif()
 
   if (WHEEL_README_PATH)
     add_custom_command(TARGET ${WHEEL_TARGET}-copy-files
+      POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy "${WHEEL_README_PATH}" "${WHEEL_PACKAGE_DIR}/README.txt")
   endif()
 
