@@ -35,7 +35,7 @@ Feature extractors
 AudioSet-VGGish
 ^^^^^^^^^^^^^^^
 
-Audio embedding model accompanying the AudioSet dataset, trained in a supervised manner using tag information for YouTube videos.
+Audio embedding model accompanying the AudioSet dataset, trained in a supervised manner using tag information from YouTube videos.
 
 **Models**
 
@@ -72,9 +72,9 @@ Audio embedding model accompanying the AudioSet dataset, trained in a supervised
 Discogs-EffNet
 ^^^^^^^^^^^^^^
 
-Audio embedding models trained with classification and contrastive learning objectives using an in-house dataset annotated with Discogs metadata.
+Audio embedding models trained following classification and contrastive learning objectives on an in-house dataset annotated with Discogs metadata.
 The classification model was trained to predict music style labels.
-The contrastive learning models were trained to learn music similarity capable of grouping audio tracks coming from the same artist, ``label`` (record label), ``release`` (album), or segments of the same ``track`` itself (self-supervised learning).
+The contrastive learning models were trained to capture music similarity by attracting audio tracks coming from the same artist, ``label`` (record label), ``release`` (album), or segments of the same ``track`` itself (self-supervised learning).
 Additionally, ``multi`` was trained in multiple similarity targets simultaneously.
 
 **Models**
@@ -401,7 +401,7 @@ There are different versions of OpenL3 trained on environmental sound (``env``) 
 MSD-MusiCNN
 ^^^^^^^^^^^
 
-A Music embedding extractor based on auto-tagging with the 50 most common tags of the `Million Song Dataset <http://millionsongdataset.com/>`_.
+Audio music embedding extractor based on auto-tagging using the 50 most common tags of the `Last.fm/Million Song Dataset <http://millionsongdataset.com/>`_.
 
 **Models**
 
@@ -438,11 +438,11 @@ A Music embedding extractor based on auto-tagging with the 50 most common tags o
 Classifiers
 -----------
 
-Classification and regression models based on embeddings.
-Instead of working with mel-spectrograms, these models require embeddings as input.
-The name of these models is a combination of the classification/regression task and the name of the :ref:`embedding model<Feature extractors>` that should be used to extract embeddings (``<classification_task>-<embedding_model>``).
+Classification and regression models built on top of audio embeddings.
+Unlike models that operate directly on audio or mel-spectrograms, these models take precomputed embeddings as input.
+Model names follow the pattern ``<task>-<embedding_model>``, where ``<task>`` is the classification or regression objective and ``<embedding_model>`` refers to the :ref:`embedding model <Feature extractors>` used to generate the embeddings.
 
-*Note: TensorflowPredict2D has to be configured with the correct output layer name for each classifier. Check the attached JSON file to find the name of the output layer on each case.*
+*Note: TensorflowPredict2D must be configured with the correct output layer name for each model. Refer to the attached JSON file to find the appropriate output layer for each case.*
 
 
 Music genre and style
@@ -557,6 +557,25 @@ Music style classification by 400 styles from the Discogs taxonomy::
     .. literalinclude :: ../../src/examples/python/models/scripts/classification-heads/genre_discogs400/genre_discogs400-discogs-maest-30s-pw-ts-1_predictions.py
 
 
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Paper <http://hdl.handle.net/10230/58023>`__
+     - 💻 `GitHub <https://github.com/palonso/MAEST>`__
+
+.. code-block:: bibtex
+
+    @inproceedings{alonso2023efficient,
+        title={Efficient Supervised Training of Audio Transformers for Music Representation Learning},
+        author={Alonso-Jim{\'e}nez, Pablo and Serra, Xavier and Bogdanov, Dmitry},
+        booktitle={International Society for Music Information Retrieval Conference (ISMIR)},
+        year={2023}
+    }
+
+
 Genre Discogs519
 ~~~~~~~~~~~~~~~~
 
@@ -594,6 +613,25 @@ Music style classification by 519 styles from the Discogs taxonomy::
     python code for predictions:
 
     .. literalinclude :: ../../src/examples/python/models/scripts/classification-heads/genre_discogs519/genre_discogs519-discogs-maest-30s-pw-519l-1_predictions.py
+
+
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Paper <http://hdl.handle.net/10230/58023>`__
+     - 💻 `GitHub <https://github.com/palonso/MAEST>`__
+
+.. code-block:: bibtex
+
+    @inproceedings{alonso2023efficient,
+        title={Efficient Supervised Training of Audio Transformers for Music Representation Learning},
+        author={Alonso-Jim{\'e}nez, Pablo and Serra, Xavier and Bogdanov, Dmitry},
+        booktitle={International Society for Music Information Retrieval Conference (ISMIR)},
+        year={2023}
+    }
 
 
 MTG-Jamendo genre
@@ -674,6 +712,28 @@ Multi-label classification with the genre subset of MTG-Jamendo Dataset (87 clas
     Python code for predictions:
 
     .. literalinclude :: ../../src/examples/python/models/scripts/classification-heads/mtg_jamendo_genre/mtg_jamendo_genre-discogs_track_embeddings-effnet-1_predictions.py
+
+
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://repositori.upf.edu/handle/10230/42015>`__
+     - 💻 `GitHub <https://github.com/MTG/mtg-jamendo-dataset>`__
+
+.. code-block:: bibtex
+
+    @conference{bogdanov2019mtg,
+        author = "Bogdanov, Dmitry and Won, Minz and Tovstogan, Philip and Porter, Alastair and Serra, Xavier",
+        title = "The MTG-Jamendo Dataset for Automatic Music Tagging",
+        booktitle = "Machine Learning for Music Discovery Workshop, International Conference on Machine Learning (ICML 2019)",
+        year = "2019",
+        address = "Long Beach, CA, United States",
+        url = "http://hdl.handle.net/10230/42015"
+    }
+
 
 
 Moods and context
@@ -788,6 +848,26 @@ Music arousal and valence regression with the `DEAM <https://cvml.unige.ch/datab
 
     .. literalinclude :: ../../src/examples/python/models/scripts/classification-heads/deam/deam-audioset-vggish-2_predictions.py
 
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <http://hdl.handle.net/10230/54181>`__
+     - 💻 `GitHub <https://github.com/MTG/musav-dataset>`__
+
+.. code-block:: bibtex
+
+    @conference{bogdanov2022mtg,
+        author = "Bogdanov, Dmitry and Lizarraga-Seijas, Xavier and Alonso-Jiménez, Pablo and Serra, Xavier",
+        title = "MusAV: A dataset of relative arousal-valence annotations for validation of audio models",
+        booktitle = "International Society for Music Information Retrieval Conference (ISMIR 2022)",
+        year = "2022",
+        address = "Bengaluru, India",
+        url = "http://hdl.handle.net/10230/54181"
+    }
+
 
 
 Arousal/valence emoMusic
@@ -819,6 +899,26 @@ Music arousal and valence regression with the `emoMusic <https://cvml.unige.ch/d
 
     .. literalinclude :: ../../src/examples/python/models/scripts/classification-heads/emomusic/emomusic-audioset-vggish-2_predictions.py
 
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <http://hdl.handle.net/10230/54181>`__
+     - 💻 `GitHub <https://github.com/MTG/musav-dataset>`__
+
+.. code-block:: bibtex
+
+    @conference{bogdanov2022mtg,
+        author = "Bogdanov, Dmitry and Lizarraga-Seijas, Xavier and Alonso-Jiménez, Pablo and Serra, Xavier",
+        title = "MusAV: A dataset of relative arousal-valence annotations for validation of audio models",
+        booktitle = "International Society for Music Information Retrieval Conference (ISMIR 2022)",
+        year = "2022",
+        address = "Bengaluru, India",
+        url = "http://hdl.handle.net/10230/54181"
+    }
+
 
 
 Arousal/valence MuSe
@@ -849,6 +949,26 @@ Music arousal and valence regression with the `MuSE <https://aclanthology.org/20
     Python code for predictions:
 
     .. literalinclude :: ../../src/examples/python/models/scripts/classification-heads/muse/muse-audioset-vggish-2_predictions.py
+
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <http://hdl.handle.net/10230/54181>`__
+     - 💻 `GitHub <https://github.com/MTG/musav-dataset>`__
+
+.. code-block:: bibtex
+
+    @conference{bogdanov2022mtg,
+        author = "Bogdanov, Dmitry and Lizarraga-Seijas, Xavier and Alonso-Jiménez, Pablo and Serra, Xavier",
+        title = "MusAV: A dataset of relative arousal-valence annotations for validation of audio models",
+        booktitle = "International Society for Music Information Retrieval Conference (ISMIR 2022)",
+        year = "2022",
+        address = "Bengaluru, India",
+        url = "http://hdl.handle.net/10230/54181"
+    }
 
 
 
@@ -969,6 +1089,25 @@ Music classification by mood (2 classes)::
 
     We do not have a dedicated algorithm to extract embeddings with this model. For now, OpenL3 embeddings can be extracted using this `script <https://gist.github.com/palonso/cfebe37e5492b5a3a31775d8eae8d9a8>`_.
 
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://ieeexplore.ieee.org/document/4725050>`__
+
+.. code-block:: bibtex
+
+    @inproceedings{laurier2008multimodal,
+        author={Laurier, Cyril and Grivolla, Jens and Herrera, Perfecto},
+        title={Multimodal Music Mood Classification Using Audio and Lyrics},
+        booktitle={2008 Seventh International Conference on Machine Learning and Applications},
+        year={2008},
+        doi={10.1109/ICMLA.2008.96}
+    }
+
+
 
 Mood Happy
 ~~~~~~~~~~
@@ -1026,6 +1165,25 @@ Music classification by mood (2 classes)::
     ⬇️ `Weights <https://essentia.upf.edu/models/classification-heads/mood_happy/mood_happy-openl3-music-mel128-emb512-1.pb>`__ 📄 `Metadata <https://essentia.upf.edu/models/classification-heads/mood_happy/mood_happy-openl3-music-mel128-emb512-1.json>`__
 
     We do not have a dedicated algorithm to extract embeddings with this model. For now, OpenL3 embeddings can be extracted using this `script <https://gist.github.com/palonso/cfebe37e5492b5a3a31775d8eae8d9a8>`_.
+
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://ieeexplore.ieee.org/document/4725050>`__
+
+.. code-block:: bibtex
+
+    @inproceedings{laurier2008multimodal,
+        author={Laurier, Cyril and Grivolla, Jens and Herrera, Perfecto},
+        title={Multimodal Music Mood Classification Using Audio and Lyrics},
+        booktitle={2008 Seventh International Conference on Machine Learning and Applications},
+        year={2008},
+        doi={10.1109/ICMLA.2008.96}
+    }
+
 
 
 Mood Party
@@ -1085,6 +1243,25 @@ Music classification by mood (2 classes)::
 
     We do not have a dedicated algorithm to extract embeddings with this model. For now, OpenL3 embeddings can be extracted using this `script <https://gist.github.com/palonso/cfebe37e5492b5a3a31775d8eae8d9a8>`_.
 
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://ieeexplore.ieee.org/document/4725050>`__
+
+.. code-block:: bibtex
+
+    @inproceedings{laurier2008multimodal,
+        author={Laurier, Cyril and Grivolla, Jens and Herrera, Perfecto},
+        title={Multimodal Music Mood Classification Using Audio and Lyrics},
+        booktitle={2008 Seventh International Conference on Machine Learning and Applications},
+        year={2008},
+        doi={10.1109/ICMLA.2008.96}
+    }
+
+
 
 Mood Relaxed
 ~~~~~~~~~~~~
@@ -1143,6 +1320,25 @@ Music classification by mood (2 classes)::
 
     We do not have a dedicated algorithm to extract embeddings with this model. For now, OpenL3 embeddings can be extracted using this `script <https://gist.github.com/palonso/cfebe37e5492b5a3a31775d8eae8d9a8>`_.
 
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://ieeexplore.ieee.org/document/4725050>`__
+
+.. code-block:: bibtex
+
+    @inproceedings{laurier2008multimodal,
+        author={Laurier, Cyril and Grivolla, Jens and Herrera, Perfecto},
+        title={Multimodal Music Mood Classification Using Audio and Lyrics},
+        booktitle={2008 Seventh International Conference on Machine Learning and Applications},
+        year={2008},
+        doi={10.1109/ICMLA.2008.96}
+    }
+
+
 
 Mood Sad
 ~~~~~~~~
@@ -1153,7 +1349,7 @@ Music classification by mood (2 classes)::
 
 **Models**
 
-.. collapse:: mood_sad-audioset-yvggish
+.. collapse:: mood_sad-audioset-vggish
 
     |
 
@@ -1200,6 +1396,25 @@ Music classification by mood (2 classes)::
     ⬇️ `Weights <https://essentia.upf.edu/models/classification-heads/mood_sad/mood_sad-openl3-music-mel128-emb512-1.pb>`__ 📄 `Metadata <https://essentia.upf.edu/models/classification-heads/mood_sad/mood_sad-openl3-music-mel128-emb512-1.json>`__
 
     We do not have a dedicated algorithm to extract embeddings with this model. For now, OpenL3 embeddings can be extracted using this `script <https://gist.github.com/palonso/cfebe37e5492b5a3a31775d8eae8d9a8>`_.
+
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://ieeexplore.ieee.org/document/4725050>`__
+
+.. code-block:: bibtex
+
+    @inproceedings{laurier2008multimodal,
+        author={Laurier, Cyril and Grivolla, Jens and Herrera, Perfecto},
+        title={Multimodal Music Mood Classification Using Audio and Lyrics},
+        booktitle={2008 Seventh International Conference on Machine Learning and Applications},
+        year={2008},
+        doi={10.1109/ICMLA.2008.96}
+    }
+
 
 
 Moods MIREX
@@ -1314,6 +1529,27 @@ Multi-label classification with mood and theme subset of the MTG-Jamendo Dataset
 
     .. literalinclude :: ../../src/examples/python/models/scripts/classification-heads/mtg_jamendo_moodtheme/mtg_jamendo_moodtheme-discogs_track_embeddings-effnet-1_predictions.py
 
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://repositori.upf.edu/handle/10230/42015>`__
+     - 💻 `GitHub <https://github.com/MTG/mtg-jamendo-dataset>`__
+
+.. code-block:: bibtex
+
+    @conference{bogdanov2019mtg,
+        author = "Bogdanov, Dmitry and Won, Minz and Tovstogan, Philip and Porter, Alastair and Serra, Xavier",
+        title = "The MTG-Jamendo Dataset for Automatic Music Tagging",
+        booktitle = "Machine Learning for Music Discovery Workshop, International Conference on Machine Learning (ICML 2019)",
+        year = "2019",
+        address = "Long Beach, CA, United States",
+        url = "http://hdl.handle.net/10230/42015"
+    }
+
+
 
 
 Instrumentation
@@ -1394,6 +1630,27 @@ Multi-label classification using the instrument subset of the MTG-Jamendo Datase
 
     .. literalinclude :: ../../src/examples/python/models/scripts/classification-heads/mtg_jamendo_instrument/mtg_jamendo_instrument-discogs_track_embeddings-effnet-1_predictions.py
 
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://repositori.upf.edu/handle/10230/42015>`__
+     - 💻 `GitHub <https://github.com/MTG/mtg-jamendo-dataset>`__
+
+.. code-block:: bibtex
+
+    @conference{bogdanov2019mtg,
+        author = "Bogdanov, Dmitry and Won, Minz and Tovstogan, Philip and Porter, Alastair and Serra, Xavier",
+        title = "The MTG-Jamendo Dataset for Automatic Music Tagging",
+        booktitle = "Machine Learning for Music Discovery Workshop, International Conference on Machine Learning (ICML 2019)",
+        year = "2019",
+        address = "Long Beach, CA, United States",
+        url = "http://hdl.handle.net/10230/42015"
+    }
+
+
 
 Music loop instrument role
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1413,6 +1670,24 @@ Classification of music loops by their instrument role using the `Freesound Loop
     Python code for predictions:
 
     .. literalinclude :: ../../src/examples/python/models/scripts/classification-heads/fs_loop_ds/fs_loop_ds-msd-musicnn-1_predictions.py
+
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://arxiv.org/abs/2008.11507>`__
+     - 🌐 `Zenodo <https://zenodo.org/record/3967852>`__
+
+.. code-block:: bibtex
+
+    @inproceedings{ramires2020freesound,
+        title={The Freesound Loop Dataset and Annotation Tool},
+        author={Ramires, Ant{\'o}nio and Chandna, Pritish and Favory, Xavier and G{\'o}mez, Emilia and Serra, Xavier},
+        booktitle={International Society for Music Information Retrieval Conference (ISMIR)},
+        year={2020}
+    }
 
 
 Mood Acoustic
@@ -1472,6 +1747,24 @@ Music classification by type of sound (2 classes)::
 
     We do not have a dedicated algorithm to extract embeddings with this model. For now, OpenL3 embeddings can be extracted using this `script <https://gist.github.com/palonso/cfebe37e5492b5a3a31775d8eae8d9a8>`_.
 
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://ieeexplore.ieee.org/document/4725050>`__
+
+.. code-block:: bibtex
+
+    @inproceedings{laurier2008multimodal,
+        author={Laurier, Cyril and Grivolla, Jens and Herrera, Perfecto},
+        title={Multimodal Music Mood Classification Using Audio and Lyrics},
+        booktitle={2008 Seventh International Conference on Machine Learning and Applications},
+        year={2008},
+        doi={10.1109/ICMLA.2008.96}
+    }
+
 
 Mood Electronic
 ~~~~~~~~~~~~~~~
@@ -1530,6 +1823,23 @@ Music classification by type of sound (2 classes)::
 
     We do not have a dedicated algorithm to extract embeddings with this model. For now, OpenL3 embeddings can be extracted using this `script <https://gist.github.com/palonso/cfebe37e5492b5a3a31775d8eae8d9a8>`_.
 
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://ieeexplore.ieee.org/document/4725050>`__
+
+.. code-block:: bibtex
+
+    @inproceedings{laurier2008multimodal,
+        author={Laurier, Cyril and Grivolla, Jens and Herrera, Perfecto},
+        title={Multimodal Music Mood Classification Using Audio and Lyrics},
+        booktitle={2008 Seventh International Conference on Machine Learning and Applications},
+        year={2008},
+        doi={10.1109/ICMLA.2008.96}
+    }
 
 
 Voice/instrumental
@@ -1688,6 +1998,24 @@ Classification of monophonic sources into acoustic or electronic origin using th
 
     .. literalinclude :: ../../src/examples/python/models/scripts/classification-heads/nsynth_acoustic_electronic/nsynth_acoustic_electronic-discogs-effnet-1_predictions.py
 
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://arxiv.org/abs/1704.01279>`__
+     - 🌐 `Website <https://magenta.tensorflow.org/datasets/nsynth>`__
+
+.. code-block:: bibtex
+
+    @inproceedings{engel2017neural,
+        title={Neural Audio Synthesis of Musical Notes with WaveNet Autoencoders},
+        author={Engel, Jesse and Resnick, Cinjon and Roberts, Adam and Dieleman, Sander and Norouzi, Mohammad and Eck, Douglas and Simonyan, Karen},
+        booktitle={International Conference on Machine Learning (ICML)},
+        year={2017}
+    }
+
 
 Nsynth bright/dark
 ~~~~~~~~~~~~~~~~~~
@@ -1707,6 +2035,24 @@ Classification of monophonic sources by timbre color using the `Nsynth <https://
     Python code for predictions:
 
     .. literalinclude :: ../../src/examples/python/models/scripts/classification-heads/nsynth_bright_dark/nsynth_bright_dark-discogs-effnet-1_predictions.py
+
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://arxiv.org/abs/1704.01279>`__
+     - 🌐 `Website <https://magenta.tensorflow.org/datasets/nsynth>`__
+
+.. code-block:: bibtex
+
+    @inproceedings{engel2017neural,
+        title={Neural Audio Synthesis of Musical Notes with WaveNet Autoencoders},
+        author={Engel, Jesse and Resnick, Cinjon and Roberts, Adam and Dieleman, Sander and Norouzi, Mohammad and Eck, Douglas and Simonyan, Karen},
+        booktitle={International Conference on Machine Learning (ICML)},
+        year={2017}
+    }
 
 
 Nsynth instrument
@@ -1728,6 +2074,24 @@ Classification of monophonic sources by instrument family using the `Nsynth <htt
 
     .. literalinclude :: ../../src/examples/python/models/scripts/classification-heads/nsynth_instrument/nsynth_instrument-discogs-effnet-1_predictions.py
 
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://arxiv.org/abs/1704.01279>`__
+     - 🌐 `Website <https://magenta.tensorflow.org/datasets/nsynth>`__
+
+.. code-block:: bibtex
+
+    @inproceedings{engel2017neural,
+        title={Neural Audio Synthesis of Musical Notes with WaveNet Autoencoders},
+        author={Engel, Jesse and Resnick, Cinjon and Roberts, Adam and Dieleman, Sander and Norouzi, Mohammad and Eck, Douglas and Simonyan, Karen},
+        booktitle={International Conference on Machine Learning (ICML)},
+        year={2017}
+    }
+
 
 Nsynth reverb
 ~~~~~~~~~~~~~
@@ -1748,7 +2112,23 @@ Detection of reverb in monophonic sources using the `Nsynth <https://magenta.ten
 
     .. literalinclude :: ../../src/examples/python/models/scripts/classification-heads/nsynth_reverb/nsynth_reverb-discogs-effnet-1_predictions.py
 
+**References**
 
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://arxiv.org/abs/1704.01279>`__
+     - 🌐 `Website <https://magenta.tensorflow.org/datasets/nsynth>`__
+
+.. code-block:: bibtex
+
+    @inproceedings{engel2017neural,
+        title={Neural Audio Synthesis of Musical Notes with WaveNet Autoencoders},
+        author={Engel, Jesse and Resnick, Cinjon and Roberts, Adam and Dieleman, Sander and Norouzi, Mohammad and Eck, Douglas and Simonyan, Karen},
+        booktitle={International Conference on Machine Learning (ICML)},
+        year={2017}
+    }
 
 
 Tonality
@@ -1883,6 +2263,27 @@ Music automatic tagging using the top-50 tags of the MTG-Jamendo Dataset::
 
     .. literalinclude :: ../../src/examples/python/models/scripts/classification-heads/mtg_jamendo_top50tags/mtg_jamendo_top50tags-discogs_track_embeddings-effnet-1_predictions.py
 
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://repositori.upf.edu/handle/10230/42015>`__
+     - 💻 `GitHub <https://github.com/MTG/mtg-jamendo-dataset>`__
+
+.. code-block:: bibtex
+
+    @conference{bogdanov2019mtg,
+        author = "Bogdanov, Dmitry and Won, Minz and Tovstogan, Philip and Porter, Alastair and Serra, Xavier",
+        title = "The MTG-Jamendo Dataset for Automatic Music Tagging",
+        booktitle = "Machine Learning for Music Discovery Workshop, International Conference on Machine Learning (ICML 2019)",
+        year = "2019",
+        address = "Long Beach, CA, United States",
+        url = "http://hdl.handle.net/10230/42015"
+    }
+
+
 
 MagnaTagATune
 ~~~~~~~~~~~~~
@@ -1955,6 +2356,22 @@ Music automatic tagging with the top-50 tags of the MagnaTagATune dataset::
 
     .. literalinclude :: ../../src/examples/python/models/scripts/classification-heads/mtt/mtt-discogs_track_embeddings-effnet-1_predictions.py
 
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://ismir2009.ismir.net/proceedings/OS5-5.pdf>`__
+
+.. code-block:: bibtex
+
+    @inproceedings{law2009evaluation,
+        title={Evaluation of Algorithms Using Games: The Case of Music Tagging},
+        author={Law, Edith and West, Kris and Mandel, Michael I and Bay, Mert and Downie, J Stephen},
+        booktitle={International Society for Music Information Retrieval Conference (ISMIR)},
+        year={2009}
+    }
 
 
 Million Song Dataset
@@ -1962,7 +2379,7 @@ Million Song Dataset
 
 .. highlight:: none
 
-Music automatic tagging using the top-50 tags of the `LastFM/Million Song Dataset <http://millionsongdataset.com/>`_::
+Music automatic tagging using the top-50 tags of the `Last.fm/Million Song Dataset <http://millionsongdataset.com/>`_::
 
     rock, pop, alternative, indie, electronic, female vocalists, dance, 00s, alternative rock, jazz, beautiful, metal,
     chillout, male vocalists, classic rock, soul, indie rock, Mellow, electronica, 80s, folk, 90s, chill, instrumental, punk,
@@ -1983,6 +2400,23 @@ Music automatic tagging using the top-50 tags of the `LastFM/Million Song Datase
 
     .. literalinclude :: ../../src/examples/python/models/scripts/classification-heads/msd/msd-msd-musicnn-1_predictions.py
 
+**References**
+
+.. list-table::
+   :widths: auto
+   :header-rows: 0
+
+   * - 📄 `Dataset paper <https://www.ee.columbia.edu/~dpwe/pubs/BertEWL11-msd.pdf>`__
+     - 🌐 `Website <http://millionsongdataset.com/>`__
+
+.. code-block:: bibtex
+
+    @inproceedings{bertin2011million,
+        title={The Million Song Dataset},
+        author={Bertin-Mahieux, Thierry and Ellis, Daniel PW and Whitman, Brian and Lamere, Paul},
+        booktitle={International Society for Music Information Retrieval Conference (ISMIR)},
+        year={2011}
+    }
 
 
 Audio event recognition
@@ -2193,6 +2627,16 @@ Also, the shift-invariance technique may be trainable low-pass filters (``tlpf``
      - 📄 `SINet Paper <https://arxiv.org/abs/2011.11058>`__
      - 📊 `FSD50K Dataset <https://zenodo.org/record/4060432>`__
 
+
+.. code-block:: bibtex
+
+    @inproceedings{fonseca2021shift,
+        title={Shift-Invariance for Sound Event Detection},
+        author={Fonseca, Eduardo and Ferraro, Andres and Serra, Xavier},
+        booktitle={International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+        year={2021}
+    }
+
 .. code-block:: bibtex
 
     @article{fonseca2022fsd50k,
@@ -2203,13 +2647,6 @@ Also, the shift-invariance technique may be trainable low-pass filters (``tlpf``
         pages={829--852},
         year={2022}
     }
-
-        @inproceedings{fonseca2021shift,
-            title={Shift-Invariance for Sound Event Detection},
-            author={Fonseca, Eduardo and Ferraro, Andres and Serra, Xavier},
-            booktitle={International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
-            year={2021}
-        }
 
 
 
