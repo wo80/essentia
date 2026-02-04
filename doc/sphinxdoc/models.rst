@@ -15,9 +15,9 @@ Some of our models can work in real-time, opening many possibilities for audio d
 
 
 
-.. highlight:: none
+If you use any of the models in your research, please cite the following paper:
 
-If you use any of the models in your research, please cite the following paper::
+.. code-block:: bibtex
 
     @inproceedings{alonso2020tensorflow,
       title={Tensorflow Audio Models in {Essentia}},
@@ -25,8 +25,6 @@ If you use any of the models in your research, please cite the following paper::
       booktitle={International Conference on Acoustics, Speech and Signal Processing ({ICASSP})},
       year={2020}
     }
-
-.. highlight:: default
 
 
 
@@ -61,16 +59,14 @@ Audio embedding model accompanying the AudioSet dataset, trained in a supervised
      - 💻 `TensorFlow Models <https://github.com/tensorflow/models/tree/master/research/audioset>`__
      - 🌐 `AudioSet <https://research.google.com/audioset/>`__
 
-.. collapse:: BibTeX
+.. code-block:: bibtex
 
-    .. code-block:: bibtex
-
-        @inproceedings{hershey2017cnn,
-            title={{CNN} Architectures for Large-Scale Audio Classification},
-            author={Hershey, Shawn and Chaudhuri, Sourish and Ellis, Daniel P. W. and Gemmeke, Jort F. and Jansen, Aren and Moore, R. Channing and Plakal, Manoj and Platt, Devin and Saurous, Rif A. and Seybold, Bryan and Slaney, Malcolm and Weiss, Ron J. and Wilson, Kevin},
-            booktitle={International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
-            year={2017}
-        }
+    @inproceedings{hershey2017cnn,
+        title={{CNN} Architectures for Large-Scale Audio Classification},
+        author={Hershey, Shawn and Chaudhuri, Sourish and Ellis, Daniel P. W. and Gemmeke, Jort F. and Jansen, Aren and Moore, R. Channing and Plakal, Manoj and Platt, Devin and Saurous, Rif A. and Seybold, Bryan and Slaney, Malcolm and Weiss, Ron J. and Wilson, Kevin},
+        booktitle={International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+        year={2017}
+    }
 
 
 Discogs-EffNet
@@ -166,16 +162,14 @@ Additionally, ``multi`` was trained in multiple similarity targets simultaneousl
    * - 📄 `Paper <https://repositori.upf.edu/handle/10230/54473>`__
      - 🌐 `Discogs <https://www.discogs.com/>`__
 
-.. collapse:: BibTeX
+.. code-block:: bibtex
 
-    .. code-block:: bibtex
-
-        @inproceedings{alonso2022music,
-            title={Music Representation Learning Based on Editorial Metadata from Discogs},
-            author={Alonso-Jim{\'e}nez, Pablo and Serra, Xavier and Bogdanov, Dmitry},
-            booktitle={International Society for Music Information Retrieval Conference (ISMIR)},
-            year={2022}
-        }
+    @inproceedings{alonso2022music,
+        title={Music Representation Learning Based on Editorial Metadata from Discogs},
+        author={Alonso-Jim{\'e}nez, Pablo and Serra, Xavier and Bogdanov, Dmitry},
+        booktitle={International Society for Music Information Retrieval Conference (ISMIR)},
+        year={2022}
+    }
 
 
 MAEST
@@ -303,16 +297,14 @@ To extract embeddings from other layers, change the ``output`` parameter accordi
    * - 📄 `Paper <http://hdl.handle.net/10230/58023>`__
      - 💻 `GitHub <https://github.com/palonso/MAEST>`__
 
-.. collapse:: BibTeX
+.. code-block:: bibtex
 
-    .. code-block:: bibtex
-
-        @inproceedings{alonso2023efficient,
-            title={Efficient Supervised Training of Audio Transformers for Music Representation Learning},
-            author={Alonso-Jim{\'e}nez, Pablo and Serra, Xavier and Bogdanov, Dmitry},
-            booktitle={International Society for Music Information Retrieval Conference (ISMIR)},
-            year={2023}
-        }
+    @inproceedings{alonso2023efficient,
+        title={Efficient Supervised Training of Audio Transformers for Music Representation Learning},
+        author={Alonso-Jim{\'e}nez, Pablo and Serra, Xavier and Bogdanov, Dmitry},
+        booktitle={International Society for Music Information Retrieval Conference (ISMIR)},
+        year={2023}
+    }
 
 
 OpenL3
@@ -396,16 +388,14 @@ There are different versions of OpenL3 trained on environmental sound (``env``) 
    * - 📄 `Paper <https://arxiv.org/abs/1905.00628>`__
      - 💻 `GitHub <https://github.com/marl/openl3>`__
 
-.. collapse:: BibTeX
+.. code-block:: bibtex
 
-    .. code-block:: bibtex
-
-        @inproceedings{cramer2019look,
-            title={Look, Listen and Learn More: Design Choices for Deep Audio Embeddings},
-            author={Cramer, Jason and Wu, Ho-Hsiang and Salamon, Justin and Bello, Juan Pablo},
-            booktitle={International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
-            year={2019}
-        }
+    @inproceedings{cramer2019look,
+        title={Look, Listen and Learn More: Design Choices for Deep Audio Embeddings},
+        author={Cramer, Jason and Wu, Ho-Hsiang and Salamon, Justin and Bello, Juan Pablo},
+        booktitle={International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+        year={2019}
+    }
 
 
 MSD-MusiCNN
@@ -434,16 +424,14 @@ A Music embedding extractor based on auto-tagging with the 50 most common tags o
    * - 📄 `Paper <https://arxiv.org/abs/1909.06654>`__
      - 💻 `GitHub <https://github.com/jordipons/musicnn>`__
 
-.. collapse:: BibTeX
+.. code-block:: bibtex
 
-    .. code-block:: bibtex
-
-        @inproceedings{pons2019musicnn,
-            title={musicnn: Pre-trained convolutional neural networks for music audio tagging},
-            author={Pons, Jordi and Serra, Xavier},
-            booktitle={Late-Breaking Demo, International Society for Music Information Retrieval Conference (ISMIR)},
-            year={2019}
-        }
+    @inproceedings{pons2019musicnn,
+        title={musicnn: Pre-trained convolutional neural networks for music audio tagging},
+        author={Pons, Jordi and Serra, Xavier},
+        booktitle={Late-Breaking Demo, International Society for Music Information Retrieval Conference (ISMIR)},
+        year={2019}
+    }
 
 
 
@@ -2092,16 +2080,14 @@ Audio event recognition (520 audio event classes)::
      - 💻 `TensorFlow Models <https://github.com/tensorflow/models/tree/master/research/audioset/yamnet>`__
      - 🌐 `AudioSet <https://research.google.com/audioset/>`__
 
-.. collapse:: BibTeX
+.. code-block:: bibtex
 
-    .. code-block:: bibtex
-
-        @inproceedings{gemmeke2017audio,
-            title={Audio Set: An ontology and human-labeled dataset for audio events},
-            author={Gemmeke, Jort F. and Ellis, Daniel P. W. and Freedman, Dylan and Jansen, Aren and Lawrence, Wade and Moore, R. Channing and Plakal, Manoj and Ritter, Marvin},
-            booktitle={International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
-            year={2017}
-        }
+    @inproceedings{gemmeke2017audio,
+        title={Audio Set: An ontology and human-labeled dataset for audio events},
+        author={Gemmeke, Jort F. and Ellis, Daniel P. W. and Freedman, Dylan and Jansen, Aren and Lawrence, Wade and Moore, R. Channing and Plakal, Manoj and Ritter, Marvin},
+        booktitle={International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+        year={2017}
+    }
 
 
 FSD-SINet
@@ -2207,18 +2193,16 @@ Also, the shift-invariance technique may be trainable low-pass filters (``tlpf``
      - 📄 `SINet Paper <https://arxiv.org/abs/2011.11058>`__
      - 📊 `FSD50K Dataset <https://zenodo.org/record/4060432>`__
 
-.. collapse:: BibTeX
+.. code-block:: bibtex
 
-    .. code-block:: bibtex
-
-        @article{fonseca2022fsd50k,
-            title={{FSD50K}: An Open Dataset of Human-Labeled Sound Events},
-            author={Fonseca, Eduardo and Favory, Xavier and Pons, Jordi and Font, Frederic and Serra, Xavier},
-            journal={IEEE/ACM Transactions on Audio, Speech, and Language Processing},
-            volume={30},
-            pages={829--852},
-            year={2022}
-        }
+    @article{fonseca2022fsd50k,
+        title={{FSD50K}: An Open Dataset of Human-Labeled Sound Events},
+        author={Fonseca, Eduardo and Favory, Xavier and Pons, Jordi and Font, Frederic and Serra, Xavier},
+        journal={IEEE/ACM Transactions on Audio, Speech, and Language Processing},
+        volume={30},
+        pages={829--852},
+        year={2022}
+    }
 
         @inproceedings{fonseca2021shift,
             title={Shift-Invariance for Sound Event Detection},
@@ -2299,16 +2283,14 @@ CREPE is offered with different model sizes ranging from ``tiny`` to ``full``. A
    * - 📄 `Paper <https://arxiv.org/abs/1802.06182>`__
      - 💻 `GitHub <https://github.com/marl/crepe>`__
 
-.. collapse:: BibTeX
+.. code-block:: bibtex
 
-    .. code-block:: bibtex
-
-        @inproceedings{kim2018crepe,
-            title={{CREPE}: A Convolutional Representation for Pitch Estimation},
-            author={Kim, Jong Wook and Salamon, Justin and Li, Peter and Bello, Juan Pablo},
-            booktitle={International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
-            year={2018}
-        }
+    @inproceedings{kim2018crepe,
+        title={{CREPE}: A Convolutional Representation for Pitch Estimation},
+        author={Kim, Jong Wook and Salamon, Justin and Li, Peter and Bello, Juan Pablo},
+        booktitle={International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+        year={2018}
+    }
 
 
 
@@ -2430,19 +2412,17 @@ Spleeter can separate music in different numbers of stems: ``2`` (vocals and acc
    * - 📄 `Paper <https://doi.org/10.21105/joss.02154>`__
      - 💻 `GitHub <https://github.com/deezer/spleeter>`__
 
-.. collapse:: BibTeX
+.. code-block:: bibtex
 
-    .. code-block:: bibtex
-
-        @article{hennequin2020spleeter,
-            title={Spleeter: a fast and efficient music source separation tool with pre-trained models},
-            author={Hennequin, Romain and Khlif, Anis and Voituret, Felix and Moussallam, Manuel},
-            journal={Journal of Open Source Software},
-            volume={5},
-            number={50},
-            pages={2154},
-            year={2020}
-        }
+    @article{hennequin2020spleeter,
+        title={Spleeter: a fast and efficient music source separation tool with pre-trained models},
+        author={Hennequin, Romain and Khlif, Anis and Voituret, Felix and Moussallam, Manuel},
+        journal={Journal of Open Source Software},
+        volume={5},
+        number={50},
+        pages={2154},
+        year={2020}
+    }
 
 
 
@@ -2499,13 +2479,11 @@ A larger model is expected to perform better at the expense of additional comput
    * - 📄 `Paper <https://arxiv.org/abs/1809.06067>`__
      - 💻 `GitHub <https://github.com/hendriks73/tempo-cnn>`__
 
-.. collapse:: BibTeX
+.. code-block:: bibtex
 
-    .. code-block:: bibtex
-
-        @inproceedings{schreiber2018singlestep,
-            title={A Single-Step Approach to Musical Tempo Estimation Using a Convolutional Neural Network},
-            author={Schreiber, Hendrik and M{\"u}ller, Meinard},
-            booktitle={International Society for Music Information Retrieval Conference (ISMIR)},
-            year={2018}
-        }
+    @inproceedings{schreiber2018singlestep,
+        title={A Single-Step Approach to Musical Tempo Estimation Using a Convolutional Neural Network},
+        author={Schreiber, Hendrik and M{\"u}ller, Meinard},
+        booktitle={International Society for Music Information Retrieval Conference (ISMIR)},
+        year={2018}
+    }
