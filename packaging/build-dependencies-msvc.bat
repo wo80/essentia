@@ -140,17 +140,17 @@ if not exist "%INSTALL_PREFIX%\include\eigen3\" (
 :: Install FFTW - https://www.fftw.org
 ::
 
-if not exist "fftw-3.3.10.tar.gz" (
+if not exist "fftw-3.3.11.tar.gz" (
   echo Downloading fftw ...
-  curl -L -o "fftw-3.3.10.tar.gz" "https://www.fftw.org/fftw-3.3.10.tar.gz"
+  curl -L -o "fftw-3.3.11.tar.gz" "https://www.fftw.org/fftw-3.3.11.tar.gz"
 )
 
 if not exist "%INSTALL_PREFIX%\include\fftw3.h" (
-  if not exist "fftw-3.3.10\" (
+  if not exist "fftw-3.3.11\" (
     echo Extracting fftw archive ...
-    tar -xf "fftw-3.3.10.tar.gz"
+    tar -xf "fftw-3.3.11.tar.gz"
   )
-  cd "fftw-3.3.10"
+  cd "fftw-3.3.11"
   cmake -B build -DBUILD_TESTS=NO -DDISABLE_FORTRAN=YES -DBUILD_SHARED_LIBS=%fftw_shared% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=YES -DCMAKE_POLICY_VERSION_MINIMUM=3.5
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
@@ -187,17 +187,17 @@ if not exist "%INSTALL_PREFIX%\include\samplerate.h" (
 :: Install zlib (TagLib dependency) - https://github.com/madler/zlib
 ::
 
-if not exist "zlib-1.3.1.tar.gz" (
+if not exist "zlib-1.3.2.tar.gz" (
   echo Downloading madler/zlib ...
-  curl -L -o "zlib-1.3.1.tar.gz" "https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz"
+  curl -L -o "zlib-1.3.2.tar.gz" "https://github.com/madler/zlib/releases/download/v1.3.2/zlib-1.3.2.tar.gz"
 )
 
 if not exist "%INSTALL_PREFIX%\include\zlib.h" (
-  if not exist "zlib-1.3.1\" (
+  if not exist "zlib-1.3.2\" (
     echo Extracting madler/zlib archive ...
-    tar -xf "zlib-1.3.1.tar.gz"
+    tar -xf "zlib-1.3.2.tar.gz"
   )
-  cd "zlib-1.3.1"
+  cd "zlib-1.3.2"
   cmake -B build -DZLIB_BUILD_EXAMPLES=NO -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
@@ -210,17 +210,17 @@ if not exist "%INSTALL_PREFIX%\include\zlib.h" (
 :: Install utf8cpp (TagLib dependency) - https://github.com/nemtrif/utfcpp
 ::
 
-if not exist "v4.0.9.tar.gz" (
+if not exist "v4.1.1.tar.gz" (
   echo Downloading utf8cpp ...
-  curl -L -o "v4.0.9.tar.gz" "https://github.com/nemtrif/utfcpp/archive/refs/tags/v4.0.9.tar.gz"
+  curl -L -o "v4.1.1.tar.gz" "https://github.com/nemtrif/utfcpp/archive/refs/tags/v4.1.1.tar.gz"
 )
 
 if not exist "%INSTALL_PREFIX%\include\utf8cpp\" (
-  if not exist "utfcpp-4.0.9\" (
+  if not exist "utfcpp-4.1.1\" (
     echo Extracting utf8cpp archive ...
-    tar -xf "v4.0.9.tar.gz"
+    tar -xf "v4.1.1.tar.gz"
   )
-  cd "utfcpp-4.0.9"
+  cd "utfcpp-4.1.1"
   cmake -B build
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE% --prefix %INSTALL_PREFIX%
@@ -233,17 +233,17 @@ if not exist "%INSTALL_PREFIX%\include\utf8cpp\" (
 :: Install TagLib - https://github.com/taglib/taglib
 ::
 
-if not exist "taglib-2.1.1.tar.gz" (
+if not exist "taglib-2.3.1.tar.gz" (
   echo Downloading taglib ...
-  curl -L -o "taglib-2.1.1.tar.gz" "https://github.com/taglib/taglib/releases/download/v2.1.1/taglib-2.1.1.tar.gz"
+  curl -L -o "taglib-2.3.1.tar.gz" "https://github.com/taglib/taglib/releases/download/v2.3.1/taglib-2.3.1.tar.gz"
 )
 
 if not exist "%INSTALL_PREFIX%\include\taglib\" (
-  if not exist "taglib-2.1.1\" (
+  if not exist "taglib-2.3.1\" (
     echo Extracting taglib archive ...
-    tar -xf "taglib-2.1.1.tar.gz"
+    tar -xf "taglib-2.3.1.tar.gz"
   )
-  cd "taglib-2.1.1"
+  cd "taglib-2.3.1"
   cmake -B build -DWITH_ZLIB=NO -DBUILD_EXAMPLES=NO -DBUILD_BINDINGS=NO -DBUILD_TESTING=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
@@ -333,17 +333,17 @@ if %ffmpeg_shared%==YES (
   set ffmpeg_type=static
 )
 
-if not exist "ffmpeg-8.0.1-win64-%ffmpeg_type%.zip" (
+if not exist "ffmpeg-9.0.1-win64-%ffmpeg_type%.zip" (
   echo Downloading wo80/ffmpeg-audio-only ...
-  curl -L -o "ffmpeg-8.0.1-win64-%ffmpeg_type%.zip" "https://github.com/wo80/ffmpeg-audio-only/releases/download/v8.0.1/ffmpeg-8.0.1-win64-%ffmpeg_type%.zip"
+  curl -L -o "ffmpeg-9.0.1-win64-%ffmpeg_type%.zip" "https://github.com/wo80/ffmpeg-audio-only/releases/download/v9.0.1/ffmpeg-9.0.1-win64-%ffmpeg_type%.zip"
 )
 
 if not exist "%INSTALL_PREFIX%\include\libavcodec\" (
-  if not exist "ffmpeg-8.0.1-win64-%ffmpeg_type%\" (
+  if not exist "ffmpeg-9.0.1-win64-%ffmpeg_type%\" (
     echo Extracting wo80/ffmpeg-audio-only archive ...
-    tar -xf "ffmpeg-8.0.1-win64-%ffmpeg_type%.zip"
+    tar -xf "ffmpeg-9.0.1-win64-%ffmpeg_type%.zip"
   )
-  cd "ffmpeg-8.0.1-win64-%ffmpeg_type%"
+  cd "ffmpeg-9.0.1-win64-%ffmpeg_type%"
   xcopy /s /y bin %INSTALL_PREFIX%\bin
   xcopy /s /y lib %INSTALL_PREFIX%\lib
   xcopy /s /y include %INSTALL_PREFIX%\include
@@ -388,7 +388,7 @@ if %WITH_GAIA%==NO (goto gaia_end)
 
 if not exist "qtbase.7z" (
   echo Downloading Qt5 ...
-  curl -L -o "qtbase.7z" "https://github.com/wo80/qt-msvc-build/releases/download/v5.15.18/qt-5.15.18-msvc2022-x64.7z"
+  curl -L -o "qtbase.7z" "https://github.com/wo80/qt-msvc-build/releases/download/v5.15.19/qt-5.15.19-msvc2026-x64.7z"
 )
 
 if not exist "%INSTALL_PREFIX%\Qt5\include\QtCore\" (
