@@ -104,21 +104,33 @@ int AudioContext::create(const std::string& filename,
   }
 
   // Check if the hardcoded sample format is supported by the codec
+  const AVSampleFormat* sample_fmts;
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(61, 19, 100)
   if (audioCodec->sample_fmts) {
-    const enum AVSampleFormat* p = audioCodec->sample_fmts;
-    while (*p != AV_SAMPLE_FMT_NONE) {
-      if (*p == _codecCtx->sample_fmt) break;
-      p++;
-    }
-    if (*p == AV_SAMPLE_FMT_NONE) {
-      // Not supported --> use the first one in the list as default?
-      // _codecCtx->sample_fmt = audioCodec->sample_fmts[0];
-      ostringstream msg;  
+      sample_fmts = audioCodec->sample_fmts;
+      while (*sample_fmts != AV_SAMPLE_FMT_NONE) {
+          if (*sample_fmts == _codecCtx->sample_fmt) break;
+          sample_fmts++;
+      }
+      if (*sample_fmts == AV_SAMPLE_FMT_NONE) {
+          // Not supported --> use the first one in the list as default?
+          // _codecCtx->sample_fmt = audioCodec->sample_fmts[0];
+          ostringstream msg;
+          msg << "AudioWriter: Could not open codec \"" << audioCodec->long_name << "\" for "
+              << format << " files: sample format " << av_get_sample_fmt_name(_codecCtx->sample_fmt) << " is not supported";
+          throw EssentiaException(msg);
+      }
+  }
+#else
+  int err = avcodec_get_supported_config(nullptr, audioCodec, AV_CODEC_CONFIG_SAMPLE_FORMAT, 0, (const void**)&sample_fmts, nullptr);
+  if (err) {
+      ostringstream msg;
       msg << "AudioWriter: Could not open codec \"" << audioCodec->long_name << "\" for "
           << format << " files: sample format " << av_get_sample_fmt_name(_codecCtx->sample_fmt) << " is not supported";
       throw EssentiaException(msg);
-    }
   }
+#endif
+
 
   // Open codec and store it in _codecCtx. 
   int result = avcodec_open2(_codecCtx, audioCodec, NULL);

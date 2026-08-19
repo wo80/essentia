@@ -128,7 +128,7 @@ if not exist "%INSTALL_PREFIX%\include\eigen3\" (
     tar -xf "eigen-5.0.1.tar.gz"
   )
   cd "eigen-5.0.1"
-  cmake -B build -DEIGEN_BUILD_DOC=NO -DBUILD_TESTING=NO -DEIGEN_BUILD_BLAS=NO -DEIGEN_BUILD_LAPACK=NO -DCMAKE_Fortran_COMPILER="" -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DEIGEN_BUILD_DOC=NO -DBUILD_TESTING=NO -DEIGEN_BUILD_BLAS=NO -DEIGEN_BUILD_LAPACK=NO -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -151,7 +151,7 @@ if not exist "%INSTALL_PREFIX%\include\fftw3.h" (
     tar -xf "fftw-3.3.11.tar.gz"
   )
   cd "fftw-3.3.11"
-  cmake -B build -DBUILD_TESTS=NO -DDISABLE_FORTRAN=YES -DBUILD_SHARED_LIBS=%fftw_shared% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=YES -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+  cmake -B build -DBUILD_TESTS=NO -DDISABLE_FORTRAN=YES -DBUILD_SHARED_LIBS=%fftw_shared% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX% -DENABLE_FLOAT=YES -DENABLE_AVX2=YES -DCMAKE_POLICY_VERSION_MINIMUM=3.5
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
   cd ..
@@ -198,7 +198,7 @@ if not exist "%INSTALL_PREFIX%\include\zlib.h" (
     tar -xf "zlib-1.3.2.tar.gz"
   )
   cd "zlib-1.3.2"
-  cmake -B build -DZLIB_BUILD_EXAMPLES=NO -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
+  cmake -B build -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
   cd ..
