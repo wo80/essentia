@@ -41,6 +41,10 @@
 #cmakedefine01 ENABLE_CHROMAPRINT
 #endif
 
+#ifndef ENABLE_ML_PREPROCESSING
+#cmakedefine01 ENABLE_ML_PREPROCESSING
+#endif
+
 #ifndef ENABLE_TENSORFLOW
 #cmakedefine01 ENABLE_TENSORFLOW
 #endif

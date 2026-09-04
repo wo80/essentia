@@ -35,6 +35,10 @@ if(MSVC)
   endif()
 endif()
 
+if(ESSENTIA_USE_ML_PREPROCESSING)
+  target_sources(essentia_tests PRIVATE test_tensorflowinput.cpp)
+endif()
+
 target_link_libraries(essentia_tests PRIVATE gtest gtest_main essentia)
 
 gtest_discover_tests(essentia_tests

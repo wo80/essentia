@@ -53,7 +53,7 @@ target_sources(essentia
     triangularbands.h
     triangularbarkbands.h)
 
-if(ESSENTIA_USE_TENSORFLOW)
+if(ESSENTIA_USE_ML_PREPROCESSING)
   target_sources(essentia
     PRIVATE
       tensorflowinputfsdsinet.cpp

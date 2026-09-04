@@ -90,6 +90,10 @@ if(ESSENTIA_USE_CHROMAPRINT)
   set(ENABLE_CHROMAPRINT ON)
 endif()
 
+if(ESSENTIA_USE_ML_PREPROCESSING)
+  set(ENABLE_ML_PREPROCESSING ON)
+endif()
+
 if(ESSENTIA_USE_TENSORFLOW)
   target_link_libraries(essentia PUBLIC TensorFlow::tensorflow)
   set(ENABLE_TENSORFLOW ON)
