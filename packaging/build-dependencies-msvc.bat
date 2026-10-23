@@ -11,6 +11,7 @@
 :: --shared     = List of shared dependencies, ignoring the '--static' flag, separated by a colon,
 ::                for example  '--shared ffmpeg:fftw'. Only FFmpeg and FFTW supported for now.
 :: --with-gaia  = Flag to enable Gaia build
+:: --with-onnx  = Flag to download and install ONNX runtime
 :: --with-tensorflow  = Flag to download and install TensorFlow
 ::
 
@@ -39,6 +40,7 @@ set BUILD_TYPE=Debug
 set SHARED_LIBS=YES
 set WITH_GAIA=NO
 set WITH_TENSORFLOW=NO
+set WITH_ONNX=NO
 
 :: Parse commandline arguments
 
@@ -53,6 +55,8 @@ for %%A in (%*) do (
     set WITH_GAIA=YES
   ) else ( if /I %%A==--with-tensorflow (
     set WITH_TENSORFLOW=YES
+  ) else ( if /I %%A==--with-onnx (
+    set WITH_ONNX=YES
   ) else ( if /I %%A==--build-type (
     set OPT=1
   ) else ( if /I %%A==--prefix (
@@ -68,16 +72,16 @@ for %%A in (%*) do (
   ) else ( if !OPT!==3 (
     set SHARED_LIB_NAMES=%%A
     set OPT=0
-  )))))))))
+  ))))))))))
 )
 
-if "%INSTALL_PREFIX%" == "" (
+if "%INSTALL_PREFIX%"=="" (
   set INSTALL_PREFIX=%cd%
 )
 
 :: Abort if install prefix doesn't exist.
 if not exist "%INSTALL_PREFIX%" (
-  echo Invalid install prefix - directory does not exist
+  echo Invalid install prefix - directory does not exist "%INSTALL_PREFIX%"
   goto error
 )
 
@@ -210,17 +214,17 @@ if not exist "%INSTALL_PREFIX%\include\zlib.h" (
 :: Install utf8cpp (TagLib dependency) - https://github.com/nemtrif/utfcpp
 ::
 
-if not exist "v4.1.1.tar.gz" (
+if not exist "v4.2.1.tar.gz" (
   echo Downloading utf8cpp ...
-  curl -L -o "v4.1.1.tar.gz" "https://github.com/nemtrif/utfcpp/archive/refs/tags/v4.1.1.tar.gz"
+  curl -L -o "v4.2.1.tar.gz" "https://github.com/nemtrif/utfcpp/archive/refs/tags/v4.2.1.tar.gz"
 )
 
 if not exist "%INSTALL_PREFIX%\include\utf8cpp\" (
-  if not exist "utfcpp-4.1.1\" (
+  if not exist "utfcpp-4.2.1\" (
     echo Extracting utf8cpp archive ...
-    tar -xf "v4.1.1.tar.gz"
+    tar -xf "v4.2.1.tar.gz"
   )
-  cd "utfcpp-4.1.1"
+  cd "utfcpp-4.2.1"
   cmake -B build
   cmake --build build --config %BUILD_TYPE%
   cmake --install build --config %BUILD_TYPE% --prefix %INSTALL_PREFIX%
@@ -233,17 +237,17 @@ if not exist "%INSTALL_PREFIX%\include\utf8cpp\" (
 :: Install TagLib - https://github.com/taglib/taglib
 ::
 
-if not exist "taglib-2.3.1.tar.gz" (
+if not exist "taglib-2.3.2.tar.gz" (
   echo Downloading taglib ...
-  curl -L -o "taglib-2.3.1.tar.gz" "https://github.com/taglib/taglib/releases/download/v2.3.1/taglib-2.3.1.tar.gz"
+  curl -L -o "taglib-2.3.2.tar.gz" "https://github.com/taglib/taglib/releases/download/v2.3.2/taglib-2.3.2.tar.gz"
 )
 
 if not exist "%INSTALL_PREFIX%\include\taglib\" (
-  if not exist "taglib-2.3.1\" (
+  if not exist "taglib-2.3.2\" (
     echo Extracting taglib archive ...
-    tar -xf "taglib-2.3.1.tar.gz"
+    tar -xf "taglib-2.3.2.tar.gz"
   )
-  cd "taglib-2.3.1"
+  cd "taglib-2.3.2"
   cmake -B build -DWITH_ZLIB=NO -DBUILD_EXAMPLES=NO -DBUILD_BINDINGS=NO -DBUILD_TESTING=NO -DBUILD_SHARED_LIBS=%SHARED_LIBS% -DCMAKE_INSTALL_PREFIX=%INSTALL_PREFIX%
   cmake --build build --config %BUILD_TYPE% --parallel
   cmake --install build --config %BUILD_TYPE%
@@ -379,6 +383,35 @@ if not exist "%INSTALL_PREFIX%\include\tensorflow\" (
 )
 
 :tf_end
+
+::
+:: Install ONNX runtime - https://github.com/microsoft/onnxruntime
+::
+
+if %WITH_ONNX%==NO (goto onnx_end)
+
+if not exist "onnxruntime-win-x64-1.31.0.zip" (
+  echo Downloading onnxruntime ...
+  curl -L -o "onnxruntime-win-x64-1.31.0.zip" "https://github.com/microsoft/onnxruntime/releases/download/v1.31.0/onnxruntime-win-x64-1.31.0.zip"
+)
+
+if not exist "%INSTALL_PREFIX%\include\onnxruntime\onnxruntime_cxx_api.h" (
+  if not exist "onnxruntime-win-x64-1.31.0\lib\onnxruntime.dll" (
+    echo Extracting onnxruntime archive ...
+    tar -xf "onnxruntime-win-x64-1.31.0.zip"
+  )
+)
+
+if not exist "%INSTALL_PREFIX%\include\onnxruntime\" (
+  cd "onnxruntime-win-x64-1.31.0"
+  xcopy /s /y "lib\*.dll" %INSTALL_PREFIX%\bin
+  xcopy /s /y "lib\*.lib" %INSTALL_PREFIX%\lib
+  xcopy /s /y /i "include" %INSTALL_PREFIX%\include\onnxruntime
+) else (
+  echo Already installed: onnxruntime
+)
+
+:onnx_end
 
 if %WITH_GAIA%==NO (goto gaia_end)
 
