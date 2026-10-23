@@ -177,27 +177,12 @@ int AudioContext::create(const std::string& filename,
   av_opt_set_chlayout(_convertCtxAv, "in_chlayout", &_codecCtx->ch_layout, 0);
   av_opt_set_chlayout(_convertCtxAv, "out_chlayout", &_codecCtx->ch_layout, 0);
   av_opt_set_int(_convertCtxAv, "in_sample_rate", _codecCtx->sample_rate, 0);
+  av_opt_set_int(_convertCtxAv, "out_sample_rate", _codecCtx->sample_rate, 0);
   av_opt_set_int(_convertCtxAv, "in_sample_fmt", AV_SAMPLE_FMT_FLT, 0);
-
-  av_opt_set_int(_convertCtxAv, "out_channel_layout", _codecCtx->channel_layout, 0);
-  av_opt_set_int(_convertCtxAv, "out_sample_rate", _codecCtx->sample_rate, 0);
   av_opt_set_int(_convertCtxAv, "out_sample_fmt", _codecCtx->sample_fmt, 0);
-#else
-  av_opt_set_chlayout(_convertCtxAv, "in_chlayout", &_codecCtx->ch_layout, 0);
-  av_opt_set_int(_convertCtxAv, "in_sample_rate", _codecCtx->sample_rate, 0);
-  av_opt_set_sample_fmt(_convertCtxAv, "in_sample_fmt", AV_SAMPLE_FMT_FLT, 0);
-
-  av_opt_set_chlayout(_convertCtxAv, "out_chlayout", &_codecCtx->ch_layout, 0);
-  av_opt_set_int(_convertCtxAv, "out_sample_rate", _codecCtx->sample_rate, 0);
-  av_opt_set_sample_fmt(_convertCtxAv, "out_sample_fmt", _codecCtx->sample_fmt, 0);
-#endif
 
   if (swr_init(_convertCtxAv) < 0) {
     throw EssentiaException("AudioLoader: Could not initialize swresample context");
-  }
-
-  if (swr_is_initialized(_convertCtxAv) == 0) {
-      throw EssentiaException("AudioLoader: Could not initialize swresample context");
   }
 
   return _codecCtx->frame_size;
@@ -284,10 +269,10 @@ void AudioContext::write(const vector<StereoSample>& stereoData) {
   
   if (dsize > _codecCtx->frame_size) {
     // AudioWriter sets up correct buffer sizes in accordance to what 
-    // AudioContext:create() returns. Nevertheless, double-check here.
+    // AudioContext:create() returns. Nevertherless, double-check here.
     ostringstream msg;
     msg << "Audio frame size " << _codecCtx->frame_size << 
-           " is not sufficient to store " << dsize << " samples";
+           " is not sufficent to store " << dsize << " samples";
     throw EssentiaException(msg);
   }
 
@@ -310,7 +295,7 @@ void AudioContext::write(const vector<AudioSample>& monoData) {
     // The same as for stereoData version of write()
     ostringstream msg;
     msg << "Audio frame size " << _codecCtx->frame_size << 
-           " is not sufficient to store " << dsize << " samples";
+           " is not sufficent to store " << dsize << " samples";
     throw EssentiaException(msg);
   }
 
@@ -323,7 +308,6 @@ void AudioContext::write(const vector<AudioSample>& monoData) {
 void AudioContext::encodePacket(int size) {
 
   int tmp_fs = _codecCtx->frame_size;
-
   if (size < _codecCtx->frame_size) {
     _codecCtx->frame_size = size;
   }

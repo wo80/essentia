@@ -34,10 +34,9 @@ const char* AudioLoader::description = essentia::standard::AudioLoader::descript
 AudioLoader::~AudioLoader() {
     closeAudioFile();
 
-    av_frame_free(&_decodedFrame);
-
     av_freep(&_buffer);
     av_freep(&_md5Encoded);
+    av_freep(&_decodedFrame);
 }
 
 void AudioLoader::configure() {
@@ -68,7 +67,7 @@ void AudioLoader::openAudioFile(const string& filename) {
         string error = "Unknown error";
         if (av_strerror(errnum, errorstr, 128) == 0) error = errorstr;
         avformat_close_input(&_demuxCtx);
-        _demuxCtx = NULL;
+        _demuxCtx = 0;
         throw EssentiaException("AudioLoader: Could not find stream information, error = ", error);
     }
 
@@ -85,13 +84,15 @@ void AudioLoader::openAudioFile(const string& filename) {
     
     if (nAudioStreams == 0) {
         avformat_close_input(&_demuxCtx);
-        _demuxCtx = NULL;
-        throw EssentiaException("AudioLoader: no audio streams in the file");
+        _demuxCtx = 0;
+        throw EssentiaException("AudioLoader ERROR: found 0 streams in the file, expecting one or more audio streams");
     }
-    _streamIdx = errnum;
 
-    _audioCodecName = std::string(codec->name);
-    _audioCtx = avcodec_alloc_context3(codec);
+    if (_selectedStream >= nAudioStreams) {
+        avformat_close_input(&_demuxCtx);
+        _demuxCtx = 0;
+        throw EssentiaException("AudioLoader ERROR: 'audioStream' parameter set to ", _selectedStream ,". It should be smaller than the audio streams count, ", nAudioStreams);
+    }
 
     _streamIdx = _streams[_selectedStream];
 
@@ -137,10 +138,6 @@ void AudioLoader::openAudioFile(const string& filename) {
     }
 
     E_DEBUG(EAlgorithm, "AudioLoader: using sample format conversion from libswresample");
-#if LIBSWRESAMPLE_VERSION_MAJOR < 5
-    // Configure format conversion  (no samplerate conversion yet)
-    int64_t layout = av_get_default_channel_layout(_audioCtx->channels);
-
     _convertCtxAv = swr_alloc();
         
     // Use modern channel layout API for swresample configuration
@@ -150,28 +147,12 @@ void AudioLoader::openAudioFile(const string& filename) {
     av_opt_set_int(_convertCtxAv, "out_sample_rate", _audioCtx->sample_rate, 0);
     av_opt_set_int(_convertCtxAv, "in_sample_fmt", _audioCtx->sample_fmt, 0);
     av_opt_set_int(_convertCtxAv, "out_sample_fmt", AV_SAMPLE_FMT_FLT, 0);
-#else
-    int error = swr_alloc_set_opts2(&_convertCtxAv,
-        &_audioCtx->ch_layout,
-        AV_SAMPLE_FMT_FLT,
-        _audioCtx->sample_rate,
-        &_audioCtx->ch_layout,
-        _audioCtx->sample_fmt,
-        _audioCtx->sample_rate,
-        0, NULL);
-    if (error < 0) {
-        throw EssentiaException("AudioLoader: Could not allocate resample context\n");
-    }
-#endif
 
     if (swr_init(_convertCtxAv) < 0) {
         throw EssentiaException("AudioLoader: Could not initialize swresample context");
     }
 
-    _packet = av_packet_alloc();
-    if (!_packet) {
-        throw EssentiaException("AudioLoader: Could not allocate packet");
-    }
+    av_init_packet(&_packet);
 
     _decodedFrame = av_frame_alloc();
     if (!_decodedFrame) {
@@ -204,6 +185,7 @@ void AudioLoader::closeAudioFile() {
     av_packet_unref(&_packet);
     _demuxCtx = 0;
     _audioCtx = 0;
+    _streams.clear();
 }
 
 
@@ -244,7 +226,7 @@ AlgorithmStatus AudioLoader::process() {
 
     // read frames until we get a good one
     do {
-        int result = av_read_frame(_demuxCtx, _packet);
+        int result = av_read_frame(_demuxCtx, &_packet);
         //E_DEBUG(EAlgorithm, "AudioLoader: called av_read_frame(), got result = " << result);
         if (result != 0) {
             // 0 = OK, < 0 = error or EOF
@@ -268,11 +250,11 @@ AlgorithmStatus AudioLoader::process() {
             }
             return FINISHED;
         }
-    } while (_packet->stream_index != _streamIdx);
+    } while (_packet.stream_index != _streamIdx);
 
     // compute md5 first
     if (_computeMD5) {
-        av_md5_update(_md5Encoded, _packet->data, _packet->size);
+        av_md5_update(_md5Encoded, _packet.data, _packet.size);
     }
     
     // decode ONE frame from this packet (if any). decodePacket() will
@@ -321,7 +303,7 @@ int AudioLoader::decode_audio_frame(AVCodecContext* audioCtx,
     }
     gotFrame = 1;
 
-    if (ret == 0) {
+    if (gotFrame) {
         int inputSamples = _decodedFrame->nb_samples;
         int inputPlaneSize = av_samples_get_buffer_size(NULL, _nChannels, inputSamples,
                                                         audioCtx->sample_fmt, 1);

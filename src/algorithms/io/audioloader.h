@@ -63,6 +63,7 @@ class AudioLoader : public Algorithm {
   struct SwrContext* _convertCtxAv;
 
   int _streamIdx; // index of the audio stream among all the streams contained in the file
+  std::vector<int> _streams;
   int _selectedStream;
   bool _configured;
 
@@ -81,7 +82,7 @@ class AudioLoader : public Algorithm {
 
  public:
   AudioLoader() : Algorithm(), _buffer(0),  _demuxCtx(0),
-	          _audioCtx(0), _audioCodecName(), _decodedFrame(0),
+	          _audioCtx(0), _audioCodec(0), _decodedFrame(0),
             _convertCtxAv(0), _configured(false) {
 
     declareOutput(_audio, 1, "audio", "the input audio signal");
