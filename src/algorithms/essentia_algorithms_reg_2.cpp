@@ -156,6 +156,9 @@
 #include "algorithms/machinelearning/tensorflowpredicttempocnn.h"
 #include "algorithms/machinelearning/tensorflowpredictvggish.h"
 #endif
+#if ENABLE_ONNXRUNTIME
+#include "algorithms/machinelearning/onnxpredict.h"
+#endif
 #include "algorithms/spectral/triangularbands.h"
 #include "algorithms/spectral/triangularbarkbands.h"
 #include "algorithms/standard/autocorrelation.h"
@@ -469,6 +472,9 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<TensorflowPredictTempoCNN> regTensorflowPredictTempoCNN;
     AlgorithmFactory::Registrar<TensorflowPredictVGGish> regTensorflowPredictVGGish;
 #endif
+#if ENABLE_ONNXRUNTIME
+    AlgorithmFactory::Registrar<OnnxPredict> regOnnxPredict;
+#endif
     AlgorithmFactory::Registrar<TriangularBands> regTriangularBands;
     AlgorithmFactory::Registrar<TriangularBarkBands> regTriangularBarkBands;
     AlgorithmFactory::Registrar<AutoCorrelation> regAutoCorrelation;
@@ -761,6 +767,9 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<TensorflowPredictMusiCNN, essentia::standard::TensorflowPredictMusiCNN> regTensorflowPredictMusiCNN;
     AlgorithmFactory::Registrar<TensorflowPredictTempoCNN, essentia::standard::TensorflowPredictTempoCNN> regTensorflowPredictTempoCNN;
     AlgorithmFactory::Registrar<TensorflowPredictVGGish, essentia::standard::TensorflowPredictVGGish> regTensorflowPredictVGGish;
+#endif
+#if ENABLE_ONNXRUNTIME
+    AlgorithmFactory::Registrar<OnnxPredict, essentia::standard::OnnxPredict> regOnnxPredict;
 #endif
     AlgorithmFactory::Registrar<TriangularBands, essentia::standard::TriangularBands> regTriangularBands;
     AlgorithmFactory::Registrar<TriangularBarkBands, essentia::standard::TriangularBarkBands> regTriangularBarkBands;

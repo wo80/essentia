@@ -17,7 +17,33 @@ set(ESSENTIA_ALGORITHMS
 )
 
 if(ESSENTIA_USE_TENSORFLOW)
-  set(ESSENTIA_ALGORITHMS ${ESSENTIA_ALGORITHMS} machinelearning)
+  target_sources(essentia
+    PRIVATE
+      machinelearning/tensorflowpredict.cpp
+      machinelearning/tensorflowpredict2d.cpp
+      machinelearning/tensorflowpredictcrepe.cpp
+      machinelearning/tensorflowpredicteffnetdiscogs.cpp
+      machinelearning/tensorflowpredictfsdsinet.cpp
+      machinelearning/tensorflowpredictmaest.cpp
+      machinelearning/tensorflowpredictmusicnn.cpp
+      machinelearning/tensorflowpredicttempocnn.cpp
+      machinelearning/tensorflowpredictvggish.cpp
+      machinelearning/tensorflowpredict.h
+      machinelearning/tensorflowpredict2d.h
+      machinelearning/tensorflowpredictcrepe.h
+      machinelearning/tensorflowpredicteffnetdiscogs.h
+      machinelearning/tensorflowpredictfsdsinet.h
+      machinelearning/tensorflowpredictmaest.h
+      machinelearning/tensorflowpredictmusicnn.h
+      machinelearning/tensorflowpredicttempocnn.h
+      machinelearning/tensorflowpredictvggish.h)
+endif()
+
+if(ESSENTIA_USE_ONNXRUNTIME)
+  target_sources(essentia
+    PRIVATE
+      machinelearning/onnxpredict.cpp
+      machinelearning/onnxpredict.h)
 endif()
 
 foreach(DIR IN LISTS ESSENTIA_ALGORITHMS)

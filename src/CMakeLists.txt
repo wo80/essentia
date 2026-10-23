@@ -99,6 +99,11 @@ if(ESSENTIA_USE_TENSORFLOW)
   set(ENABLE_TENSORFLOW ON)
 endif()
 
+if(ESSENTIA_USE_ONNXRUNTIME)
+  target_link_libraries(essentia PUBLIC OnnxRuntime::onnxruntime)
+  set(ENABLE_ONNXRUNTIME ON)
+endif()
+
 if(ESSENTIA_USE_GAIA2)
   target_link_libraries(essentia PUBLIC Gaia2::gaia2 Qt5::Core Qt5::Concurrent)
   add_compile_definitions(HAVE_GAIA2)

@@ -49,6 +49,10 @@
 #cmakedefine01 ENABLE_TENSORFLOW
 #endif
 
+#ifndef ENABLE_ONNXRUNTIME
+#cmakedefine01 ENABLE_ONNXRUNTIME
+#endif
+
 #ifndef ENABLE_GAIA2
 #cmakedefine01 ENABLE_GAIA2
 #endif

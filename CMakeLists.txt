@@ -23,7 +23,7 @@ option(BUILD_PYTHON_BINDINGS "Build Python bindings" OFF)
 option(BUILD_VAMP_PLUGIN "Build VAMP plugin" OFF)
 option(USE_KISSFFT "Use internal KissFFT" OFF)
 option(USE_TENSORFLOW "Use TensorFlow" OFF)
-option(USE_ML_PREPROCESSING "Build the ML preprocessing algorithms (TensorflowInput*)" ON)
+option(USE_ONNXRUNTIME "Use ONNX Runtime" OFF)
 option(USE_GAIA2 "Use Gaia2" OFF)
 option(ENABLE_STATIC_DEPENDENCIES "MSVC only: enable linking against static dependencies" OFF)
 
@@ -52,6 +52,10 @@ if(USE_TENSORFLOW)
   find_package(TensorFlow QUIET)
 endif()
 
+if(USE_ONNXRUNTIME)
+  find_package(OnnxRuntime QUIET)
+endif()
+
 if(USE_GAIA2)
   find_package(Gaia2 QUIET)
 
@@ -69,6 +73,7 @@ set(ESSENTIA_USE_LIBSAMPLERATE OFF)
 set(ESSENTIA_USE_TAGLIB OFF)
 set(ESSENTIA_USE_CHROMAPRINT OFF)
 set(ESSENTIA_USE_TENSORFLOW OFF)
+set(ESSENTIA_USE_ONNXRUNTIME OFF)
 set(ESSENTIA_USE_ML_PREPROCESSING OFF)
 set(ESSENTIA_USE_VAMP OFF)
 set(ESSENTIA_USE_GAIA OFF)
@@ -123,11 +128,17 @@ if(TARGET TensorFlow::tensorflow)
   set(ESSENTIA_USE_TENSORFLOW ON)
 endif()
 
+
+if(TARGET OnnxRuntime::onnxruntime)
+  essentia_package_info(OnnxRuntime OnnxRuntime::onnxruntime)
+  set(ESSENTIA_USE_ONNXRUNTIME ON)
+endif()
+
 # The TensorflowInput* algorithms compute log-compressed mel bands and link against
 # nothing; TensorFlow only consumes their output. They are therefore available
 # independently of USE_TENSORFLOW, and TensorflowPredict* instantiates them through
-# the factory, so TensorFlow support implies them.
-if(USE_ML_PREPROCESSING OR ESSENTIA_USE_TENSORFLOW)
+# the factory, so TensorFlow or ONNX support implies them.
+if(ESSENTIA_USE_TENSORFLOW OR ESSENTIA_USE_ONNXRUNTIME)
   set(ESSENTIA_USE_ML_PREPROCESSING ON)
 endif()
 
