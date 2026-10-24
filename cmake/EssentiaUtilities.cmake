@@ -16,7 +16,7 @@ macro(essentia_package_info name target)
 endmacro()
 
 macro(essentia_check_set name)
-  string(TOUPPER ${${name}} NAME_UPPER)
+  string(TOUPPER "${${name}}" NAME_UPPER)
 
   if( "${NAME_UPPER}" STREQUAL "ON"   OR
       "${NAME_UPPER}" STREQUAL "Y"    OR

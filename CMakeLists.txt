@@ -23,6 +23,7 @@ option(BUILD_PYTHON_BINDINGS "Build Python bindings" OFF)
 option(BUILD_VAMP_PLUGIN "Build VAMP plugin" OFF)
 option(USE_KISSFFT "Use internal KissFFT" OFF)
 option(USE_TENSORFLOW "Use TensorFlow" OFF)
+option(USE_ONNXRUNTIME "Use ONNX Runtime" OFF)
 option(USE_GAIA2 "Use Gaia2" OFF)
 option(ENABLE_STATIC_DEPENDENCIES "MSVC only: enable linking against static dependencies" OFF)
 
@@ -37,7 +38,7 @@ find_package(FFmpeg)
 find_package(SampleRate QUIET)
 find_package(Taglib QUIET)
 find_package(Chromaprint QUIET)
-find_package(Yaml QUIET)
+find_package(YAML QUIET)
 
 if(BUILD_PYTHON_BINDINGS)
   find_package(Python3 3.10...<3.15 COMPONENTS Interpreter Development NumPy REQUIRED)
@@ -49,6 +50,10 @@ endif()
 
 if(USE_TENSORFLOW)
   find_package(TensorFlow QUIET)
+endif()
+
+if(USE_ONNXRUNTIME)
+  find_package(OnnxRuntime QUIET)
 endif()
 
 if(USE_GAIA2)
@@ -68,6 +73,8 @@ set(ESSENTIA_USE_LIBSAMPLERATE OFF)
 set(ESSENTIA_USE_TAGLIB OFF)
 set(ESSENTIA_USE_CHROMAPRINT OFF)
 set(ESSENTIA_USE_TENSORFLOW OFF)
+set(ESSENTIA_USE_ONNXRUNTIME OFF)
+set(ESSENTIA_USE_ML_PREPROCESSING OFF)
 set(ESSENTIA_USE_VAMP OFF)
 set(ESSENTIA_USE_GAIA OFF)
 
@@ -81,6 +88,7 @@ else()
   endif()
 
   if(TARGET FFTW3::fftw3f)
+    essentia_package_info(FFTW3f FFTW3::fftw3f)
     set(ESSENTIA_USE_FFTW ON)
   elseif(APPLE AND ACCELERATE_LIBRARIES)
     set(ESSENTIA_USE_VDSP ON)
@@ -111,13 +119,27 @@ if(TARGET Chromaprint::chromaprint)
 endif()
 
 if(TARGET yaml)
-  essentia_package_info(yaml yaml)
+  essentia_package_info(YAML yaml)
   set(ESSENTIA_USE_YAML ON)
 endif()
 
 if(TARGET TensorFlow::tensorflow)
   essentia_package_info(TensorFlow TensorFlow::tensorflow)
   set(ESSENTIA_USE_TENSORFLOW ON)
+endif()
+
+
+if(TARGET OnnxRuntime::onnxruntime)
+  essentia_package_info(OnnxRuntime OnnxRuntime::onnxruntime)
+  set(ESSENTIA_USE_ONNXRUNTIME ON)
+endif()
+
+# The TensorflowInput* algorithms compute log-compressed mel bands and link against
+# nothing; TensorFlow only consumes their output. They are therefore available
+# independently of USE_TENSORFLOW, and TensorflowPredict* instantiates them through
+# the factory, so TensorFlow or ONNX support implies them.
+if(ESSENTIA_USE_TENSORFLOW OR ESSENTIA_USE_ONNXRUNTIME)
+  set(ESSENTIA_USE_ML_PREPROCESSING ON)
 endif()
 
 if(TARGET VampSdk::vamp)

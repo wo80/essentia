@@ -61,7 +61,7 @@ set(yaml_VERSION ${PC_YAML_VERSION})
 
 include(FindPackageHandleStandardArgs)
 
-find_package_handle_standard_args(Yaml
+find_package_handle_standard_args(YAML
   REQUIRED_VARS
     yaml_LIBRARY
     yaml_INCLUDE_DIR
@@ -69,7 +69,7 @@ find_package_handle_standard_args(Yaml
     yaml_VERSION
 )
 
-if(Yaml_FOUND)
+if(YAML_FOUND)
   set(yaml_FOUND TRUE)
   set(yaml_LIBRARIES ${yaml_LIBRARY})
   set(yaml_INCLUDE_DIRS ${yaml_INCLUDE_DIR})

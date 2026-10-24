@@ -139,11 +139,13 @@
 #include "algorithms/spectral/spectralwhitening.h"
 #include "algorithms/spectral/spectrumtocent.h"
 #include "algorithms/spectral/strongpeak.h"
-#if ENABLE_TENSORFLOW
+#if ENABLE_ML_PREPROCESSING
 #include "algorithms/spectral/tensorflowinputfsdsinet.h"
 #include "algorithms/spectral/tensorflowinputmusicnn.h"
 #include "algorithms/spectral/tensorflowinputtempocnn.h"
 #include "algorithms/spectral/tensorflowinputvggish.h"
+#endif
+#if ENABLE_TENSORFLOW
 #include "algorithms/machinelearning/tensorflowpredict.h"
 #include "algorithms/machinelearning/tensorflowpredict2d.h"
 #include "algorithms/machinelearning/tensorflowpredictcrepe.h"
@@ -153,6 +155,9 @@
 #include "algorithms/machinelearning/tensorflowpredictmusicnn.h"
 #include "algorithms/machinelearning/tensorflowpredicttempocnn.h"
 #include "algorithms/machinelearning/tensorflowpredictvggish.h"
+#endif
+#if ENABLE_ONNXRUNTIME
+#include "algorithms/machinelearning/onnxpredict.h"
 #endif
 #include "algorithms/spectral/triangularbands.h"
 #include "algorithms/spectral/triangularbarkbands.h"
@@ -450,11 +455,13 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<SpectralWhitening> regSpectralWhitening;
     AlgorithmFactory::Registrar<SpectrumToCent> regSpectrumToCent;
     AlgorithmFactory::Registrar<StrongPeak> regStrongPeak;
-#if ENABLE_TENSORFLOW
+#if ENABLE_ML_PREPROCESSING
     AlgorithmFactory::Registrar<TensorflowInputFSDSINet> regTensorflowInputFSDSINet;
     AlgorithmFactory::Registrar<TensorflowInputMusiCNN> regTensorflowInputMusiCNN;
     AlgorithmFactory::Registrar<TensorflowInputTempoCNN> regTensorflowInputTempoCNN;
     AlgorithmFactory::Registrar<TensorflowInputVGGish> regTensorflowInputVGGish;
+#endif
+#if ENABLE_TENSORFLOW
     AlgorithmFactory::Registrar<TensorflowPredict> regTensorflowPredict;
     AlgorithmFactory::Registrar<TensorflowPredict2D> regTensorflowPredict2D;
     AlgorithmFactory::Registrar<TensorflowPredictCREPE> regTensorflowPredictCREPE;
@@ -464,6 +471,9 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<TensorflowPredictMusiCNN> regTensorflowPredictMusiCNN;
     AlgorithmFactory::Registrar<TensorflowPredictTempoCNN> regTensorflowPredictTempoCNN;
     AlgorithmFactory::Registrar<TensorflowPredictVGGish> regTensorflowPredictVGGish;
+#endif
+#if ENABLE_ONNXRUNTIME
+    AlgorithmFactory::Registrar<OnnxPredict> regOnnxPredict;
 #endif
     AlgorithmFactory::Registrar<TriangularBands> regTriangularBands;
     AlgorithmFactory::Registrar<TriangularBarkBands> regTriangularBarkBands;
@@ -741,11 +751,13 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<SpectralWhitening, essentia::standard::SpectralWhitening> regSpectralWhitening;
     AlgorithmFactory::Registrar<SpectrumToCent, essentia::standard::SpectrumToCent> regSpectrumToCent;
     AlgorithmFactory::Registrar<StrongPeak, essentia::standard::StrongPeak> regStrongPeak;
-#if ENABLE_TENSORFLOW
+#if ENABLE_ML_PREPROCESSING
     AlgorithmFactory::Registrar<TensorflowInputFSDSINet, essentia::standard::TensorflowInputFSDSINet> regTensorflowInputFSDSINet;
     AlgorithmFactory::Registrar<TensorflowInputMusiCNN, essentia::standard::TensorflowInputMusiCNN> regTensorflowInputMusiCNN;
     AlgorithmFactory::Registrar<TensorflowInputTempoCNN, essentia::standard::TensorflowInputTempoCNN> regTensorflowInputTempoCNN;
     AlgorithmFactory::Registrar<TensorflowInputVGGish, essentia::standard::TensorflowInputVGGish> regTensorflowInputVGGish;
+#endif
+#if ENABLE_TENSORFLOW
     AlgorithmFactory::Registrar<TensorflowPredict, essentia::standard::TensorflowPredict> regTensorflowPredict;
     AlgorithmFactory::Registrar<TensorflowPredict2D, essentia::standard::TensorflowPredict2D> regTensorflowPredict2D;
     AlgorithmFactory::Registrar<TensorflowPredictCREPE, essentia::standard::TensorflowPredictCREPE> regTensorflowPredictCREPE;
@@ -755,6 +767,9 @@ ESSENTIA_API void registerAlgorithm() {
     AlgorithmFactory::Registrar<TensorflowPredictMusiCNN, essentia::standard::TensorflowPredictMusiCNN> regTensorflowPredictMusiCNN;
     AlgorithmFactory::Registrar<TensorflowPredictTempoCNN, essentia::standard::TensorflowPredictTempoCNN> regTensorflowPredictTempoCNN;
     AlgorithmFactory::Registrar<TensorflowPredictVGGish, essentia::standard::TensorflowPredictVGGish> regTensorflowPredictVGGish;
+#endif
+#if ENABLE_ONNXRUNTIME
+    AlgorithmFactory::Registrar<OnnxPredict, essentia::standard::OnnxPredict> regOnnxPredict;
 #endif
     AlgorithmFactory::Registrar<TriangularBands, essentia::standard::TriangularBands> regTriangularBands;
     AlgorithmFactory::Registrar<TriangularBarkBands, essentia::standard::TriangularBarkBands> regTriangularBarkBands;

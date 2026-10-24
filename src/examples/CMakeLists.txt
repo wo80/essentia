@@ -1,5 +1,5 @@
 function(essentia_add_example example)
-  if(BUILD_EXAMPLES EQUAL 1 OR example IN_LIST BUILD_EXAMPLES)
+  if(BUILD_EXAMPLES EQUAL 1 OR "${example}" IN_LIST BUILD_EXAMPLES)
     add_executable(${example} "${example}.cpp")
     target_link_libraries(${example} PRIVATE essentia)
     if(BUILD_SHARED_LIBS)
