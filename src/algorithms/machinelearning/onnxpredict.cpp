@@ -18,6 +18,7 @@
  */
 
 #include "onnxpredict.h"
+#include <filesystem>
 
 using namespace std;
 using namespace essentia;
@@ -206,6 +207,8 @@ void OnnxPredict::reset() {
   _inputNodes.clear();
   _outputNodes.clear();
 
+  const std::filesystem::path model_path = std::filesystem::u8path(_graphFilename);
+
   try {
     // Reset the previous session and its options.
     _session.reset();
@@ -256,7 +259,7 @@ void OnnxPredict::reset() {
 
     // Initialize the session.
     _session = std::make_unique<Ort::Session>(
-        _env, _graphFilename.c_str(), _sessionOptions);
+        _env, model_path.c_str(), _sessionOptions);
   }
   catch (const Ort::Exception& e) {
     // Preserve the existing optimization fallback behavior.
@@ -271,7 +274,7 @@ void OnnxPredict::reset() {
           GraphOptimizationLevel::ORT_ENABLE_BASIC);
 
       _session = std::make_unique<Ort::Session>(
-          _env, _graphFilename.c_str(), _sessionOptions);
+          _env, model_path.c_str(), _sessionOptions);
     }
     else {
       throw EssentiaException(
