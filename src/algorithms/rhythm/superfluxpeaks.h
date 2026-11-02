@@ -22,7 +22,7 @@
 
 #include "algorithmfactory.h"
 
-using namespace std;
+
 namespace essentia {
 namespace standard {
         

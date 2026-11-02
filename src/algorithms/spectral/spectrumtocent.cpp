@@ -47,9 +47,9 @@ void SpectrumToCent::configure() {
 
 
 void SpectrumToCent::compute() {
-  const vector<Real>& spectrum = _spectrumInput.get();
-  vector<Real>& bands = _bandsOutput.get();
-  vector<Real>& freqs = _freqOutput.get();
+  const std::vector<Real>& spectrum = _spectrumInput.get();
+  std::vector<Real>& bands = _bandsOutput.get();
+  std::vector<Real>& freqs = _freqOutput.get();
 
   if (spectrum.size() <= 1) {
     throw EssentiaException("SpectrumToCent: the size of the input spectrum is not greater than one");

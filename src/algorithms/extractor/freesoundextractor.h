@@ -121,7 +121,7 @@ class FreesoundExtractor : public Algorithm {
     declareParameter("rhythmMaxTempo", "the fastest tempo to detect [bpm]", "[60,250]", 210);
   
     const char* statsArray[] = { "mean", "var", "stdev", "median", "min", "max", "dmean", "dmean2", "dvar", "dvar2" };
-    vector<string> stats = arrayToVector<string>(statsArray);
+    std::vector<std::string> stats = arrayToVector<std::string>(statsArray);
     declareParameter("lowlevelStats", "the statistics to compute for low-level features", "", stats);
     declareParameter("tonalStats", "the statistics to compute for tonal features", "", stats);
     declareParameter("rhythmStats", "the statistics to compute for rhythm features", "", stats);

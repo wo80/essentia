@@ -6,7 +6,7 @@
 //for min(), max() below
 
 using namespace TNT;
-using namespace std;
+
 
 namespace JAMA
 {
@@ -78,6 +78,7 @@ class LU
 		piv(A.dim1())
 	
 	{
+      using std::min;
 
    // Use a "left-looking", dot-product, Crout/Doolittle algorithm.
 
